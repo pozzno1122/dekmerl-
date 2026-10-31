@@ -11,7 +11,7 @@
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kantumruy Pro', sans-serif; }
-        body { background-color: #121212; color: #ffffff; min-height: 100vh; padding-bottom: 40px; position: relative; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+        body { background-color: #121212; color: #ffffff; min-height: 100vh; padding-bottom: 40px; position: relative; user-select: none; }
         
         /* Click Water Ripple Effect */
         .click-ripple {
@@ -227,12 +227,11 @@
             background-color: #000000;
             position: relative;
             border-radius: 0;
-            overflow: hidden;
-            -webkit-touch-callout: none; /* Disable iOS/Android long-press context menu */
         }
         @media (min-width: 1024px) {
             .series-player-container {
                 border-radius: 12px;
+                overflow: hidden;
                 box-shadow: 0 8px 30px rgba(0,0,0,0.7);
             }
         }
@@ -241,29 +240,6 @@
             width: 100%;
             height: 100%;
             border: none;
-            pointer-events: auto;
-        }
-
-        /* Full Transparent Overlay Shield to completely block long-press and right-click on mobile/PC */
-        .anti-download-shield {
-            position: absolute;
-            inset: 0;
-            z-index: 5;
-            background: transparent;
-            /* Allow player controls to be clickable by making pointer-events none except on top-right */
-            pointer-events: none;
-        }
-        
-        /* Block top-right area completely */
-        .anti-download-shield-topright {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 70px;
-            z-index: 6;
-            pointer-events: auto;
-            background: transparent;
         }
 
         .series-info-box {
@@ -478,15 +454,10 @@
         </div>
 
         <div class="series-modal-body-wrapper">
-            <!-- Left Side: Player & Info (With Anti-Download Long-Press Shields) -->
+            <!-- Left Side: Player & Info (Added nodownload & sandbox to prevent video download) -->
             <div class="player-and-info-section">
-                <div class="series-player-container" oncontextmenu="return false;">
+                <div class="series-player-container">
                     <iframe id="seriesPlayerFrame" src="" allowfullscreen controlsList="nodownload" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
-                    
-                    <!-- Transparent shields to prevent long-press context menu on mobile/browsers -->
-                    <div class="anti-download-shield"></div>
-                    <div class="anti-download-shield-topright" onclick="alert('ការទាញយកវីដេអូត្រូវបានហាមឃាត់!');"></div>
-
                     <div id="vipLockedMessage" class="hidden" style="position: absolute; inset: 0; background-color: rgba(0,0,0,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 10;">
                         <div style="font-size: 2.5rem; margin-bottom: 6px;">🔒</div>
                         <h4 style="color: #facc15; font-size: 1rem; font-weight: 700;">វីដេអូនេះសម្រាប់តែសមាជិក VIP ប៉ុណ្ណោះ</h4>
