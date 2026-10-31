@@ -11,7 +11,7 @@
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kantumruy Pro', sans-serif; }
-        body { background-color: #121212; color: #ffffff; min-height: 100vh; padding-bottom: 40px; position: relative; user-select: none; }
+        body { background-color: #121212; color: #ffffff; min-height: 100vh; padding-bottom: 40px; position: relative; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
         
         /* Click Water Ripple Effect */
         .click-ripple {
@@ -228,6 +228,7 @@
             position: relative;
             border-radius: 0;
             overflow: hidden;
+            -webkit-touch-callout: none; /* Disable iOS/Android long-press context menu */
         }
         @media (min-width: 1024px) {
             .series-player-container {
@@ -240,16 +241,28 @@
             width: 100%;
             height: 100%;
             border: none;
+            pointer-events: auto;
         }
 
-        /* Anti-Download Shield: Covers the top-right 3-dot menu area inside player to block download */
+        /* Full Transparent Overlay Shield to completely block long-press and right-click on mobile/PC */
         .anti-download-shield {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            background: transparent;
+            /* Allow player controls to be clickable by making pointer-events none except on top-right */
+            pointer-events: none;
+        }
+        
+        /* Block top-right area completely */
+        .anti-download-shield-topright {
             position: absolute;
             top: 0;
             right: 0;
-            width: 60px;
-            height: 60px;
-            z-index: 5;
+            width: 100px;
+            height: 70px;
+            z-index: 6;
+            pointer-events: auto;
             background: transparent;
         }
 
@@ -465,12 +478,14 @@
         </div>
 
         <div class="series-modal-body-wrapper">
-            <!-- Left Side: Player & Info (With Anti-Download Shield Overlay) -->
+            <!-- Left Side: Player & Info (With Anti-Download Long-Press Shields) -->
             <div class="player-and-info-section">
-                <div class="series-player-container">
+                <div class="series-player-container" oncontextmenu="return false;">
                     <iframe id="seriesPlayerFrame" src="" allowfullscreen controlsList="nodownload" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
-                    <!-- Shield covering the 3-dot menu area to prevent tapping/downloading -->
-                    <div class="anti-download-shield" onclick="alert('ការទាញយកវីដេអូត្រូវបានហាមឃាត់!');"></div>
+                    
+                    <!-- Transparent shields to prevent long-press context menu on mobile/browsers -->
+                    <div class="anti-download-shield"></div>
+                    <div class="anti-download-shield-topright" onclick="alert('ការទាញយកវីដេអូត្រូវបានហាមឃាត់!');"></div>
 
                     <div id="vipLockedMessage" class="hidden" style="position: absolute; inset: 0; background-color: rgba(0,0,0,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 10;">
                         <div style="font-size: 2.5rem; margin-bottom: 6px;">🔒</div>
