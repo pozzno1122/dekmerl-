@@ -227,11 +227,11 @@
             background-color: #000000;
             position: relative;
             border-radius: 0;
+            overflow: hidden;
         }
         @media (min-width: 1024px) {
             .series-player-container {
                 border-radius: 12px;
-                overflow: hidden;
                 box-shadow: 0 8px 30px rgba(0,0,0,0.7);
             }
         }
@@ -240,6 +240,17 @@
             width: 100%;
             height: 100%;
             border: none;
+        }
+
+        /* Anti-Download Shield: Covers the top-right 3-dot menu area inside player to block download */
+        .anti-download-shield {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            z-index: 5;
+            background: transparent;
         }
 
         .series-info-box {
@@ -454,10 +465,13 @@
         </div>
 
         <div class="series-modal-body-wrapper">
-            <!-- Left Side: Player & Info (Added nodownload & sandbox to prevent video download) -->
+            <!-- Left Side: Player & Info (With Anti-Download Shield Overlay) -->
             <div class="player-and-info-section">
                 <div class="series-player-container">
                     <iframe id="seriesPlayerFrame" src="" allowfullscreen controlsList="nodownload" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+                    <!-- Shield covering the 3-dot menu area to prevent tapping/downloading -->
+                    <div class="anti-download-shield" onclick="alert('ការទាញយកវីដេអូត្រូវបានហាមឃាត់!');"></div>
+
                     <div id="vipLockedMessage" class="hidden" style="position: absolute; inset: 0; background-color: rgba(0,0,0,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 10;">
                         <div style="font-size: 2.5rem; margin-bottom: 6px;">🔒</div>
                         <h4 style="color: #facc15; font-size: 1rem; font-weight: 700;">វីដេអូនេះសម្រាប់តែសមាជិក VIP ប៉ុណ្ណោះ</h4>
