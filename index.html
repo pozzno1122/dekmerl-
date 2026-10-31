@@ -11,7 +11,7 @@
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kantumruy Pro', sans-serif; }
-        body { background-color: #121212; color: #ffffff; min-height: 100vh; padding-bottom: 40px; position: relative; }
+        body { background-color: #121212; color: #ffffff; min-height: 100vh; padding-bottom: 40px; position: relative; user-select: none; }
         
         /* Click Water Ripple Effect */
         .click-ripple {
@@ -155,9 +155,7 @@
         .btn-card-edit { background-color: #2563eb; color: #fff; }
         .btn-card-delete { background-color: #dc2626; color: #fff; }
 
-        /* ========================================================
-           RESPONSIVE SERIES PLAYER MODAL (PC & MOBILE OPTIMIZED)
-           ======================================================== */
+        /* Responsive Series Player Modal */
         .series-modal-overlay { 
             position: fixed; 
             inset: 0; 
@@ -198,7 +196,6 @@
             transition: background 0.2s;
         }
 
-        /* PC Layout Wrapper: Split screen on Desktop */
         .series-modal-body-wrapper {
             display: flex;
             flex-direction: column;
@@ -286,7 +283,7 @@
         }
         @media (min-width: 1024px) {
             .episode-grid-thumbnails {
-                grid-template-columns: 1fr; /* Stack episodes nicely on PC sidebar */
+                grid-template-columns: 1fr;
             }
         }
 
@@ -303,7 +300,7 @@
         }
         @media (min-width: 1024px) {
             .episode-thumb-card {
-                flex-direction: row; /* Horizontal layout on PC for better episode selection */
+                flex-direction: row;
                 align-items: center;
                 gap: 10px;
                 padding: 6px;
@@ -373,7 +370,7 @@
         .hidden { display: none !important; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <header>
         <div class="header-container">
@@ -444,7 +441,7 @@
         <div id="videoGrid" class="video-grid"></div>
     </main>
 
-    <!-- Series Player Modal (Optimized for PC & Mobile) -->
+    <!-- Series Player Modal -->
     <div id="seriesModal" class="series-modal-overlay hidden">
         <div class="series-modal-header">
             <button onclick="closeSeriesModal()" class="btn-back-series">
@@ -457,10 +454,10 @@
         </div>
 
         <div class="series-modal-body-wrapper">
-            <!-- Left Side: Player & Info -->
+            <!-- Left Side: Player & Info (Added nodownload & sandbox to prevent video download) -->
             <div class="player-and-info-section">
                 <div class="series-player-container">
-                    <iframe id="seriesPlayerFrame" src="" allowfullscreen></iframe>
+                    <iframe id="seriesPlayerFrame" src="" allowfullscreen controlsList="nodownload" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
                     <div id="vipLockedMessage" class="hidden" style="position: absolute; inset: 0; background-color: rgba(0,0,0,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 10;">
                         <div style="font-size: 2.5rem; margin-bottom: 6px;">🔒</div>
                         <h4 style="color: #facc15; font-size: 1rem; font-weight: 700;">វីដេអូនេះសម្រាប់តែសមាជិក VIP ប៉ុណ្ណោះ</h4>
@@ -475,7 +472,7 @@
                 </div>
             </div>
 
-            <!-- Right Side: Episodes Sidebar (Optimized for PC & Mobile) -->
+            <!-- Right Side: Episodes Sidebar -->
             <div class="series-episodes-area">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                     <h4 style="font-size: 0.9rem; color: #bbb; font-weight: bold;">🎬 ជ្រើសរើសភាគទស្សនា (Episodes)៖</h4>
