@@ -355,6 +355,43 @@
             }
         }
 
+        /* ប៊ូតុងសញ្ញាបូកបង្ហោះភាគបន្ត (Add Episode Button Card) */
+        .add-episode-card-btn {
+            background-color: rgba(229, 9, 20, 0.08);
+            border: 2px dashed #E50914;
+            border-radius: 8px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            color: #E50914;
+            transition: all 0.2s ease;
+        }
+        .add-episode-card-btn:hover {
+            background-color: rgba(229, 9, 20, 0.2);
+            transform: scale(1.02);
+        }
+        .add-episode-card-btn i {
+            font-size: 1.8rem;
+        }
+        .add-episode-card-btn span {
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        @media (min-width: 1024px) {
+            .add-episode-card-btn {
+                min-height: 62px;
+                flex-direction: row;
+                gap: 10px;
+            }
+            .add-episode-card-btn i {
+                font-size: 1.3rem;
+            }
+        }
+
         /* Admin / Edit Modals */
         .modal-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
         .modal-box { background-color: #1e1e1e; border: 1px solid #333; border-radius: 16px; width: 100%; max-width: 580px; padding: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
@@ -511,6 +548,42 @@
                 </div>
                 <div id="episodeListContainer" class="episode-grid-thumbnails"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- Quick Add Next Episode Modal for Admin -->
+    <div id="quickAddEpModal" class="modal-overlay hidden">
+        <div class="modal-box" style="text-align: left; max-width: 500px;">
+            <button onclick="closeQuickAddEpModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="font-size: 0.95rem; margin-bottom: 14px; color: #E50914;">➕ បង្ហោះភាគបន្តសម្រាប់រឿងនេះ</h3>
+            <form id="quickAddEpForm" onsubmit="handleQuickAddEpisode(event)">
+                <input type="hidden" id="quickAddSeriesTitle">
+                <input type="hidden" id="quickAddVideoType">
+                <input type="hidden" id="quickAddVideoCategory">
+                <input type="hidden" id="quickAddImageUrl">
+                <input type="hidden" id="quickAddIsHot">
+
+                <div class="form-group">
+                    <label>ឈ្មោះរឿងដុំ (Series Title)</label>
+                    <input type="text" id="quickAddSeriesTitleDisplay" disabled class="form-control" style="background-color: #222; color: #facc15; font-weight: bold;">
+                </div>
+                <div class="form-group">
+                    <label>ចំណងជើងភាគ (ឧ. ភាគទី ៤ ឬ រដូវកាលទី ៤)</label>
+                    <input type="text" id="quickAddEpTitle" required placeholder="ឧ. ភាគទី ៤" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>លីងវីដេអូ (Video URL)</label>
+                    <input type="url" id="quickAddVideoUrl" required placeholder="https://..." class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>ប្រភេទការមើល</label>
+                    <select id="quickAddAccessType" class="form-control">
+                        <option value="free">ឥតគិតថ្លៃ (Free)</option>
+                        <option value="vip">សម្រាប់ VIP (VIP Only)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit" style="background-color: #E50914; color: #fff;">➕ បង្ហោះភាគនេះឥឡូវនេះ</button>
+            </form>
         </div>
     </div>
 
@@ -1255,6 +1328,12 @@
                     });
                 }
                 renderVideos();
+                
+                // រក្សាការ Update Modal ភាគប្រសិនបើកំពុងបើក
+                const openModalSeries = document.getElementById('seriesModalTitle').innerText;
+                if (openModalSeries && !document.getElementById('seriesModal').classList.contains('hidden')) {
+                    openSeriesModal(openModalSeries, false);
+                }
             });
         }
 
@@ -1409,7 +1488,7 @@
             openSeriesModal(seriesName);
         }
 
-        window.openSeriesModal = function(seriesName) {
+        window.openSeriesModal = function(seriesName, resetPlay = true) {
             const sEpisodes = window.videos.filter(v => v.series === seriesName);
             if(sEpisodes.length === 0) return;
 
@@ -1420,12 +1499,13 @@
                 return (a.createdAt || 0) - (b.createdAt || 0);
             });
 
-            const isFreeSeries = sEpisodes[0].category === 'រឿងឥតគិតថ្លៃ';
+            const firstEp = sEpisodes[0];
+            const isFreeSeries = firstEp.category === 'រឿងឥតគិតថ្លៃ';
 
             document.getElementById('seriesModalTitleTop').innerText = seriesName;
-            document.getElementById('seriesModalCategoryTop').innerText = `${sEpisodes[0].type || 'រឿងភាគ'} | ${sEpisodes[0].category || 'ស្នេហា'}`;
+            document.getElementById('seriesModalCategoryTop').innerText = `${firstEp.type || 'រឿងភាគ'} | ${firstEp.category || 'ស្នេហា'}`;
             document.getElementById('seriesModalTitle').innerText = seriesName;
-            document.getElementById('seriesModalCategory').innerText = `ប្រភេទ: ${sEpisodes[0].type || 'រឿងភាគ'} (${sEpisodes[0].category || 'ស្នេហា'})`;
+            document.getElementById('seriesModalCategory').innerText = `ប្រភេទ: ${firstEp.type || 'រឿងភាគ'} (${firstEp.category || 'ស្នេហា'})`;
             
             const adminManageBox = document.getElementById('seriesAdminManageBtnBox');
             if (isUserAdmin()) {
@@ -1437,7 +1517,7 @@
             const epContainer = document.getElementById('episodeListContainer');
             const isAdmin = isUserAdmin();
 
-            epContainer.innerHTML = sEpisodes.map((ep) => `
+            let episodesHTML = sEpisodes.map((ep) => `
                 <div id="ep_card_${ep.id}" class="episode-thumb-card">
                     <div class="ep-thumb-img-box" onclick="playEpisode('${ep.id}')" style="cursor: pointer;">
                         <img src="${ep.imageUrl}" alt="Ep Thumbnail">
@@ -1454,9 +1534,71 @@
                 </div>
             `).join('');
 
-            playEpisode(sEpisodes[0].id);
+            // បន្ថែមប៊ូតុងសញ្ញាបូកសម្រាប់ Admin បង្ហោះភាគបន្ត
+            if (isAdmin) {
+                episodesHTML += `
+                    <div class="add-episode-card-btn" onclick="openQuickAddEpModal('${seriesName.replace(/'/g, "\\'")}')">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>បង្ហោះភាគបន្ត</span>
+                    </div>
+                `;
+            }
+
+            epContainer.innerHTML = episodesHTML;
+
+            if (resetPlay) {
+                playEpisode(sEpisodes[0].id);
+            }
             document.getElementById('seriesModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+        }
+
+        /* មុខងារបើក និងបង្ហោះភាគបន្ត (Quick Add Episode Functions) */
+        window.openQuickAddEpModal = function(seriesName) {
+            const sEpisodes = window.videos.filter(v => v.series === seriesName);
+            if(sEpisodes.length === 0) return;
+            const refEp = sEpisodes[0];
+
+            document.getElementById('quickAddSeriesTitle').value = refEp.series;
+            document.getElementById('quickAddSeriesTitleDisplay').value = refEp.series;
+            document.getElementById('quickAddVideoType').value = refEp.type || 'រឿងភាគ';
+            document.getElementById('quickAddVideoCategory').value = refEp.category || 'ស្នេហា';
+            document.getElementById('quickAddImageUrl').value = refEp.imageUrl || '';
+            document.getElementById('quickAddIsHot').value = refEp.isHot ? "true" : "false";
+
+            // ស្វែងរកលេខភាគចុងក្រោយដើម្បី Suggest
+            const lastEpNum = sEpisodes.length + 1;
+            document.getElementById('quickAddEpTitle').value = `ភាគទី ${lastEpNum}`;
+            document.getElementById('quickAddVideoUrl').value = '';
+            document.getElementById('quickAddAccessType').value = (refEp.category === 'រឿងឥតគិតថ្លៃ') ? 'free' : 'vip';
+
+            document.getElementById('quickAddEpModal').classList.remove('hidden');
+        }
+
+        window.closeQuickAddEpModal = function() {
+            document.getElementById('quickAddEpModal').classList.add('hidden');
+        }
+
+        window.handleQuickAddEpisode = async function(e) {
+            e.preventDefault();
+            const series = document.getElementById('quickAddSeriesTitle').value;
+            const ep = document.getElementById('quickAddEpTitle').value.trim();
+            const type = document.getElementById('quickAddVideoType').value;
+            const category = document.getElementById('quickAddVideoCategory').value;
+            const imageUrl = document.getElementById('quickAddImageUrl').value;
+            const videoUrl = document.getElementById('quickAddVideoUrl').value.trim();
+            let accessType = document.getElementById('quickAddAccessType').value;
+            if (category === 'រឿងឥតគិតថ្លៃ') accessType = 'free';
+            const isHot = document.getElementById('quickAddIsHot').value === "true";
+
+            try {
+                const newVideoRef = push(ref(db, 'videos'));
+                await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
+                closeQuickAddEpModal();
+                alert(`បានបង្ហោះ ${ep} សម្រាប់រឿង "${series}" ជោគជ័យ!`);
+            } catch (err) {
+                alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
+            }
         }
 
         window.closeSeriesModal = function() {
@@ -1548,7 +1690,7 @@
                 renderAdminAllEpisodesList();
                 const currentSeriesTitle = document.getElementById('seriesModalTitle').innerText;
                 if (currentSeriesTitle) {
-                    openSeriesModal(currentSeriesTitle);
+                    openSeriesModal(currentSeriesTitle, false);
                 }
                 alert("បានកែសម្រួលវីដេអូរឿងជោគជ័យ!");
             } catch(err) {
