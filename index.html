@@ -420,9 +420,10 @@
         </div>
     </section>
 
-    <!-- Category Filter Pills -->
+    <!-- Category Filter Pills (បន្ថែមប៊ូតុង "រឿងឥតគិតថ្លៃ" បន្ទាប់ពីប៊ូតុង "ទាំងអស់") -->
     <div class="category-filter">
         <button onclick="filterCategory('all')" id="cat_all" class="cat-pill active-cat">✨ ទាំងអស់</button>
+        <button onclick="filterCategory('រឿងឥតគិតថ្លៃ')" id="cat_រឿងឥតគិតថ្លៃ" class="cat-pill">🎁 រឿងឥតគិតថ្លៃ</button>
         <button onclick="filterCategory('រឿងភាគ')" id="cat_រឿងភាគ" class="cat-pill">🎬 រឿងភាគ</button>
         <button onclick="filterCategory('រឿងពេញ')" id="cat_រឿងពេញ" class="cat-pill">🍿 រឿងពេញ</button>
         <button onclick="filterCategory('ស្នេហា')" id="cat_ស្នេហា" class="cat-pill">❤️ ស្នេហា</button>
@@ -534,8 +535,9 @@
                             <option value="រឿងពេញ">🍿 រឿងពេញ (Full Movie)</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>ប្រភេទសាច់រឿង (Genre)</label>
+                    <div class="form-group"><label>ប្រភេទសាច់រឿង / ការដាក់តum (Genre)</label>
                         <select id="videoCategory" class="form-control">
+                            <option value="រឿងឥតគិតថ្លៃ">🎁 រឿងឥតគិតថ្លៃ (Free Series - គ្រប់ភាគអត់លុយ)</option>
                             <option value="ស្នេហា">❤️ ស្នេហា</option>
                             <option value="ប្រយុទ្ធ">⚔️ ប្រយុទ្ធ</option>
                             <option value="កំប្លែង">😂 កំប្លែង</option>
@@ -640,6 +642,7 @@
                 </div>
                 <div class="form-group"><label>ប្រភេទសាច់រឿង</label>
                     <select id="editCategory" class="form-control">
+                        <option value="រឿងឥតគិតថ្លៃ">រឿងឥតគិតថ្លៃ</option>
                         <option value="ស្នេហា">ស្នេហា</option>
                         <option value="ប្រយុទ្ធ">ប្រយុទ្ធ</option>
                         <option value="កំប្លែង">កំប្លែង</option>
@@ -704,7 +707,6 @@
             } catch (err) {}
         }
 
-        // Helper Function សម្រាប់គណនារយៈពេលនៅសល់ឲ្យដូចគ្នាទាំងអស់ (ថ្ងៃ/ម៉ោង/នាទី)
         function formatTimeRemaining(expiryTime) {
             const diffMs = expiryTime - Date.now();
             if (diffMs <= 0) return "ផុតកំណត់";
@@ -813,7 +815,6 @@
             });
         }
 
-        /* ពិនិត្យការផុតកំណត់ VIP ជាប្រចាំ និងផ្ញើសារទៅ Telegram Group បើផុត VIP */
         function checkVipExpiryBackground() {
             let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
             let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
@@ -838,7 +839,6 @@
                 renderAdminMemberList();
                 renderVipUserList();
             } else {
-                // ធ្វើបច្ចុប្បន្នភាពការរាប់ថយក្រោយជានិច្ច
                 renderTelegramLoginWidget();
                 if(!document.getElementById('adminModal').classList.contains('hidden')) {
                     renderAdminMemberList();
@@ -851,7 +851,7 @@
             renderBanners();
             listenToBanners();
             checkVipExpiryBackground();
-            setInterval(checkVipExpiryBackground, 10000); // ពិនិត្យរៀងរាល់ 10 វិនាទីដើម្បីរាប់ថយក្រោយបានរហ័ស
+            setInterval(checkVipExpiryBackground, 10000);
 
             const slides = document.getElementById('carouselSlides');
             let currentSlide = 0;
@@ -1205,7 +1205,6 @@
             alert(`បានផ្ដល់សិទ្ធិ VIP ជូន ${tgUser} រយៈពេល ${unitLabel} ជោគជ័យ!`);
         }
 
-        /* បង្ហាញបញ្ជី VIP ក្នុង Admin ឲ្យរាប់ថយក្រោយស្មើគ្នា និងដូចគ្នាជាមួយ Profile ខាងលើ */
         function renderVipUserList() {
             const list = document.getElementById('vipUserList');
             if(!list) return;
@@ -1265,7 +1264,13 @@
             const category = document.getElementById('videoCategory').value;
             const videoUrl = document.getElementById('videoUrl').value.trim();
             const imageUrl = document.getElementById('imageUrl').value.trim();
-            const accessType = document.getElementById('accessType').value;
+            
+            // បើជ្រើសរើសប្រភេទរឿងជា "រឿងឥតគិតថ្លៃ" គឺកំណត់ accessType ជា free ស្វ័យប្រវត្តិពីដើមរហូតដល់ចប់
+            let accessType = document.getElementById('accessType').value;
+            if (category === 'រឿងឥតគិតថ្លៃ') {
+                accessType = 'free';
+            }
+
             const isHot = document.getElementById('isHot').checked;
 
             try {
@@ -1286,8 +1291,8 @@
             let filtered = window.videos;
             
             if (window.currentCategory !== 'all') {
-                if (window.currentCategory === 'រឿងភាគ' || window.currentCategory === 'រឿងពេញ') {
-                    filtered = filtered.filter(v => v.type === window.currentCategory);
+                if (window.currentCategory === 'រឿងភាគ' || window.currentCategory === 'រឿងពេញ' || window.currentCategory === 'រឿងឥតគិតថ្លៃ') {
+                    filtered = filtered.filter(v => v.category === window.currentCategory || (window.currentCategory === 'រឿងឥតគិតថ្លៃ' && v.category === 'រឿងឥតគិតថ្លៃ'));
                 } else {
                     filtered = filtered.filter(v => v.category === window.currentCategory);
                 }
@@ -1330,12 +1335,13 @@
 
             grid.innerHTML = seriesList.map((s) => {
                 const firstEp = s.episodes[0];
+                const isFreeSeries = s.category === 'រឿងឥតគិតថ្លៃ';
                 return `
                     <div class="video-card">
                         <div class="thumbnail-box" onclick="openSeriesModal('${s.series.replace(/'/g, "\\'")}')">
                             <img src="${s.imageUrl}" alt="Thumbnail">
-                            <span class="badge-access ${firstEp.accessType === 'vip' ? 'badge-vip' : 'badge-free'}">
-                                ${firstEp.accessType === 'vip' ? '👑 VIP' : 'ឥតគិតថ្លៃ'}
+                            <span class="badge-access ${isFreeSeries || firstEp.accessType === 'free' ? 'badge-free' : 'badge-vip'}">
+                                ${isFreeSeries ? '🎁 ឥតគិតថ្លៃ' : (firstEp.accessType === 'vip' ? '👑 VIP' : 'ឥតគិតថ្លៃ')}
                             </span>
                             ${s.isHot ? '<span class="badge-hot">🔥 HOT</span>' : ''}
                         </div>
@@ -1410,6 +1416,8 @@
                 return (a.createdAt || 0) - (b.createdAt || 0);
             });
 
+            const isFreeSeries = sEpisodes[0].category === 'រឿងឥតគិតថ្លៃ';
+
             document.getElementById('seriesModalTitleTop').innerText = seriesName;
             document.getElementById('seriesModalCategoryTop').innerText = `${sEpisodes[0].type || 'រឿងភាគ'} | ${sEpisodes[0].category || 'ស្នេហា'}`;
             document.getElementById('seriesModalTitle').innerText = seriesName;
@@ -1427,7 +1435,7 @@
                 <div onclick="playEpisode('${ep.id}')" id="ep_card_${ep.id}" class="episode-thumb-card">
                     <div class="ep-thumb-img-box">
                         <img src="${ep.imageUrl}" alt="Ep Thumbnail">
-                        <span class="ep-thumb-badge">${ep.accessType === 'vip' ? '👑 VIP' : '▶ ឥតគិតថ្លៃ'}</span>
+                        <span class="ep-thumb-badge">${isFreeSeries || ep.accessType === 'free' ? '▶ ឥតគិតថ្លៃ' : '👑 VIP'}</span>
                     </div>
                     <div class="ep-thumb-title">${ep.ep}</div>
                 </div>
@@ -1455,7 +1463,8 @@
             const iframe = document.getElementById('seriesPlayerFrame');
             const lockedMsg = document.getElementById('vipLockedMessage');
 
-            const hasVipAccess = isUserVip();
+            const isFreeSeries = v.category === 'រឿងឥតគិតថ្លៃ';
+            const hasVipAccess = isUserVip() || isFreeSeries || v.accessType === 'free';
 
             if(v.accessType === 'vip' && !hasVipAccess) {
                 iframe.src = "";
@@ -1504,14 +1513,20 @@
         window.saveEditedVideo = async function(e) {
             e.preventDefault();
             const id = document.getElementById('editId').value;
+            const category = document.getElementById('editCategory').value;
+            let accessType = document.getElementById('editAccessType').value;
+            if (category === 'រឿងឥតគិតថ្លៃ') {
+                accessType = 'free';
+            }
+
             const updatedData = {
                 series: document.getElementById('editSeriesTitle').value.trim(),
                 ep: document.getElementById('editEpTitle').value.trim(),
                 type: document.getElementById('editVideoType').value,
-                category: document.getElementById('editCategory').value,
+                category: category,
                 videoUrl: document.getElementById('editVideoUrl').value.trim(),
                 imageUrl: document.getElementById('editImageUrl').value.trim(),
-                accessType: document.getElementById('editAccessType').value,
+                accessType: accessType,
                 isHot: document.getElementById('editIsHot').checked
             };
             try {
