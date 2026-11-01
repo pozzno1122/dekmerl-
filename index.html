@@ -420,7 +420,7 @@
         </div>
     </section>
 
-    <!-- Category Filter Pills (បន្ថែមប៊ូតុង "រឿងឥតគិតថ្លៃ" បន្ទាប់ពីប៊ូតុង "ទាំងអស់") -->
+    <!-- Category Filter Pills (បន្ថែម ៣ ប៊ូតុងថ្មី៖ យុទ្ធសាស្ត្រ, អ្នកប្រាជ្ញ, តួស្រី) -->
     <div class="category-filter">
         <button onclick="filterCategory('all')" id="cat_all" class="cat-pill active-cat">✨ ទាំងអស់</button>
         <button onclick="filterCategory('រឿងឥតគិតថ្លៃ')" id="cat_រឿងឥតគិតថ្លៃ" class="cat-pill">🎁 រឿងឥតគិតថ្លៃ</button>
@@ -429,6 +429,9 @@
         <button onclick="filterCategory('ស្នេហា')" id="cat_ស្នេហា" class="cat-pill">❤️ ស្នេហា</button>
         <button onclick="filterCategory('ប្រយុទ្ធ')" id="cat_ប្រយុទ្ធ" class="cat-pill">⚔️ ប្រយុទ្ធ</button>
         <button onclick="filterCategory('កំប្លែង')" id="cat_កំប្លែង" class="cat-pill">😂 កំប្លែង</button>
+        <button onclick="filterCategory('យុទ្ធសាស្ត្រ')" id="cat_យុទ្ធសាស្ត្រ" class="cat-pill">⚔️ យុទ្ធសាស្ត្រ</button>
+        <button onclick="filterCategory('អ្នកប្រាជ្ញ')" id="cat_អ្នកប្រាជ្ញ" class="cat-pill">🧠 អ្នកប្រាជ្ញ</button>
+        <button onclick="filterCategory('តួស្រី')" id="cat_តួស្រី" class="cat-pill">💃 តួស្រី</button>
     </div>
 
     <!-- VIP Section -->
@@ -535,12 +538,15 @@
                             <option value="រឿងពេញ">🍿 រឿងពេញ (Full Movie)</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>ប្រភេទសាច់រឿង / ការដាក់តum (Genre)</label>
+                    <div class="form-group"><label>ប្រភេទសាច់រឿង (Genre)</label>
                         <select id="videoCategory" class="form-control">
                             <option value="រឿងឥតគិតថ្លៃ">🎁 រឿងឥតគិតថ្លៃ (Free Series - គ្រប់ភាគអត់លុយ)</option>
                             <option value="ស្នេហា">❤️ ស្នេហា</option>
                             <option value="ប្រយុទ្ធ">⚔️ ប្រយុទ្ធ</option>
                             <option value="កំប្លែង">😂 កំប្លែង</option>
+                            <option value="យុទ្ធសាស្ត្រ">⚔️ យុទ្ធសាស្ត្រ</option>
+                            <option value="អ្នកប្រាជ្ញ">🧠 អ្នកប្រាជ្ញ</option>
+                            <option value="តួស្រី">💃 តួស្រី</option>
                         </select>
                     </div>
                     <div class="form-group"><label>លីងវីដេអូ (Video URL)</label><input type="url" id="videoUrl" required placeholder="https://..." class="form-control"></div>
@@ -646,6 +652,9 @@
                         <option value="ស្នេហា">ស្នេហា</option>
                         <option value="ប្រយុទ្ធ">ប្រយុទ្ធ</option>
                         <option value="កំប្លែង">កំប្លែង</option>
+                        <option value="យុទ្ធសាស្ត្រ">យុទ្ធសាស្ត្រ</option>
+                        <option value="អ្នកប្រាជ្ញ">អ្នកប្រាជ្ញ</option>
+                        <option value="តួស្រី">តួស្រី</option>
                     </select>
                 </div>
                 <div class="form-group"><label>លីងវីដេអូ</label><input type="url" id="editVideoUrl" required class="form-control"></div>
@@ -1265,7 +1274,6 @@
             const videoUrl = document.getElementById('videoUrl').value.trim();
             const imageUrl = document.getElementById('imageUrl').value.trim();
             
-            // បើជ្រើសរើសប្រភេទរឿងជា "រឿងឥតគិតថ្លៃ" គឺកំណត់ accessType ជា free ស្វ័យប្រវត្តិពីដើមរហូតដល់ចប់
             let accessType = document.getElementById('accessType').value;
             if (category === 'រឿងឥតគិតថ្លៃ') {
                 accessType = 'free';
@@ -1291,11 +1299,7 @@
             let filtered = window.videos;
             
             if (window.currentCategory !== 'all') {
-                if (window.currentCategory === 'រឿងភាគ' || window.currentCategory === 'រឿងពេញ' || window.currentCategory === 'រឿងឥតគិតថ្លៃ') {
-                    filtered = filtered.filter(v => v.category === window.currentCategory || (window.currentCategory === 'រឿងឥតគិតថ្លៃ' && v.category === 'រឿងឥតគិតថ្លៃ'));
-                } else {
-                    filtered = filtered.filter(v => v.category === window.currentCategory);
-                }
+                filtered = filtered.filter(v => v.category === window.currentCategory);
             }
 
             const seriesMap = {};
@@ -1431,13 +1435,22 @@
             }
 
             const epContainer = document.getElementById('episodeListContainer');
+            const isAdmin = isUserAdmin();
+
             epContainer.innerHTML = sEpisodes.map((ep) => `
-                <div onclick="playEpisode('${ep.id}')" id="ep_card_${ep.id}" class="episode-thumb-card">
-                    <div class="ep-thumb-img-box">
+                <div id="ep_card_${ep.id}" class="episode-thumb-card">
+                    <div class="ep-thumb-img-box" onclick="playEpisode('${ep.id}')" style="cursor: pointer;">
                         <img src="${ep.imageUrl}" alt="Ep Thumbnail">
                         <span class="ep-thumb-badge">${isFreeSeries || ep.accessType === 'free' ? '▶ ឥតគិតថ្លៃ' : '👑 VIP'}</span>
                     </div>
-                    <div class="ep-thumb-title">${ep.ep}</div>
+                    <div class="ep-thumb-title" onclick="playEpisode('${ep.id}')" style="cursor: pointer; flex: 1;">${ep.ep}</div>
+                    
+                    ${isAdmin ? `
+                        <div style="display: flex; gap: 4px; padding: 4px 8px;">
+                            <button onclick="openEditModal('${ep.id}')" style="background-color: #2563eb; color: #fff; border: none; padding: 3px 6px; border-radius: 4px; font-size: 0.6rem; cursor: pointer;" title="កែប្រែភាគនេះ">✏️ កែ</button>
+                            <button onclick="deleteEpisode('${ep.id}')" style="background-color: #dc2626; color: #fff; border: none; padding: 3px 6px; border-radius: 4px; font-size: 0.6rem; cursor: pointer;" title="លុបភាគនេះ">🗑️</button>
+                        </div>
+                    ` : ''}
                 </div>
             `).join('');
 
@@ -1533,6 +1546,11 @@
                 await update(ref(db, 'videos/' + id), updatedData);
                 closeEditModal();
                 renderAdminAllEpisodesList();
+                // បើ modal ຫຼີ້ນរឿងកំពុងបើក គឺធ្វើបច្ចុប្បន្នភាពបញ្ជីភាគឡើងវិញភ្លាមៗ
+                const currentSeriesTitle = document.getElementById('seriesModalTitle').innerText;
+                if (currentSeriesTitle) {
+                    openSeriesModal(currentSeriesTitle);
+                }
                 alert("បានកែសម្រួលវីដេអូរឿងជោគជ័យ!");
             } catch(err) {
                 alert("កំហុស៖ " + err.message);
