@@ -357,7 +357,7 @@
 
         /* Admin / Edit Modals */
         .modal-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
-        .modal-box { background-color: #1e1e1e; border: 1px solid #333; border-radius: 16px; width: 100%; max-width: 520px; padding: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-box { background-color: #1e1e1e; border: 1px solid #333; border-radius: 16px; width: 100%; max-width: 580px; padding: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
         .btn-close-modal { position: absolute; top: 14px; right: 14px; background: none; border: none; color: #888; font-size: 1.2rem; cursor: pointer; }
         
         .admin-tabs { display: flex; gap: 12px; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 16px; overflow-x: auto; }
@@ -408,7 +408,7 @@
                 <img src="https://i.postimg.cc/1zgrxqrp/1000061376-removebg-preview.png" alt="Logo" class="logo-img">
                 <div class="brand-title">DekMerl-<span>ដេកមើល</span></div>
             </div>
-            <!-- កន្លែងបង្ហាញ Profile និង Telegram Icon កៀនស្ដាំខាងលើ -->
+            <!-- កន្លែងបង្ហាញ Profile និង Telegram Icon កៀនស្ដាំខាងលើ (ជាប់គ្នាស្អាត) -->
             <div id="authContainer">
                 <div id="telegramLoginButton"></div>
             </div>
@@ -517,13 +517,14 @@
 
     <!-- Admin Management Modal -->
     <div id="adminModal" class="modal-overlay hidden">
-        <div class="modal-box" style="max-width: 540px; text-align: left;">
+        <div class="modal-box" style="max-width: 620px; text-align: left;">
             <button onclick="toggleAdminModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
             <div class="admin-tabs">
                 <button onclick="switchAdminTab('upload')" id="tabUploadBtn" class="tab-btn active-tab">➕ បង្ហោះវីដេអូ</button>
-                <button onclick="switchAdminTab('episodes')" id="tabEpisodesBtn" class="tab-btn">📋 គ្រប់គ្រងភាគទាំងអស់</button>
+                <button onclick="switchAdminTab('episodes')" id="tabEpisodesBtn" class="tab-btn">📋 ភាគទាំងអស់</button>
+                <button onclick="switchAdminTab('members')" id="tabMembersBtn" class="tab-btn">👥 បញ្ជីសមាជិក</button>
                 <button onclick="switchAdminTab('banners')" id="tabBannersBtn" class="tab-btn">🖼️ កែ Banner</button>
-                <button onclick="switchAdminTab('vip')" id="tabVipBtn" class="tab-btn">👑 កែប្រែ VIP</button>
+                <button onclick="switchAdminTab('vip')" id="tabVipBtn" class="tab-btn">👑 តម្លៃ VIP</button>
                 <button onclick="switchAdminTab('users')" id="tabUsersBtn" class="tab-btn">💎 ផ្ដល់ VIP</button>
                 <button onclick="switchAdminTab('coadmin')" id="tabCoadminBtn" class="tab-btn hidden">👥 Co-Admin</button>
             </div>
@@ -565,6 +566,19 @@
                 <div id="adminAllEpisodesList" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
             </div>
 
+            <!-- Tab ថ្មី: ពិនិត្យមើលបញ្ជីសមាជិកទាំងអស់ និងស្វែងរក -->
+            <div id="adminTabMembers" class="hidden">
+                <div class="search-box-wrap" style="margin-bottom: 12px;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="adminMemberSearchInput" oninput="renderAdminMemberList()" placeholder="ស្វែងរកឈ្មោះសមាជិកតាម Username..." class="search-input" autocomplete="off">
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h4 style="font-size: 0.85rem; color: #bbb;">👥 បញ្ជីសមាជិកសរុប (VIP និងធម្មតា)៖</h4>
+                    <span id="memberCountBadge" style="font-size: 0.75rem; color: #facc15; background: rgba(250,204,21,0.1); padding: 2px 8px; border-radius: 6px;"></span>
+                </div>
+                <div id="adminMemberListContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow-y: auto;"></div>
+            </div>
+
             <div id="adminTabBanners" class="hidden">
                 <form onsubmit="saveBannerSettings(event)">
                     <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 12px;">🖼️ កែសម្រួលលីងរូបភាព Banner Carousel៖</h4>
@@ -582,7 +596,6 @@
                 </form>
             </div>
 
-            <!-- Tab ផ្ដល់ VIP (អាចបញ្ចូលចំនួនថ្ងៃ ឬម៉ោងតាមតម្រូវការ) -->
             <div id="adminTabUsers" class="hidden">
                 <form onsubmit="assignVipToUser(event)">
                     <div class="form-group"><label>Telegram Username របស់អតិថិជន</label><input type="text" id="targetTgUser" required placeholder="@username" class="form-control"></div>
@@ -710,13 +723,38 @@
                     };
                     const savedBefore = localStorage.getItem('dekmerl_tg_user');
                     localStorage.setItem('dekmerl_tg_user', JSON.stringify(user));
+
+                    // Save to Registered Users Registry
+                    let allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
+                    allUsers[user.username] = {
+                        username: user.username,
+                        first_name: user.first_name,
+                        photo_url: user.photo_url || 'https://via.placeholder.com/32',
+                        registeredAt: Date.now()
+                    };
+                    localStorage.setItem('dekmerl_all_registered_users', JSON.stringify(allUsers));
+
                     window.history.replaceState({}, document.title, window.location.pathname);
                     if (!savedBefore) { sendTelegramRegistrationAlert(user); }
                     return user;
                 }
             } catch(e) {}
             const saved = localStorage.getItem('dekmerl_tg_user');
-            return saved ? JSON.parse(saved) : null;
+            if (saved) {
+                const user = JSON.parse(saved);
+                let allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
+                if (!allUsers[user.username]) {
+                    allUsers[user.username] = {
+                        username: user.username,
+                        first_name: user.first_name,
+                        photo_url: user.photo_url || 'https://via.placeholder.com/32',
+                        registeredAt: Date.now()
+                    };
+                    localStorage.setItem('dekmerl_all_registered_users', JSON.stringify(allUsers));
+                }
+                return user;
+            }
+            return null;
         }
 
         window.currentUserTgObj = getTelegramUserData();
@@ -782,6 +820,7 @@
             renderVipUI();
             listenToVideos();
             renderVipUserList();
+            renderAdminMemberList();
 
             document.addEventListener('click', (e) => {
                 const wrap = document.querySelector('.search-box-wrap');
@@ -792,7 +831,7 @@
             });
         });
 
-        /* បង្ហាញ Profile រូបតំណាង និង Telegram Icon កៀនស្ដាំខាងលើ + រាប់ថយក្រោយ VIP */
+        /* បង្ហាញ Profile រូបតំណាង រូបភាព VIP ជំនួសអក្សរ និងប៊ូតុងចាកចេញជាប់គ្នាស្អាត */
         function renderTelegramLoginWidget() {
             const container = document.getElementById('telegramLoginButton');
             if (!container) return;
@@ -809,18 +848,26 @@
                     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
                     const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     if (diffDays > 0) {
-                        vipCountdownText = `VIP: នៅសល់ ${diffDays}ថ្ងៃ`;
+                        vipCountdownText = `នៅសល់ ${diffDays}ថ្ងៃ`;
                     } else {
-                        vipCountdownText = `VIP: នៅសល់ ${diffHours > 0 ? diffHours : 1}ម៉ោង`;
+                        vipCountdownText = `នៅសល់ ${diffHours > 0 ? diffHours : 1}ម៉ោង`;
                     }
                 }
 
+                // រូបភាព VIP ដែលអ្នកបានផ្ដល់ជូន
+                const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
+
                 container.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 8px; background-color: #1e1e1e; border: 1px solid ${hasVip ? '#facc15' : '#333'}; padding: 4px 10px; border-radius: 20px;">
-                        <img src="${window.currentUserTgObj.photo_url || 'https://via.placeholder.com/28'}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" alt="Avatar">
-                        <i class="fa-brands fa-telegram" style="color: #229ED9; font-size: 1.1rem;"></i>
-                        ${hasVip ? `<span style="font-size: 0.65rem; color: #facc15; font-weight: bold; background: rgba(250,204,21,0.1); padding: 2px 6px; border-radius: 6px;">${vipCountdownText}</span>` : ''}
-                        <button onclick="logoutUser()" style="background: none; border: none; color: #ff4d4d; cursor: pointer; margin-left: 2px;" title="ចាកចេញ"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    <div style="display: flex; align-items: center; gap: 6px; background-color: #1e1e1e; border: 1px solid ${hasVip ? '#facc15' : '#333'}; padding: 4px 8px; border-radius: 20px;">
+                        <img src="${window.currentUserTgObj.photo_url || 'https://via.placeholder.com/28'}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #444;" alt="Avatar">
+                        <i class="fa-brands fa-telegram" style="color: #229ED9; font-size: 1.1rem; margin-right: 2px;"></i>
+                        ${hasVip ? `
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <img src="${vipBadgeImgUrl}" style="height: 22px; object-fit: contain;" alt="VIP">
+                                <span style="font-size: 0.6rem; color: #facc15; font-weight: bold;">(${vipCountdownText})</span>
+                            </div>
+                        ` : ''}
+                        <button onclick="logoutUser()" style="background: rgba(255,255,255,0.08); border: none; color: #ff4d4d; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 2px;" title="ចាកចេញ"><i class="fa-solid fa-right-from-bracket" style="font-size: 0.75rem;"></i></button>
                     </div>
                 `;
             } else {
@@ -911,11 +958,13 @@
         window.toggleAdminModal = function() {
             document.getElementById('adminModal').classList.toggle('hidden');
             renderAdminAllEpisodesList();
+            renderAdminMemberList();
         }
 
         window.switchAdminTab = function(tabName) {
             document.getElementById('adminTabUpload').classList.add('hidden');
             document.getElementById('adminTabEpisodes').classList.add('hidden');
+            document.getElementById('adminTabMembers').classList.add('hidden');
             document.getElementById('adminTabBanners').classList.add('hidden');
             document.getElementById('adminTabVip').classList.add('hidden');
             document.getElementById('adminTabUsers').classList.add('hidden');
@@ -923,6 +972,7 @@
 
             document.getElementById('tabUploadBtn').classList.remove('active-tab');
             document.getElementById('tabEpisodesBtn').classList.remove('active-tab');
+            document.getElementById('tabMembersBtn').classList.remove('active-tab');
             document.getElementById('tabBannersBtn').classList.remove('active-tab');
             document.getElementById('tabVipBtn').classList.remove('active-tab');
             document.getElementById('tabUsersBtn').classList.remove('active-tab');
@@ -935,6 +985,10 @@
                 document.getElementById('adminTabEpisodes').classList.remove('hidden');
                 document.getElementById('tabEpisodesBtn').classList.add('active-tab');
                 renderAdminAllEpisodesList();
+            } else if (tabName === 'members') {
+                document.getElementById('adminTabMembers').classList.remove('hidden');
+                document.getElementById('tabMembersBtn').classList.add('active-tab');
+                renderAdminMemberList();
             } else if (tabName === 'banners') {
                 document.getElementById('adminTabBanners').classList.remove('hidden');
                 document.getElementById('tabBannersBtn').classList.add('active-tab');
@@ -953,6 +1007,86 @@
                 document.getElementById('adminTabCoadmin').classList.remove('hidden');
                 document.getElementById('tabCoadminBtn').classList.add('active-tab');
                 renderCoAdminList();
+            }
+        }
+
+        /* មុខងារគ្រប់គ្រង និងស្វែងរកសមាជិកទាំងអស់ (បង្ហាញរូប Profile និង Username) */
+        window.renderAdminMemberList = function() {
+            const container = document.getElementById('adminMemberListContainer');
+            const countBadge = document.getElementById('memberCountBadge');
+            if(!container) return;
+
+            const searchQuery = (document.getElementById('adminMemberSearchInput')?.value || '').toLowerCase().trim();
+            const allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
+            const vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
+
+            let usersArr = Object.values(allUsers);
+            
+            if (searchQuery !== '') {
+                usersArr = usersArr.filter(u => u.username.toLowerCase().includes(searchQuery) || (u.first_name && u.first_name.toLowerCase().includes(searchQuery)));
+            }
+
+            if(countBadge) {
+                const totalVipCount = Object.keys(vipUsers).filter(k => vipUsers[k] > Date.now()).length;
+                countBadge.innerText = `សរុប: ${usersArr.length}នាក់ | VIP: ${totalVipCount}នាក់`;
+            }
+
+            if(usersArr.length === 0) {
+                container.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 15px;">មិនទាន់មានសមាជិកចុះឈ្មោះ ឬរកមិនឃើញឡើយ។</p>`;
+                return;
+            }
+
+            const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
+
+            container.innerHTML = usersArr.map(u => {
+                const expiry = vipUsers[u.username];
+                const isVip = expiry && expiry > Date.now();
+                let timeStr = "";
+                if(isVip) {
+                    const diffMs = expiry - Date.now();
+                    const days = Math.ceil(diffMs / (1000*60*60*24));
+                    timeStr = `(សល់ ${days} ថ្ងៃ)`;
+                }
+
+                return `
+                    <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid ${isVip ? '#facc15' : '#333'}; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <img src="${u.photo_url || 'https://via.placeholder.com/32'}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;" alt="Avatar">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="color: #fff; font-weight: bold;">${u.username}</span>
+                                    ${isVip ? `<img src="${vipBadgeImgUrl}" style="height: 18px; object-fit: contain;" alt="VIP">` : '<span style="font-size: 0.6rem; background: #333; color: #aaa; padding: 1px 6px; border-radius: 4px;">សមាជិកធម្មតា</span>'}
+                                </div>
+                                <div style="color: #888; font-size: 0.65rem;">ឈ្មោះ: ${u.first_name || 'គ្មាន'} ${timeStr}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <button onclick="quickManageVip('${u.username}')" style="background-color: #229ED9; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">👑 កែ VIP</button>
+                            <button onclick="removeUserRecord('${u.username}')" style="background-color: #dc2626; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">🗑️ លុប</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.quickManageVip = function(username) {
+            switchAdminTab('users');
+            document.getElementById('targetTgUser').value = username;
+        }
+
+        window.removeUserRecord = function(username) {
+            if(confirm(`តើអ្នកពិតជាចង់លុបគណនី ${username} នេះចេញពីប្រព័ន្ធមែនទេ?`)) {
+                let allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
+                delete allUsers[username];
+                localStorage.setItem('dekmerl_all_registered_users', JSON.stringify(allUsers));
+
+                let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
+                delete vipUsers[username];
+                localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
+
+                renderAdminMemberList();
+                renderVipUserList();
+                alert("បានលុបជោគជ័យ!");
             }
         }
 
@@ -996,14 +1130,13 @@
             }
         }
 
-        /* មុខងារផ្ដល់ VIP តាមចំនួនថ្ងៃ ឬម៉ោងតាមតម្រូវការ */
         window.assignVipToUser = async function(e) {
             e.preventDefault();
             let tgUser = document.getElementById('targetTgUser').value.toLowerCase().trim();
             if(!tgUser.startsWith('@')) tgUser = '@' + tgUser;
             
             const amount = parseInt(document.getElementById('vipAmountValue').value) || 1;
-            const unit = document.getElementById('vipTimeUnit').value; // 'days' or 'hours'
+            const unit = document.getElementById('vipTimeUnit').value;
 
             let durationMs = amount * 24 * 60 * 60 * 1000;
             if (unit === 'hours') {
@@ -1014,6 +1147,13 @@
             const expiryTime = Date.now() + durationMs;
             vipUsers[tgUser] = expiryTime;
             localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
+
+            // Ensure user exists in registry
+            let allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
+            if(!allUsers[tgUser]) {
+                allUsers[tgUser] = { username: tgUser, first_name: 'VIP User', photo_url: 'https://via.placeholder.com/32', registeredAt: Date.now() };
+                localStorage.setItem('dekmerl_all_registered_users', JSON.stringify(allUsers));
+            }
 
             const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
             const unitLabel = unit === 'days' ? `${amount} ថ្ងៃ` : `${amount} ម៉ោង`;
@@ -1029,6 +1169,7 @@
 
             document.getElementById('targetTgUser').value = "";
             renderVipUserList();
+            renderAdminMemberList();
             renderTelegramLoginWidget();
             alert(`បានផ្ដល់សិទ្ធិ VIP ជូន ${tgUser} រយៈពេល ${unitLabel} ជោគជ័យ!`);
         }
@@ -1061,6 +1202,7 @@
             delete vipUsers[user];
             localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
             renderVipUserList();
+            renderAdminMemberList();
             renderTelegramLoginWidget();
             alert(`បានដកសិទ្ធិ VIP របស់ ${user} រួចរាល់!`);
         }
