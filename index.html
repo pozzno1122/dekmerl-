@@ -369,7 +369,7 @@
         .form-control { width: 100%; background-color: #121212; border: 1px solid #333; border-radius: 8px; padding: 10px; color: #fff; font-size: 0.85rem; outline: none; }
         .btn-submit { width: 100%; background-color: #E50914; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 8px; }
 
-        /* Telegram Floating Action Button (អណ្ដែតរលកស្អាត) */
+        /* Telegram Floating Action Button */
         .telegram-float-btn {
             position: fixed;
             bottom: 24px;
@@ -408,7 +408,6 @@
                 <img src="https://i.postimg.cc/1zgrxqrp/1000061376-removebg-preview.png" alt="Logo" class="logo-img">
                 <div class="brand-title">DekMerl-<span>ដេកមើល</span></div>
             </div>
-            <!-- កន្លែងបង្ហាញ Profile និង Telegram Icon កៀនស្ដាំខាងលើ (ជាប់គ្នាស្អាត) -->
             <div id="authContainer">
                 <div id="telegramLoginButton"></div>
             </div>
@@ -458,7 +457,6 @@
             <span>រឿងពេញនិយម</span>
         </div>
         
-        <!-- Live Search Box Input with Dropdown Auto-suggest -->
         <div class="search-box-wrap">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
             <input type="text" id="searchInput" oninput="handleSearchInput()" placeholder="ស្វែងរកឈ្មោះរឿង..." class="search-input" autocomplete="off">
@@ -468,7 +466,6 @@
         <div id="videoGrid" class="video-grid"></div>
     </main>
 
-    <!-- Telegram Floating Action Button (អណ្ដែតរលកស្អាត) -->
     <a href="https://t.me/Dekmerl" target="_blank" class="telegram-float-btn" title="Join Telegram Channel">
         <i class="fa-brands fa-telegram"></i>
     </a>
@@ -486,7 +483,6 @@
         </div>
 
         <div class="series-modal-body-wrapper">
-            <!-- Left Side: Player & Info -->
             <div class="player-and-info-section">
                 <div class="series-player-container">
                     <iframe id="seriesPlayerFrame" src="" allowfullscreen controlsList="nodownload" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
@@ -504,7 +500,6 @@
                 </div>
             </div>
 
-            <!-- Right Side: Episodes Sidebar -->
             <div class="series-episodes-area">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                     <h4 style="font-size: 0.9rem; color: #bbb; font-weight: bold;">🎬 ជ្រើសរើសភាគទស្សនា (Episodes)៖</h4>
@@ -709,6 +704,24 @@
             } catch (err) {}
         }
 
+        // Helper Function សម្រាប់គណនារយៈពេលនៅសល់ឲ្យដូចគ្នាទាំងអស់ (ថ្ងៃ/ម៉ោង/នាទី)
+        function formatTimeRemaining(expiryTime) {
+            const diffMs = expiryTime - Date.now();
+            if (diffMs <= 0) return "ផុតកំណត់";
+            
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+            if (diffDays > 0) {
+                return `${diffDays} ថ្ងៃ`;
+            } else if (diffHours > 0) {
+                return `${diffHours} ម៉ោង`;
+            } else {
+                return `${diffMins > 0 ? diffMins : 1} នាទី`;
+            }
+        }
+
         function getTelegramUserData() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -809,7 +822,6 @@
 
             Object.keys(vipUsers).forEach(user => {
                 if (vipUsers[user] <= now) {
-                    // VIP Expired
                     if (!expiredList[user]) {
                         sendTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${user}\n📅 ពេលវាលាផុតកំណត់: ${new Date().toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
                         expiredList[user] = true;
@@ -825,6 +837,13 @@
                 renderTelegramLoginWidget();
                 renderAdminMemberList();
                 renderVipUserList();
+            } else {
+                // ធ្វើបច្ចុប្បន្នភាពការរាប់ថយក្រោយជានិច្ច
+                renderTelegramLoginWidget();
+                if(!document.getElementById('adminModal').classList.contains('hidden')) {
+                    renderAdminMemberList();
+                    renderVipUserList();
+                }
             }
         }
 
@@ -832,7 +851,7 @@
             renderBanners();
             listenToBanners();
             checkVipExpiryBackground();
-            setInterval(checkVipExpiryBackground, 30000); // ពិនិត្យរៀងរាល់ 30 វិនាទី
+            setInterval(checkVipExpiryBackground, 10000); // ពិនិត្យរៀងរាល់ 10 វិនាទីដើម្បីរាប់ថយក្រោយបានរហ័ស
 
             const slides = document.getElementById('carouselSlides');
             let currentSlide = 0;
@@ -860,7 +879,6 @@
             });
         });
 
-        /* បង្ហាញ Profile រូបតំណាង រូបភាព VIP និងរាប់ថយក្រោយជាម៉ោង/ថ្ងៃយ៉ាងជាក់លាក់ */
         function renderTelegramLoginWidget() {
             const container = document.getElementById('telegramLoginButton');
             if (!container) return;
@@ -873,18 +891,7 @@
                 
                 let vipCountdownText = "";
                 if (hasVip) {
-                    const diffMs = expiry - Date.now();
-                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-
-                    if (diffDays > 0) {
-                        vipCountdownText = `នៅសល់ ${diffDays}ថ្ងៃ`;
-                    } else if (diffHours > 0) {
-                        vipCountdownText = `នៅសល់ ${diffHours}ម៉ោង`;
-                    } else {
-                        vipCountdownText = `នៅសល់ ${diffMins > 0 ? diffMins : 1}នាទី`;
-                    }
+                    vipCountdownText = formatTimeRemaining(expiry);
                 }
 
                 const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
@@ -896,7 +903,7 @@
                         ${hasVip ? `
                             <div style="display: flex; align-items: center; gap: 4px;">
                                 <img src="${vipBadgeImgUrl}" style="height: 22px; object-fit: contain;" alt="VIP">
-                                <span style="font-size: 0.6rem; color: #facc15; font-weight: bold;">(${vipCountdownText})</span>
+                                <span style="font-size: 0.6rem; color: #facc15; font-weight: bold;">(នៅសល់ ${vipCountdownText})</span>
                             </div>
                         ` : ''}
                         <button onclick="logoutUser()" style="background: rgba(255,255,255,0.08); border: none; color: #ff4d4d; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 2px;" title="ចាកចេញ"><i class="fa-solid fa-right-from-bracket" style="font-size: 0.75rem;"></i></button>
@@ -1074,10 +1081,7 @@
                 const isVip = expiry && expiry > Date.now();
                 let timeStr = "";
                 if(isVip) {
-                    const diffMs = expiry - Date.now();
-                    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    timeStr = days > 0 ? `(សល់ ${days} ថ្ងៃ)` : `(សល់ ${hours > 0 ? hoursLeft : 1} ម៉ោង)`;
+                    timeStr = `(សល់ ${formatTimeRemaining(expiry)})`;
                 }
 
                 return `
@@ -1180,7 +1184,6 @@
             vipUsers[tgUser] = expiryTime;
             localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
 
-            // Clear expired notification flag for this user so they can be notified when it expires again
             let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
             delete expiredList[tgUser];
             localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
@@ -1202,6 +1205,7 @@
             alert(`បានផ្ដល់សិទ្ធិ VIP ជូន ${tgUser} រយៈពេល ${unitLabel} ជោគជ័យ!`);
         }
 
+        /* បង្ហាញបញ្ជី VIP ក្នុង Admin ឲ្យរាប់ថយក្រោយស្មើគ្នា និងដូចគ្នាជាមួយ Profile ខាងលើ */
         function renderVipUserList() {
             const list = document.getElementById('vipUserList');
             if(!list) return;
@@ -1212,10 +1216,7 @@
                 return;
             }
             list.innerHTML = keys.map(user => {
-                const diffMs = vipUsers[user] - Date.now();
-                const daysLeft = Math.floor(diffMs / (1000*60*60*24));
-                const hoursLeft = Math.floor((diffMs % (1000*60*60*24)) / (1000*60*60));
-                let timeStr = daysLeft > 0 ? `${daysLeft} ថ្ងៃ` : `${hoursLeft > 0 ? hoursLeft : 1} ម៉ោង`;
+                const timeStr = formatTimeRemaining(vipUsers[user]);
                 return `
                     <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem;">
                         <div><span style="color: #facc15; font-weight: bold;">${user}</span> <span style="color: #888; font-size: 0.7rem;">(នៅសល់ ${timeStr})</span></div>
