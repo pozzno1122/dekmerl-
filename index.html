@@ -566,7 +566,6 @@
                 <div id="adminAllEpisodesList" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
             </div>
 
-            <!-- Tab ថ្មី: ពិនិត្យមើលបញ្ជីសមាជិកទាំងអស់ និងស្វែងរក -->
             <div id="adminTabMembers" class="hidden">
                 <div class="search-box-wrap" style="margin-bottom: 12px;">
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
@@ -603,13 +602,13 @@
                     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
                         <div class="form-group">
                             <label>ចំនួន (Value)</label>
-                            <input type="number" id="vipAmountValue" required value="30" min="1" class="form-control">
+                            <input type="number" id="vipAmountValue" required value="1" min="1" class="form-control">
                         </div>
                         <div class="form-group">
                             <label>ឯកតា (Unit)</label>
                             <select id="vipTimeUnit" class="form-control">
-                                <option value="days">ថ្ងៃ (Days)</option>
                                 <option value="hours">ម៉ោង (Hours)</option>
+                                <option value="days">ថ្ងៃ (Days)</option>
                             </select>
                         </div>
                     </div>
@@ -700,8 +699,7 @@
         const botToken = "8153039437:AAHCNXE5fH_Po5REEYsb9ccs2PrcgmaRpXI";
         const chatId = "-1004357183059";
         
-        async function sendTelegramRegistrationAlert(user) {
-            const textMsg = `👤 **អតិថិជនថ្មីបានចុះឈ្មោះ/ចូលប្រើប្រាស់!**\n\n🆔 ID: ${user.id}\n👤 ឈ្មោះ: ${user.first_name}\n🌐 Username: ${user.username}\n📅 ពេលវាលា: ${new Date().toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`;
+        async function sendTelegramAlert(textMsg) {
             try {
                 await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                     method: 'POST',
@@ -724,7 +722,6 @@
                     const savedBefore = localStorage.getItem('dekmerl_tg_user');
                     localStorage.setItem('dekmerl_tg_user', JSON.stringify(user));
 
-                    // Save to Registered Users Registry
                     let allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
                     allUsers[user.username] = {
                         username: user.username,
@@ -735,7 +732,9 @@
                     localStorage.setItem('dekmerl_all_registered_users', JSON.stringify(allUsers));
 
                     window.history.replaceState({}, document.title, window.location.pathname);
-                    if (!savedBefore) { sendTelegramRegistrationAlert(user); }
+                    if (!savedBefore) { 
+                        sendTelegramAlert(`👤 **អតិថិជនថ្មីបានចុះឈ្មោះ/ចូលប្រើប្រាស់!**\n\n🆔 ID: ${user.id}\n👤 ឈ្មោះ: ${user.first_name}\n🌐 Username: ${user.username}\n📅 ពេលវាលា: ${new Date().toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`); 
+                    }
                     return user;
                 }
             } catch(e) {}
@@ -801,9 +800,39 @@
             });
         }
 
+        /* ពិនិត្យការផុតកំណត់ VIP ជាប្រចាំ និងផ្ញើសារទៅ Telegram Group បើផុត VIP */
+        function checkVipExpiryBackground() {
+            let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
+            let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
+            let changed = false;
+            let now = Date.now();
+
+            Object.keys(vipUsers).forEach(user => {
+                if (vipUsers[user] <= now) {
+                    // VIP Expired
+                    if (!expiredList[user]) {
+                        sendTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${user}\n📅 ពេលវាលាផុតកំណត់: ${new Date().toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                        expiredList[user] = true;
+                    }
+                    delete vipUsers[user];
+                    changed = true;
+                }
+            });
+
+            if (changed) {
+                localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
+                localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
+                renderTelegramLoginWidget();
+                renderAdminMemberList();
+                renderVipUserList();
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             renderBanners();
             listenToBanners();
+            checkVipExpiryBackground();
+            setInterval(checkVipExpiryBackground, 30000); // ពិនិត្យរៀងរាល់ 30 វិនាទី
 
             const slides = document.getElementById('carouselSlides');
             let currentSlide = 0;
@@ -831,7 +860,7 @@
             });
         });
 
-        /* បង្ហាញ Profile រូបតំណាង រូបភាព VIP ជំនួសអក្សរ និងប៊ូតុងចាកចេញជាប់គ្នាស្អាត */
+        /* បង្ហាញ Profile រូបតំណាង រូបភាព VIP និងរាប់ថយក្រោយជាម៉ោង/ថ្ងៃយ៉ាងជាក់លាក់ */
         function renderTelegramLoginWidget() {
             const container = document.getElementById('telegramLoginButton');
             if (!container) return;
@@ -847,14 +876,17 @@
                     const diffMs = expiry - Date.now();
                     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
                     const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
                     if (diffDays > 0) {
                         vipCountdownText = `នៅសល់ ${diffDays}ថ្ងៃ`;
+                    } else if (diffHours > 0) {
+                        vipCountdownText = `នៅសល់ ${diffHours}ម៉ោង`;
                     } else {
-                        vipCountdownText = `នៅសល់ ${diffHours > 0 ? diffHours : 1}ម៉ោង`;
+                        vipCountdownText = `នៅសល់ ${diffMins > 0 ? diffMins : 1}នាទី`;
                     }
                 }
 
-                // រូបភាព VIP ដែលអ្នកបានផ្ដល់ជូន
                 const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
 
                 container.innerHTML = `
@@ -901,7 +933,7 @@
             if (!window.currentUserTgObj) return false;
             if (isUserAdmin()) return true;
             const username = window.currentUserTgObj.username.toLowerCase().trim();
-            const vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
+            let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
             const expiry = vipUsers[username];
             if (expiry && expiry > Date.now()) return true;
             return false;
@@ -1010,7 +1042,6 @@
             }
         }
 
-        /* មុខងារគ្រប់គ្រង និងស្វែងរកសមាជិកទាំងអស់ (បង្ហាញរូប Profile និង Username) */
         window.renderAdminMemberList = function() {
             const container = document.getElementById('adminMemberListContainer');
             const countBadge = document.getElementById('memberCountBadge');
@@ -1044,8 +1075,9 @@
                 let timeStr = "";
                 if(isVip) {
                     const diffMs = expiry - Date.now();
-                    const days = Math.ceil(diffMs / (1000*60*60*24));
-                    timeStr = `(សល់ ${days} ថ្ងៃ)`;
+                    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    timeStr = days > 0 ? `(សល់ ${days} ថ្ងៃ)` : `(សល់ ${hours > 0 ? hoursLeft : 1} ម៉ោង)`;
                 }
 
                 return `
@@ -1148,7 +1180,11 @@
             vipUsers[tgUser] = expiryTime;
             localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
 
-            // Ensure user exists in registry
+            // Clear expired notification flag for this user so they can be notified when it expires again
+            let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
+            delete expiredList[tgUser];
+            localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
+
             let allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
             if(!allUsers[tgUser]) {
                 allUsers[tgUser] = { username: tgUser, first_name: 'VIP User', photo_url: 'https://via.placeholder.com/32', registeredAt: Date.now() };
@@ -1157,15 +1193,7 @@
 
             const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
             const unitLabel = unit === 'days' ? `${amount} ថ្ងៃ` : `${amount} ម៉ោង`;
-            const textMsg = `💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n🌐 វេបសាយ: DekMerl-ដេកមើល`;
-            
-            try {
-                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: chatId, text: textMsg, parse_mode: 'Markdown' })
-                });
-            } catch (err) {}
+            sendTelegramAlert(`💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
 
             document.getElementById('targetTgUser').value = "";
             renderVipUserList();
@@ -1185,9 +1213,9 @@
             }
             list.innerHTML = keys.map(user => {
                 const diffMs = vipUsers[user] - Date.now();
-                const daysLeft = Math.ceil(diffMs / (1000*60*60*24));
-                const hoursLeft = Math.ceil(diffMs / (1000*60*60));
-                let timeStr = daysLeft > 0 ? `${daysLeft} ថ្ងៃ` : `${hoursLeft > 0 ? hoursLeft : 0} ម៉ោង`;
+                const daysLeft = Math.floor(diffMs / (1000*60*60*24));
+                const hoursLeft = Math.floor((diffMs % (1000*60*60*24)) / (1000*60*60));
+                let timeStr = daysLeft > 0 ? `${daysLeft} ថ្ងៃ` : `${hoursLeft > 0 ? hoursLeft : 1} ម៉ោង`;
                 return `
                     <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem;">
                         <div><span style="color: #facc15; font-weight: bold;">${user}</span> <span style="color: #888; font-size: 0.7rem;">(នៅសល់ ${timeStr})</span></div>
