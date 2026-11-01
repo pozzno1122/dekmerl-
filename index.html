@@ -420,7 +420,7 @@
         </div>
     </section>
 
-    <!-- Category Filter Pills (បន្ថែម ៣ ប៊ូតុងថ្មី៖ យុទ្ធសាស្ត្រ, អ្នកប្រាជ្ញ, តួស្រី) -->
+    <!-- Category Filter Pills -->
     <div class="category-filter">
         <button onclick="filterCategory('all')" id="cat_all" class="cat-pill active-cat">✨ ទាំងអស់</button>
         <button onclick="filterCategory('រឿងឥតគិតថ្លៃ')" id="cat_រឿងឥតគិតថ្លៃ" class="cat-pill">🎁 រឿងឥតគិតថ្លៃ</button>
@@ -1447,8 +1447,8 @@
                     
                     ${isAdmin ? `
                         <div style="display: flex; gap: 4px; padding: 4px 8px;">
-                            <button onclick="openEditModal('${ep.id}')" style="background-color: #2563eb; color: #fff; border: none; padding: 3px 6px; border-radius: 4px; font-size: 0.6rem; cursor: pointer;" title="កែប្រែភាគនេះ">✏️ កែ</button>
-                            <button onclick="deleteEpisode('${ep.id}')" style="background-color: #dc2626; color: #fff; border: none; padding: 3px 6px; border-radius: 4px; font-size: 0.6rem; cursor: pointer;" title="លុបភាគនេះ">🗑️</button>
+                            <button onclick="openEditModal('${ep.id}')" style="background-color: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;" title="កែប្រែភាគនេះ">✏️ កែ</button>
+                            <button onclick="deleteEpisode('${ep.id}')" style="background-color: #dc2626; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;" title="លុបភាគនេះ">🗑️</button>
                         </div>
                     ` : ''}
                 </div>
@@ -1546,7 +1546,6 @@
                 await update(ref(db, 'videos/' + id), updatedData);
                 closeEditModal();
                 renderAdminAllEpisodesList();
-                // បើ modal ຫຼີ້ນរឿងកំពុងបើក គឺធ្វើបច្ចុប្បន្នភាពបញ្ជីភាគឡើងវិញភ្លាមៗ
                 const currentSeriesTitle = document.getElementById('seriesModalTitle').innerText;
                 if (currentSeriesTitle) {
                     openSeriesModal(currentSeriesTitle);
