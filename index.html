@@ -294,6 +294,7 @@
             border: 1px solid #333;
             border-radius: 8px;
             overflow: hidden;
+            cursor: pointer;
             transition: border-color 0.2s;
             display: flex;
             flex-direction: column;
@@ -315,7 +316,6 @@
             width: 100%;
             aspect-ratio: 16/9;
             background-color: #000;
-            cursor: pointer;
         }
         @media (min-width: 1024px) {
             .ep-thumb-img-box {
@@ -347,37 +347,13 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            cursor: pointer;
-            flex: 1;
         }
         @media (min-width: 1024px) {
             .ep-thumb-title {
                 padding: 0;
+                flex: 1;
             }
         }
-
-        /* Add Episode Plus Card Style */
-        .episode-add-plus-card {
-            background-color: rgba(229, 9, 20, 0.08);
-            border: 2px dashed #E50914;
-            border-radius: 8px;
-            aspect-ratio: 16/9;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            color: #E50914;
-            gap: 4px;
-            min-height: 85px;
-        }
-        .episode-add-plus-card:hover {
-            background-color: rgba(229, 9, 20, 0.2);
-            transform: scale(1.02);
-        }
-        .episode-add-plus-card i { font-size: 1.5rem; }
-        .episode-add-plus-card span { font-size: 0.7rem; font-weight: bold; }
 
         /* Admin / Edit Modals */
         .modal-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
@@ -659,11 +635,11 @@
     <div id="editVideoModal" class="modal-overlay hidden">
         <div class="modal-box" style="text-align: left;">
             <button onclick="closeEditModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
-            <h3 id="editModalTitleHeading" style="font-size: 0.95rem; margin-bottom: 14px; color: #E50914;">✏️ កែសម្រួលភាគវីដេអូ</h3>
+            <h3 style="font-size: 0.95rem; margin-bottom: 14px; color: #E50914;">✏️ កែសម្រួលភាគវីដេអូ</h3>
             <form id="editForm" onsubmit="saveEditedVideo(event)">
                 <input type="hidden" id="editId">
                 <div class="form-group"><label>ចំណងជើងរឿងដុំ</label><input type="text" id="editSeriesTitle" required class="form-control"></div>
-                <div class="form-group"><label>ចំណងជើងភាគ (ឧ. ភាគទី ៦)</label><input type="text" id="editEpTitle" required class="form-control"></div>
+                <div class="form-group"><label>ចំណងជើងភាគ</label><input type="text" id="editEpTitle" required class="form-control"></div>
                 <div class="form-group"><label>ប្រភេទរឿង</label>
                     <select id="editVideoType" class="form-control">
                         <option value="រឿងភាគ">រឿងភាគ</option>
@@ -683,12 +659,12 @@
                 </div>
                 <div class="form-group"><label>លីងវីដេអូ</label><input type="url" id="editVideoUrl" required class="form-control"></div>
                 <div class="form-group"><label>លីងរូបភាព Thumbnail</label><input type="url" id="editImageUrl" required class="form-control"></div>
-                <div class="form-group"><label>ប្រភេទការមើល</label><select id="editAccessType" class="form-control"><option value="free">ឥតគិតថ្លៃ (Free)</option><option value="vip">VIP</option></select></div>
+                <div class="form-group"><label>ប្រភេទការមើល</label><select id="editAccessType" class="form-control"><option value="ឥតគិតថ្លៃ">ឥតគិតថ្លៃ</option><option value="vip">VIP</option></select></div>
                 <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
                     <input type="checkbox" id="editIsHot" style="width: 18px; height: 18px; accent-color: #E50914; cursor: pointer;">
                     <label for="editIsHot" style="margin-bottom: 0; color: #facc15; font-weight: bold; cursor: pointer;">🔥 រឿង Hot (មានសញ្ញាភ្លើង)</label>
                 </div>
-                <button type="submit" id="editSubmitBtn" class="btn-submit">រក្សាទុកការកែប្រែ</button>
+                <button type="submit" class="btn-submit">រក្សាទុកការកែប្រែ</button>
             </form>
         </div>
     </div>
@@ -1461,13 +1437,13 @@
             const epContainer = document.getElementById('episodeListContainer');
             const isAdmin = isUserAdmin();
 
-            let episodesHtml = sEpisodes.map((ep) => `
+            epContainer.innerHTML = sEpisodes.map((ep) => `
                 <div id="ep_card_${ep.id}" class="episode-thumb-card">
-                    <div class="ep-thumb-img-box" onclick="playEpisode('${ep.id}')">
+                    <div class="ep-thumb-img-box" onclick="playEpisode('${ep.id}')" style="cursor: pointer;">
                         <img src="${ep.imageUrl}" alt="Ep Thumbnail">
                         <span class="ep-thumb-badge">${isFreeSeries || ep.accessType === 'free' ? '▶ ឥតគិតថ្លៃ' : '👑 VIP'}</span>
                     </div>
-                    <div class="ep-thumb-title" onclick="playEpisode('${ep.id}')">${ep.ep}</div>
+                    <div class="ep-thumb-title" onclick="playEpisode('${ep.id}')" style="cursor: pointer; flex: 1;">${ep.ep}</div>
                     
                     ${isAdmin ? `
                         <div style="display: flex; gap: 4px; padding: 4px 8px;">
@@ -1477,19 +1453,6 @@
                     ` : ''}
                 </div>
             `).join('');
-
-            // បន្ថែមប៊ូតុងសញ្ញាបូក “➕ បន្ថែមភាគ” សម្រាប់ Admin នៅចុងបញ្ចប់
-            if (isAdmin) {
-                const sample = sEpisodes[0];
-                episodesHtml += `
-                    <div class="episode-add-plus-card" onclick="openAddEpisodeModal('${sample.series.replace(/'/g, "\\'")}', '${sample.type || 'រឿងភាគ'}', '${sample.category || 'ស្នេហា'}', '${sample.imageUrl}')" title="បន្ថែមភាគថ្មី">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>បន្ថែមភាគថ្មី</span>
-                    </div>
-                `;
-            }
-
-            epContainer.innerHTML = episodesHtml;
 
             playEpisode(sEpisodes[0].id);
             document.getElementById('seriesModal').classList.remove('hidden');
@@ -1543,43 +1506,18 @@
             }
         }
 
-        // មុខងារបើកផ្ទាំងទម្រង់សម្រាប់បន្ថែមភាគថ្មីដោយស្វ័យប្រវត្តិមិនបាច់វាយឈ្មោះរឿងដុំដដែលៗ
-        window.openAddEpisodeModal = function(series, type, category, imageUrl) {
-            document.getElementById('editId').value = ""; // គ្មាន ID មានន័យថាបង្កើតថ្មី (Add New)
-            document.getElementById('editSeriesTitle').value = series;
-            document.getElementById('editSeriesTitle').readOnly = true; // ចាក់សោរមិនឱ្យប្ដូរឈ្មោះរឿងដុំ ដើម្បីរក្សាភាពដូចគ្នា
-            document.getElementById('editEpTitle').value = "";
-            document.getElementById('editEpTitle').placeholder = "ឧ. ភាគទី ៦";
-            document.getElementById('editVideoType').value = type;
-            document.getElementById('editCategory').value = category;
-            document.getElementById('editVideoUrl').value = "";
-            document.getElementById('editImageUrl').value = imageUrl;
-            document.getElementById('editImageUrl').readOnly = true; // ล็อกរូប Thumbnail ទុកដដែល
-            document.getElementById('editAccessType').value = category === 'រឿងឥតគិតថ្លៃ' ? 'free' : 'free';
-            document.getElementById('editIsHot').checked = false;
-
-            document.getElementById('editModalTitleHeading').innerText = "➕ បន្ថែមភាគថ្មីសម្រាប់រឿង៖ " + series;
-            document.getElementById('editSubmitBtn').innerText = "💾 រក្សាទុកភាគថ្មីនេះ";
-            document.getElementById('editVideoModal').classList.remove('hidden');
-        }
-
         window.openEditModal = function(id) {
             const v = window.videos.find(item => item.id === id);
             if(!v) return;
             document.getElementById('editId').value = v.id;
             document.getElementById('editSeriesTitle').value = v.series;
-            document.getElementById('editSeriesTitle').readOnly = false;
             document.getElementById('editEpTitle').value = v.ep;
             document.getElementById('editVideoType').value = v.type || 'រឿងភាគ';
             document.getElementById('editCategory').value = v.category || 'ស្នេហា';
             document.getElementById('editVideoUrl').value = v.videoUrl;
             document.getElementById('editImageUrl').value = v.imageUrl;
-            document.getElementById('editImageUrl').readOnly = false;
             document.getElementById('editAccessType').value = v.accessType;
             document.getElementById('editIsHot').checked = v.isHot || false;
-
-            document.getElementById('editModalTitleHeading').innerText = "✏️ កែសម្រួលភាគវីដេអូ";
-            document.getElementById('editSubmitBtn').innerText = "រក្សាទុកការកែប្រែ";
             document.getElementById('editVideoModal').classList.remove('hidden');
         }
 
@@ -1594,9 +1532,8 @@
                 accessType = 'free';
             }
 
-            const seriesTitle = document.getElementById('editSeriesTitle').value.trim();
-            const videoData = {
-                series: seriesTitle,
+            const updatedData = {
+                series: document.getElementById('editSeriesTitle').value.trim(),
                 ep: document.getElementById('editEpTitle').value.trim(),
                 type: document.getElementById('editVideoType').value,
                 category: category,
@@ -1605,25 +1542,15 @@
                 accessType: accessType,
                 isHot: document.getElementById('editIsHot').checked
             };
-
             try {
-                if (id === "") {
-                    // បើគ្មាន ID មានន័យថាចុចប៊ូតុងសញ្ញាបូក (+) ដើម្បីបន្ថែមភាគថ្មី
-                    videoData.createdAt = Date.now();
-                    const newRef = push(ref(db, 'videos'));
-                    await set(newRef, videoData);
-                    alert("បានបន្ថែមភាគថ្មីជោគជ័យ!");
-                } else {
-                    // កែប្រែភាគដែលមានស្រាប់
-                    await update(ref(db, 'videos/' + id), videoData);
-                    alert("បានកែសម្រួលវីដេអូរឿងជោគជ័យ!");
-                }
-
+                await update(ref(db, 'videos/' + id), updatedData);
                 closeEditModal();
                 renderAdminAllEpisodesList();
-                if (seriesTitle) {
-                    openSeriesModal(seriesTitle);
+                const currentSeriesTitle = document.getElementById('seriesModalTitle').innerText;
+                if (currentSeriesTitle) {
+                    openSeriesModal(currentSeriesTitle);
                 }
+                alert("បានកែសម្រួលវីដេអូរឿងជោគជ័យ!");
             } catch(err) {
                 alert("កំហុស៖ " + err.message);
             }
