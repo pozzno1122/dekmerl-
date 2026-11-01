@@ -369,32 +369,32 @@
         .form-control { width: 100%; background-color: #121212; border: 1px solid #333; border-radius: 8px; padding: 10px; color: #fff; font-size: 0.85rem; outline: none; }
         .btn-submit { width: 100%; background-color: #E50914; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 8px; }
 
-        /* Telegram Floating Action Button */
+        /* Telegram Floating Action Button (អណ្ដែតរលកស្អាត) */
         .telegram-float-btn {
             position: fixed;
             bottom: 24px;
             right: 24px;
             background: linear-gradient(135deg, #229ED9, #0088cc);
             color: #ffffff;
-            width: 54px;
-            height: 54px;
+            width: 58px;
+            height: 58px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem;
-            box-shadow: 0 6px 20px rgba(34, 158, 217, 0.5);
+            font-size: 1.8rem;
+            box-shadow: 0 8px 25px rgba(34, 158, 217, 0.6);
             z-index: 90;
             text-decoration: none;
-            transition: transform 0.2s;
-            animation: tgPulse 2s infinite ease-in-out;
+            transition: transform 0.3s ease;
+            animation: tgWaveFloat 2.5s infinite ease-in-out;
         }
         .telegram-float-btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.12) rotate(5deg);
         }
-        @keyframes tgPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 158, 217, 0.6); }
-            50% { box-shadow: 0 0 16px 8px rgba(34, 158, 217, 0.2); }
+        @keyframes tgWaveFloat {
+            0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 6px 20px rgba(34, 158, 217, 0.5); }
+            50% { transform: translateY(-8px) scale(1.04); box-shadow: 0 12px 30px rgba(34, 158, 217, 0.8); }
         }
 
         .hidden { display: none !important; }
@@ -408,6 +408,7 @@
                 <img src="https://i.postimg.cc/1zgrxqrp/1000061376-removebg-preview.png" alt="Logo" class="logo-img">
                 <div class="brand-title">DekMerl-<span>ដេកមើល</span></div>
             </div>
+            <!-- កន្លែងបង្ហាញ Profile និង Telegram Icon កៀនស្ដាំខាងលើ -->
             <div id="authContainer">
                 <div id="telegramLoginButton"></div>
             </div>
@@ -467,7 +468,7 @@
         <div id="videoGrid" class="video-grid"></div>
     </main>
 
-    <!-- Telegram Floating Button (អណ្ដែតខាងស្ដាំដៃខាងក្រោម) -->
+    <!-- Telegram Floating Action Button (អណ្ដែតរលកស្អាត) -->
     <a href="https://t.me/Dekmerl" target="_blank" class="telegram-float-btn" title="Join Telegram Channel">
         <i class="fa-brands fa-telegram"></i>
     </a>
@@ -555,7 +556,6 @@
                 </form>
             </div>
 
-            <!-- Tab គ្រប់គ្រងភាគទាំងអស់ (មានបន្ថែម Search Box) -->
             <div id="adminTabEpisodes" class="hidden">
                 <div class="search-box-wrap" style="margin-bottom: 12px;">
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
@@ -565,22 +565,12 @@
                 <div id="adminAllEpisodesList" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
             </div>
 
-            <!-- Tab កែ Banner ថ្មី -->
             <div id="adminTabBanners" class="hidden">
                 <form onsubmit="saveBannerSettings(event)">
                     <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 12px;">🖼️ កែសម្រួលលីងរូបភាព Banner Carousel៖</h4>
-                    <div class="form-group">
-                        <label> Banner ទី ១ (Image URL 1)</label>
-                        <input type="url" id="bannerUrl1" required class="form-control" placeholder="https://...">
-                    </div>
-                    <div class="form-group">
-                        <label> Banner ទី ២ (Image URL 2)</label>
-                        <input type="url" id="bannerUrl2" required class="form-control" placeholder="https://...">
-                    </div>
-                    <div class="form-group">
-                        <label> Banner ទី ៣ (Image URL 3)</label>
-                        <input type="url" id="bannerUrl3" required class="form-control" placeholder="https://...">
-                    </div>
+                    <div class="form-group"><label>Banner ទី ១ (Image URL 1)</label><input type="url" id="bannerUrl1" required class="form-control" placeholder="https://..."></div>
+                    <div class="form-group"><label>Banner ទី ២ (Image URL 2)</label><input type="url" id="bannerUrl2" required class="form-control" placeholder="https://..."></div>
+                    <div class="form-group"><label>Banner ទី ៣ (Image URL 3)</label><input type="url" id="bannerUrl3" required class="form-control" placeholder="https://..."></div>
                     <button type="submit" class="btn-submit" style="background-color: #2563eb; color: #fff; margin-top: 8px;">រក្សាទុក Banner</button>
                 </form>
             </div>
@@ -592,17 +582,26 @@
                 </form>
             </div>
 
+            <!-- Tab ផ្ដល់ VIP (អាចបញ្ចូលចំនួនថ្ងៃ ឬម៉ោងតាមតម្រូវការ) -->
             <div id="adminTabUsers" class="hidden">
                 <form onsubmit="assignVipToUser(event)">
                     <div class="form-group"><label>Telegram Username របស់អតិថិជន</label><input type="text" id="targetTgUser" required placeholder="@username" class="form-control"></div>
-                    <div class="form-group"><label>រយៈពេល VIP</label>
-                        <select id="vipDuration" class="form-control">
-                            <option value="7">VIP 7 ថ្ងៃ</option>
-                            <option value="15">VIP 15 ថ្ងៃ</option>
-                            <option value="30">VIP 30 ថ្ងៃ</option>
-                        </select>
+                    
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+                        <div class="form-group">
+                            <label>ចំនួន (Value)</label>
+                            <input type="number" id="vipAmountValue" required value="30" min="1" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>ឯកតា (Unit)</label>
+                            <select id="vipTimeUnit" class="form-control">
+                                <option value="days">ថ្ងៃ (Days)</option>
+                                <option value="hours">ម៉ោង (Hours)</option>
+                            </select>
+                        </div>
                     </div>
-                    <button type="submit" class="btn-submit" style="background-color: #229ED9;">✅ ផ្ដល់សិទ្ធិ VIP និងផ្ញើ Telegram Group</button>
+
+                    <button type="submit" class="btn-submit" style="background-color: #229ED9;">✅ ផ្ដល់សិទ្ធិ VIP តាមចំនួនកំណត់</button>
                 </form>
                 <div id="vipUserList" style="margin-top: 14px; display: flex; flex-direction: column; gap: 6px;"></div>
             </div>
@@ -641,7 +640,7 @@
                 </div>
                 <div class="form-group"><label>លីងវីដេអូ</label><input type="url" id="editVideoUrl" required class="form-control"></div>
                 <div class="form-group"><label>លីងរូបភាព Thumbnail</label><input type="url" id="editImageUrl" required class="form-control"></div>
-                <div class="form-group"><label>ប្រភេទការមើល</label><select id="editAccessType" class="form-control"><option value="free">ឥតគិតថ្លៃ</option><option value="vip">VIP</option></select></div>
+                <div class="form-group"><label>ប្រភេទការមើល</label><select id="editAccessType" class="form-control"><option value="ឥតគិតថ្លៃ">ឥតគិតថ្លៃ</option><option value="vip">VIP</option></select></div>
                 <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
                     <input type="checkbox" id="editIsHot" style="width: 18px; height: 18px; accent-color: #E50914; cursor: pointer;">
                     <label for="editIsHot" style="margin-bottom: 0; color: #facc15; font-weight: bold; cursor: pointer;">🔥 រឿង Hot (មានសញ្ញាភ្លើង)</label>
@@ -724,7 +723,6 @@
         window.videos = [];
         window.currentCategory = 'all';
 
-        /* Banner Carousel Management */
         window.bannerImages = JSON.parse(localStorage.getItem('dekmerl_banners')) || [
             "https://cdn.phototourl.com/member/2026-10-29-129eff2d-f0d6-443d-af59-579a762356ff.jpg",
             "https://cdn.phototourl.com/member/2026-10-29-4a22ea06-9fbe-45ee-8455-5f9d2793f6da.jpg",
@@ -747,11 +745,7 @@
 
             window.bannerImages = [b1, b2, b3];
             localStorage.setItem('dekmerl_banners', JSON.stringify(window.bannerImages));
-
-            // Sync Database
-            try {
-                set(ref(db, 'banners'), window.bannerImages);
-            } catch(err) {}
+            try { set(ref(db, 'banners'), window.bannerImages); } catch(err) {}
 
             renderBanners();
             alert("បានរក្សាទុក និងប្ដូររូបភាព Banner ជោគជ័យ!");
@@ -798,16 +792,35 @@
             });
         });
 
+        /* បង្ហាញ Profile រូបតំណាង និង Telegram Icon កៀនស្ដាំខាងលើ + រាប់ថយក្រោយ VIP */
         function renderTelegramLoginWidget() {
             const container = document.getElementById('telegramLoginButton');
             if (!container) return;
 
             if (window.currentUserTgObj) {
+                const username = window.currentUserTgObj.username.toLowerCase().trim();
+                const vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
+                const expiry = vipUsers[username];
+                const hasVip = expiry && expiry > Date.now();
+                
+                let vipCountdownText = "";
+                if (hasVip) {
+                    const diffMs = expiry - Date.now();
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    if (diffDays > 0) {
+                        vipCountdownText = `VIP: នៅសល់ ${diffDays}ថ្ងៃ`;
+                    } else {
+                        vipCountdownText = `VIP: នៅសល់ ${diffHours > 0 ? diffHours : 1}ម៉ោង`;
+                    }
+                }
+
                 container.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 8px; background-color: #1e1e1e; border: 1px solid #333; padding: 4px 12px; border-radius: 20px;">
-                        <img src="${window.currentUserTgObj.photo_url || 'https://via.placeholder.com/24'}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" alt="Avatar">
-                        <span style="font-size: 0.75rem; color: #229ED9; font-weight: bold; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${window.currentUserTgObj.username || window.currentUserTgObj.first_name}</span>
-                        <button onclick="logoutUser()" style="background: none; border: none; color: #ff4d4d; cursor: pointer; margin-left: 4px;"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    <div style="display: flex; align-items: center; gap: 8px; background-color: #1e1e1e; border: 1px solid ${hasVip ? '#facc15' : '#333'}; padding: 4px 10px; border-radius: 20px;">
+                        <img src="${window.currentUserTgObj.photo_url || 'https://via.placeholder.com/28'}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" alt="Avatar">
+                        <i class="fa-brands fa-telegram" style="color: #229ED9; font-size: 1.1rem;"></i>
+                        ${hasVip ? `<span style="font-size: 0.65rem; color: #facc15; font-weight: bold; background: rgba(250,204,21,0.1); padding: 2px 6px; border-radius: 6px;">${vipCountdownText}</span>` : ''}
+                        <button onclick="logoutUser()" style="background: none; border: none; color: #ff4d4d; cursor: pointer; margin-left: 2px;" title="ចាកចេញ"><i class="fa-solid fa-right-from-bracket"></i></button>
                     </div>
                 `;
             } else {
@@ -823,6 +836,7 @@
                 container.appendChild(script);
             }
         }
+
         window.logoutUser = function() {
             localStorage.removeItem('dekmerl_tg_user');
             window.currentUserTgObj = null;
@@ -887,7 +901,7 @@
 
         window.buyVIP = function(plan, price) {
             if (!window.currentUserTgObj) {
-                alert("សូមចុចប៊ូតុង 'Log in with Telegram' ខាងលើដើម្បីភ្ជាប់គណនីរបស់អ្នកជាមុនសិន!");
+                alert("សូមចុចប៊ូតុង Telegram កៀនស្ដាំខាងលើដើម្បីភ្ជាប់គណនីរបស់អ្នកជាមុនសិន!");
                 return;
             }
             const message = encodeURIComponent(`សួស្ដី Admin (@RIENML1), ខ្ញុំចង់ទិញកញ្ចប់ VIP (${plan} - ${price})។ Telegram របស់ខ្ញុំគឺ: ${window.currentUserTgObj.username}`);
@@ -942,11 +956,9 @@
             }
         }
 
-        /* គ្រប់គ្រងបញ្ជីភាគវីដេអូសរុប (មានបន្ថែម Filter Search ឈ្មោះរឿង/ភាគ) */
         window.renderAdminAllEpisodesList = function() {
             const listContainer = document.getElementById('adminAllEpisodesList');
             if(!listContainer) return;
-            
             const searchQuery = (document.getElementById('adminEpisodeSearchInput')?.value || '').toLowerCase().trim();
 
             let list = window.videos;
@@ -984,19 +996,28 @@
             }
         }
 
+        /* មុខងារផ្ដល់ VIP តាមចំនួនថ្ងៃ ឬម៉ោងតាមតម្រូវការ */
         window.assignVipToUser = async function(e) {
             e.preventDefault();
             let tgUser = document.getElementById('targetTgUser').value.toLowerCase().trim();
             if(!tgUser.startsWith('@')) tgUser = '@' + tgUser;
-            const days = parseInt(document.getElementById('vipDuration').value);
+            
+            const amount = parseInt(document.getElementById('vipAmountValue').value) || 1;
+            const unit = document.getElementById('vipTimeUnit').value; // 'days' or 'hours'
+
+            let durationMs = amount * 24 * 60 * 60 * 1000;
+            if (unit === 'hours') {
+                durationMs = amount * 60 * 60 * 1000;
+            }
 
             let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
-            const expiryTime = Date.now() + (days * 24 * 60 * 60 * 1000);
+            const expiryTime = Date.now() + durationMs;
             vipUsers[tgUser] = expiryTime;
             localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
 
             const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
-            const textMsg = `💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${days} ថ្ងៃ\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n🌐 វេបសាយ: DekMerl-ដេកមើល`;
+            const unitLabel = unit === 'days' ? `${amount} ថ្ងៃ` : `${amount} ម៉ោង`;
+            const textMsg = `💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n🌐 វេបសាយ: DekMerl-ដេកមើល`;
             
             try {
                 await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -1008,7 +1029,8 @@
 
             document.getElementById('targetTgUser').value = "";
             renderVipUserList();
-            alert(`បានផ្ដល់សិទ្ធិ VIP ជូន ${tgUser} រយៈពេល ${days} ថ្ងៃ និងបានផ្ញើដំណឹងទៅ Telegram Group រួចរាល់!`);
+            renderTelegramLoginWidget();
+            alert(`បានផ្ដល់សិទ្ធិ VIP ជូន ${tgUser} រយៈពេល ${unitLabel} ជោគជ័យ!`);
         }
 
         function renderVipUserList() {
@@ -1021,10 +1043,13 @@
                 return;
             }
             list.innerHTML = keys.map(user => {
-                const daysLeft = Math.ceil((vipUsers[user] - Date.now()) / (1000*60*60*24));
+                const diffMs = vipUsers[user] - Date.now();
+                const daysLeft = Math.ceil(diffMs / (1000*60*60*24));
+                const hoursLeft = Math.ceil(diffMs / (1000*60*60));
+                let timeStr = daysLeft > 0 ? `${daysLeft} ថ្ងៃ` : `${hoursLeft > 0 ? hoursLeft : 0} ម៉ោង`;
                 return `
                     <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem;">
-                        <div><span style="color: #facc15; font-weight: bold;">${user}</span> <span style="color: #888; font-size: 0.7rem;">(នៅសល់ ${daysLeft > 0 ? daysLeft : 0}ថ្ងៃ)</span></div>
+                        <div><span style="color: #facc15; font-weight: bold;">${user}</span> <span style="color: #888; font-size: 0.7rem;">(នៅសល់ ${timeStr})</span></div>
                         <button onclick="removeVipUser('${user}')" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: 700;">លុប VIP</button>
                     </div>
                 `;
@@ -1036,6 +1061,7 @@
             delete vipUsers[user];
             localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
             renderVipUserList();
+            renderTelegramLoginWidget();
             alert(`បានដកសិទ្ធិ VIP របស់ ${user} រួចរាល់!`);
         }
 
