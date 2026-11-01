@@ -1,11 +1,10 @@
-    <!DOCTYPE html>
-    <html lang="km">
-    <head>
+<!DOCTYPE html>
+<html lang="km">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DekMerl - ដេកមើល | ពិភពវីដេអូរឿង AI</title>
-    <!-- Google Site Verification -->
-    <meta name="google-site-verification" content="ZUL2HEL9-AYrnmLjv240Cs5SS2_Zt9xsUh-cW2kLq44" />
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://i.postimg.cc/1zgrxqrp/1000061376-removebg-preview.png">
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -370,6 +369,34 @@
         .form-control { width: 100%; background-color: #121212; border: 1px solid #333; border-radius: 8px; padding: 10px; color: #fff; font-size: 0.85rem; outline: none; }
         .btn-submit { width: 100%; background-color: #E50914; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 8px; }
 
+        /* Telegram Floating Action Button */
+        .telegram-float-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: linear-gradient(135deg, #229ED9, #0088cc);
+            color: #ffffff;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            box-shadow: 0 6px 20px rgba(34, 158, 217, 0.5);
+            z-index: 90;
+            text-decoration: none;
+            transition: transform 0.2s;
+            animation: tgPulse 2s infinite ease-in-out;
+        }
+        .telegram-float-btn:hover {
+            transform: scale(1.1);
+        }
+        @keyframes tgPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 158, 217, 0.6); }
+            50% { box-shadow: 0 0 16px 8px rgba(34, 158, 217, 0.2); }
+        }
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -389,11 +416,7 @@
 
     <section class="banner-section">
         <div class="carousel-container">
-            <div id="carouselSlides" class="carousel-track">
-                <div class="slide"><img src="https://cdn.phototourl.com/member/2026-10-29-129eff2d-f0d6-443d-af59-579a762356ff.jpg"></div>
-                <div class="slide"><img src="https://cdn.phototourl.com/member/2026-10-29-4a22ea06-9fbe-45ee-8455-5f9d2793f6da.jpg"></div>
-                <div class="slide"><img src="https://cdn.phototourl.com/member/2026-10-29-129eff2d-f0d6-443d-af59-579a762356ff.jpg"></div>
-            </div>
+            <div id="carouselSlides" class="carousel-track"></div>
         </div>
     </section>
 
@@ -444,6 +467,11 @@
         <div id="videoGrid" class="video-grid"></div>
     </main>
 
+    <!-- Telegram Floating Button (អណ្ដែតខាងស្ដាំដៃខាងក្រោម) -->
+    <a href="https://t.me/Dekmerl" target="_blank" class="telegram-float-btn" title="Join Telegram Channel">
+        <i class="fa-brands fa-telegram"></i>
+    </a>
+
     <!-- Series Player Modal -->
     <div id="seriesModal" class="series-modal-overlay hidden">
         <div class="series-modal-header">
@@ -457,7 +485,7 @@
         </div>
 
         <div class="series-modal-body-wrapper">
-            <!-- Left Side: Player & Info (Added nodownload & sandbox to prevent video download) -->
+            <!-- Left Side: Player & Info -->
             <div class="player-and-info-section">
                 <div class="series-player-container">
                     <iframe id="seriesPlayerFrame" src="" allowfullscreen controlsList="nodownload" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
@@ -488,11 +516,12 @@
 
     <!-- Admin Management Modal -->
     <div id="adminModal" class="modal-overlay hidden">
-        <div class="modal-box" style="max-width: 520px; text-align: left;">
+        <div class="modal-box" style="max-width: 540px; text-align: left;">
             <button onclick="toggleAdminModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
             <div class="admin-tabs">
                 <button onclick="switchAdminTab('upload')" id="tabUploadBtn" class="tab-btn active-tab">➕ បង្ហោះវីដេអូ</button>
                 <button onclick="switchAdminTab('episodes')" id="tabEpisodesBtn" class="tab-btn">📋 គ្រប់គ្រងភាគទាំងអស់</button>
+                <button onclick="switchAdminTab('banners')" id="tabBannersBtn" class="tab-btn">🖼️ កែ Banner</button>
                 <button onclick="switchAdminTab('vip')" id="tabVipBtn" class="tab-btn">👑 កែប្រែ VIP</button>
                 <button onclick="switchAdminTab('users')" id="tabUsersBtn" class="tab-btn">💎 ផ្ដល់ VIP</button>
                 <button onclick="switchAdminTab('coadmin')" id="tabCoadminBtn" class="tab-btn hidden">👥 Co-Admin</button>
@@ -526,9 +555,34 @@
                 </form>
             </div>
 
+            <!-- Tab គ្រប់គ្រងភាគទាំងអស់ (មានបន្ថែម Search Box) -->
             <div id="adminTabEpisodes" class="hidden">
-                <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 10px;">📋 បញ្ជីភាគវីដេអូសរុប (កែប្រែ និងលុបនៅទីនេះ)៖</h4>
-                <div id="adminAllEpisodesList" style="display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto;"></div>
+                <div class="search-box-wrap" style="margin-bottom: 12px;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="adminEpisodeSearchInput" oninput="renderAdminAllEpisodesList()" placeholder="ស្វែងរកឈ្មោះរឿង ឬភាគដើម្បីកែប្រែ/លុប..." class="search-input" autocomplete="off">
+                </div>
+                <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 10px;">📋 បញ្ជីភាគវីដេអូសរុប៖</h4>
+                <div id="adminAllEpisodesList" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- Tab កែ Banner ថ្មី -->
+            <div id="adminTabBanners" class="hidden">
+                <form onsubmit="saveBannerSettings(event)">
+                    <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 12px;">🖼️ កែសម្រួលលីងរូបភាព Banner Carousel៖</h4>
+                    <div class="form-group">
+                        <label> Banner ទី ១ (Image URL 1)</label>
+                        <input type="url" id="bannerUrl1" required class="form-control" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label> Banner ទី ២ (Image URL 2)</label>
+                        <input type="url" id="bannerUrl2" required class="form-control" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label> Banner ទី ៣ (Image URL 3)</label>
+                        <input type="url" id="bannerUrl3" required class="form-control" placeholder="https://...">
+                    </div>
+                    <button type="submit" class="btn-submit" style="background-color: #2563eb; color: #fff; margin-top: 8px;">រក្សាទុក Banner</button>
+                </form>
             </div>
 
             <div id="adminTabVip" class="hidden">
@@ -670,13 +724,63 @@
         window.videos = [];
         window.currentCategory = 'all';
 
+        /* Banner Carousel Management */
+        window.bannerImages = JSON.parse(localStorage.getItem('dekmerl_banners')) || [
+            "https://cdn.phototourl.com/member/2026-10-29-129eff2d-f0d6-443d-af59-579a762356ff.jpg",
+            "https://cdn.phototourl.com/member/2026-10-29-4a22ea06-9fbe-45ee-8455-5f9d2793f6da.jpg",
+            "https://cdn.phototourl.com/member/2026-10-29-129eff2d-f0d6-443d-af59-579a762356ff.jpg"
+        ];
+
+        function renderBanners() {
+            const track = document.getElementById('carouselSlides');
+            if(!track) return;
+            track.innerHTML = window.bannerImages.map(imgUrl => `
+                <div class="slide"><img src="${imgUrl}" alt="Banner"></div>
+            `).join('');
+        }
+
+        window.saveBannerSettings = function(e) {
+            e.preventDefault();
+            const b1 = document.getElementById('bannerUrl1').value.trim();
+            const b2 = document.getElementById('bannerUrl2').value.trim();
+            const b3 = document.getElementById('bannerUrl3').value.trim();
+
+            window.bannerImages = [b1, b2, b3];
+            localStorage.setItem('dekmerl_banners', JSON.stringify(window.bannerImages));
+
+            // Sync Database
+            try {
+                set(ref(db, 'banners'), window.bannerImages);
+            } catch(err) {}
+
+            renderBanners();
+            alert("បានរក្សាទុក និងប្ដូររូបភាព Banner ជោគជ័យ!");
+        }
+
+        function listenToBanners() {
+            const bannerRef = ref(db, 'banners');
+            onValue(bannerRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data && Array.isArray(data)) {
+                    window.bannerImages = data;
+                    localStorage.setItem('dekmerl_banners', JSON.stringify(data));
+                    renderBanners();
+                }
+            });
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
+            renderBanners();
+            listenToBanners();
+
             const slides = document.getElementById('carouselSlides');
             let currentSlide = 0;
             if (slides) {
                 setInterval(() => {
-                    currentSlide = (currentSlide + 1) % 3;
-                    slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    if(window.bannerImages.length > 0) {
+                        currentSlide = (currentSlide + 1) % window.bannerImages.length;
+                        slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    }
                 }, 4000);
             }
             renderTelegramLoginWidget();
@@ -798,12 +902,14 @@
         window.switchAdminTab = function(tabName) {
             document.getElementById('adminTabUpload').classList.add('hidden');
             document.getElementById('adminTabEpisodes').classList.add('hidden');
+            document.getElementById('adminTabBanners').classList.add('hidden');
             document.getElementById('adminTabVip').classList.add('hidden');
             document.getElementById('adminTabUsers').classList.add('hidden');
             document.getElementById('adminTabCoadmin').classList.add('hidden');
 
             document.getElementById('tabUploadBtn').classList.remove('active-tab');
             document.getElementById('tabEpisodesBtn').classList.remove('active-tab');
+            document.getElementById('tabBannersBtn').classList.remove('active-tab');
             document.getElementById('tabVipBtn').classList.remove('active-tab');
             document.getElementById('tabUsersBtn').classList.remove('active-tab');
             document.getElementById('tabCoadminBtn').classList.remove('active-tab');
@@ -815,6 +921,12 @@
                 document.getElementById('adminTabEpisodes').classList.remove('hidden');
                 document.getElementById('tabEpisodesBtn').classList.add('active-tab');
                 renderAdminAllEpisodesList();
+            } else if (tabName === 'banners') {
+                document.getElementById('adminTabBanners').classList.remove('hidden');
+                document.getElementById('tabBannersBtn').classList.add('active-tab');
+                document.getElementById('bannerUrl1').value = window.bannerImages[0] || '';
+                document.getElementById('bannerUrl2').value = window.bannerImages[1] || '';
+                document.getElementById('bannerUrl3').value = window.bannerImages[2] || '';
             } else if (tabName === 'vip') {
                 document.getElementById('adminTabVip').classList.remove('hidden');
                 document.getElementById('tabVipBtn').classList.add('active-tab');
@@ -830,14 +942,23 @@
             }
         }
 
-        function renderAdminAllEpisodesList() {
+        /* គ្រប់គ្រងបញ្ជីភាគវីដេអូសរុប (មានបន្ថែម Filter Search ឈ្មោះរឿង/ភាគ) */
+        window.renderAdminAllEpisodesList = function() {
             const listContainer = document.getElementById('adminAllEpisodesList');
             if(!listContainer) return;
-            if(window.videos.length === 0) {
-                listContainer.innerHTML = `<p style="font-size: 0.75rem; color: #666;">មិនទាន់មានវីដេអូភាគណាមួយទេ។</p>`;
+            
+            const searchQuery = (document.getElementById('adminEpisodeSearchInput')?.value || '').toLowerCase().trim();
+
+            let list = window.videos;
+            if(searchQuery !== '') {
+                list = list.filter(v => v.series.toLowerCase().includes(searchQuery) || v.ep.toLowerCase().includes(searchQuery));
+            }
+
+            if(list.length === 0) {
+                listContainer.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 10px;">មិនទាន់មានភាគវីដេអូ ឬរកមិនឃើញឡើយ។</p>`;
                 return;
             }
-            listContainer.innerHTML = window.videos.map(v => `
+            listContainer.innerHTML = list.map(v => `
                 <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 10px; border-radius: 8px; font-size: 0.75rem;">
                     <div>
                         <span style="color: #fff; font-weight: bold;">${v.series}</span> - <span style="color: #facc15;">${v.ep}</span>
