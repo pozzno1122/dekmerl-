@@ -736,7 +736,13 @@
                 </div>
                 <div class="form-group"><label>លីងវីដេអូ</label><input type="url" id="editVideoUrl" required class="form-control"></div>
                 <div class="form-group"><label>លីងរូបភាព Thumbnail</label><input type="url" id="editImageUrl" required class="form-control"></div>
-                <div class="form-group"><label>ប្រភេទការមើល</label><select id="editAccessType" class="form-control"><option value="ឥតគិតថ្លៃ">ឥតគិតថ្លៃ</option><option value="vip">VIP</option></select></div>
+                <div class="form-group">
+                    <label>ប្រភេទការមើល</label>
+                    <select id="editAccessType" class="form-control">
+                        <option value="free">ឥតគិតថ្លៃ (Free)</option>
+                        <option value="vip">សម្រាប់ VIP (VIP Only)</option>
+                    </select>
+                </div>
                 <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
                     <input type="checkbox" id="editIsHot" style="width: 18px; height: 18px; accent-color: #E50914; cursor: pointer;">
                     <label for="editIsHot" style="margin-bottom: 0; color: #facc15; font-weight: bold; cursor: pointer;">🔥 រឿង Hot (មានសញ្ញាភ្លើង)</label>
@@ -810,7 +816,6 @@
             }
         }
 
-        // រក្សាទុកទិន្នន័យសមាជិកទៅ Firebase Realtime Database
         async function saveUserToDatabase(user) {
             if (!user || !user.username) return;
             const cleanUserKey = user.username.replace(/[^a-zA-Z0-9_]/g, '');
@@ -1245,7 +1250,7 @@
                 <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 10px; border-radius: 8px; font-size: 0.75rem;">
                     <div>
                         <span style="color: #fff; font-weight: bold;">${v.series}</span> - <span style="color: #facc15;">${v.ep}</span>
-                        <div style="color: #888; font-size: 0.65rem;">ប្រភេទ: ${v.type || 'រឿងភាគ'} | មើល: ${v.accessType.toUpperCase()} ${v.isHot ? '| 🔥 HOT' : ''}</div>
+                        <div style="color: #888; font-size: 0.65rem;">ប្រភេទ: ${v.type || 'រឿងភាគ'} | មើល: ${(v.accessType === 'free' || v.accessType === 'ឥតគិតថ្លៃ') ? 'FREE' : 'VIP'} ${v.isHot ? '| 🔥 HOT' : ''}</div>
                     </div>
                     <div style="display: flex; gap: 6px;">
                         <button onclick="openEditModal('${v.id}')" style="background-color: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">✏️ កែ</button>
@@ -1433,12 +1438,13 @@
             grid.innerHTML = seriesList.map((s) => {
                 const firstEp = s.episodes[0];
                 const isFreeSeries = s.category === 'រឿងឥតគិតថ្លៃ';
+                const isFreeEp = isFreeSeries || firstEp.accessType === 'free' || firstEp.accessType === 'ឥតគិតថ្លៃ';
                 return `
                     <div class="video-card">
                         <div class="thumbnail-box" onclick="openSeriesModal('${s.series.replace(/'/g, "\\'")}')">
                             <img src="${s.imageUrl}" alt="Thumbnail">
-                            <span class="badge-access ${isFreeSeries || firstEp.accessType === 'free' ? 'badge-free' : 'badge-vip'}">
-                                ${isFreeSeries ? '🎁 ឥតគិតថ្លៃ' : (firstEp.accessType === 'vip' ? '👑 VIP' : 'ឥតគិតថ្លៃ')}
+                            <span class="badge-access ${isFreeEp ? 'badge-free' : 'badge-vip'}">
+                                ${isFreeSeries ? '🎁 ឥតគិតថ្លៃ' : (isFreeEp ? 'ឥតគិតថ្លៃ' : '👑 VIP')}
                             </span>
                             ${s.isHot ? '<span class="badge-hot">🔥 HOT</span>' : ''}
                         </div>
@@ -1531,22 +1537,25 @@
             const epContainer = document.getElementById('episodeListContainer');
             const isAdmin = isUserAdmin();
 
-            let episodesHTML = sEpisodes.map((ep) => `
-                <div id="ep_card_${ep.id}" class="episode-thumb-card">
-                    <div class="ep-thumb-img-box" onclick="playEpisode('${ep.id}')" style="cursor: pointer;">
-                        <img src="${ep.imageUrl}" alt="Ep Thumbnail">
-                        <span class="ep-thumb-badge">${isFreeSeries || ep.accessType === 'free' ? '▶ ឥតគិតថ្លៃ' : '👑 VIP'}</span>
-                    </div>
-                    <div class="ep-thumb-title" onclick="playEpisode('${ep.id}')" style="cursor: pointer; flex: 1;">${ep.ep}</div>
-                    
-                    ${isAdmin ? `
-                        <div style="display: flex; gap: 4px; padding: 4px 8px;">
-                            <button onclick="openEditModal('${ep.id}')" style="background-color: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;" title="កែប្រែភាគនេះ">✏️ កែ</button>
-                            <button onclick="deleteEpisode('${ep.id}')" style="background-color: #dc2626; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;" title="លុបភាគនេះ">🗑️</button>
+            let episodesHTML = sEpisodes.map((ep) => {
+                const isEpFree = isFreeSeries || ep.accessType === 'free' || ep.accessType === 'ឥតគិតថ្លៃ';
+                return `
+                    <div id="ep_card_${ep.id}" class="episode-thumb-card">
+                        <div class="ep-thumb-img-box" onclick="playEpisode('${ep.id}')" style="cursor: pointer;">
+                            <img src="${ep.imageUrl}" alt="Ep Thumbnail">
+                            <span class="ep-thumb-badge">${isEpFree ? '▶ ឥតគិតថ្លៃ' : '👑 VIP'}</span>
                         </div>
-                    ` : ''}
-                </div>
-            `).join('');
+                        <div class="ep-thumb-title" onclick="playEpisode('${ep.id}')" style="cursor: pointer; flex: 1;">${ep.ep}</div>
+                        
+                        ${isAdmin ? `
+                            <div style="display: flex; gap: 4px; padding: 4px 8px;">
+                                <button onclick="openEditModal('${ep.id}')" style="background-color: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;" title="កែប្រែភាគនេះ">✏️ កែ</button>
+                                <button onclick="deleteEpisode('${ep.id}')" style="background-color: #dc2626; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;" title="លុបភាគនេះ">🗑️</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
 
             if (isAdmin) {
                 episodesHTML += `
@@ -1630,9 +1639,10 @@
             const lockedMsg = document.getElementById('vipLockedMessage');
 
             const isFreeSeries = v.category === 'រឿងឥតគិតថ្លៃ';
-            const hasVipAccess = isUserVip() || isFreeSeries || v.accessType === 'free';
+            const isEpFree = v.accessType === 'free' || v.accessType === 'ឥតគិតថ្លៃ';
+            const hasVipAccess = isUserVip() || isFreeSeries || isEpFree;
 
-            if(v.accessType === 'vip' && !hasVipAccess) {
+            if(!isEpFree && !hasVipAccess && v.accessType === 'vip') {
                 iframe.src = "";
                 iframe.style.display = "none";
                 lockedMsg.classList.remove('hidden');
@@ -1669,7 +1679,10 @@
             document.getElementById('editCategory').value = v.category || 'ស្នេហា';
             document.getElementById('editVideoUrl').value = v.videoUrl;
             document.getElementById('editImageUrl').value = v.imageUrl;
-            document.getElementById('editAccessType').value = v.accessType;
+            
+            const accessVal = (v.accessType === 'free' || v.accessType === 'ឥតគិតថ្លៃ') ? 'free' : 'vip';
+            document.getElementById('editAccessType').value = accessVal;
+            
             document.getElementById('editIsHot').checked = v.isHot || false;
             document.getElementById('editVideoModal').classList.remove('hidden');
         }
