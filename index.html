@@ -810,6 +810,24 @@
             }
         }
 
+        // រក្សាទុកទិន្នន័យសមាជិកទៅ Firebase Realtime Database
+        async function saveUserToDatabase(user) {
+            if (!user || !user.username) return;
+            const cleanUserKey = user.username.replace(/[^a-zA-Z0-9_]/g, '');
+            const userRef = ref(db, 'users/' + cleanUserKey);
+            
+            const userData = {
+                username: user.username,
+                first_name: user.first_name || '',
+                photo_url: user.photo_url || 'https://via.placeholder.com/32',
+                lastSeen: Date.now()
+            };
+
+            try {
+                await update(userRef, userData);
+            } catch(e) {}
+        }
+
         function getTelegramUserData() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -823,14 +841,7 @@
                     const savedBefore = localStorage.getItem('dekmerl_tg_user');
                     localStorage.setItem('dekmerl_tg_user', JSON.stringify(user));
 
-                    let allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
-                    allUsers[user.username] = {
-                        username: user.username,
-                        first_name: user.first_name,
-                        photo_url: user.photo_url || 'https://via.placeholder.com/32',
-                        registeredAt: Date.now()
-                    };
-                    localStorage.setItem('dekmerl_all_registered_users', JSON.stringify(allUsers));
+                    saveUserToDatabase(user);
 
                     window.history.replaceState({}, document.title, window.location.pathname);
                     if (!savedBefore) { 
@@ -842,16 +853,7 @@
             const saved = localStorage.getItem('dekmerl_tg_user');
             if (saved) {
                 const user = JSON.parse(saved);
-                let allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
-                if (!allUsers[user.username]) {
-                    allUsers[user.username] = {
-                        username: user.username,
-                        first_name: user.first_name,
-                        photo_url: user.photo_url || 'https://via.placeholder.com/32',
-                        registeredAt: Date.now()
-                    };
-                    localStorage.setItem('dekmerl_all_registered_users', JSON.stringify(allUsers));
-                }
+                saveUserToDatabase(user);
                 return user;
             }
             return null;
@@ -859,6 +861,7 @@
 
         window.currentUserTgObj = getTelegramUserData();
         window.videos = [];
+        window.dbUsersList = {};
         window.currentCategory = 'all';
 
         window.bannerImages = JSON.parse(localStorage.getItem('dekmerl_banners')) || [
@@ -866,6 +869,17 @@
             "https://cdn.phototourl.com/member/2026-10-29-4a22ea06-9fbe-45ee-8455-5f9d2793f6da.jpg",
             "https://cdn.phototourl.com/member/2026-10-29-129eff2d-f0d6-443d-af59-579a762356ff.jpg"
         ];
+
+        function listenToUsers() {
+            const usersRef = ref(db, 'users');
+            onValue(usersRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    window.dbUsersList = data;
+                    renderAdminMemberList();
+                }
+            });
+        }
 
         function renderBanners() {
             const track = document.getElementById('carouselSlides');
@@ -936,6 +950,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             renderBanners();
             listenToBanners();
+            listenToUsers();
             checkVipExpiryBackground();
             setInterval(checkVipExpiryBackground, 10000);
 
@@ -1141,10 +1156,9 @@
             if(!container) return;
 
             const searchQuery = (document.getElementById('adminMemberSearchInput')?.value || '').toLowerCase().trim();
-            const allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
             const vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
 
-            let usersArr = Object.values(allUsers);
+            let usersArr = Object.values(window.dbUsersList || {});
             
             if (searchQuery !== '') {
                 usersArr = usersArr.filter(u => u.username.toLowerCase().includes(searchQuery) || (u.first_name && u.first_name.toLowerCase().includes(searchQuery)));
@@ -1196,11 +1210,12 @@
             document.getElementById('targetTgUser').value = username;
         }
 
-        window.removeUserRecord = function(username) {
+        window.removeUserRecord = async function(username) {
             if(confirm(`តើអ្នកពិតជាចង់លុបគណនី ${username} នេះចេញពីប្រព័ន្ធមែនទេ?`)) {
-                let allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
-                delete allUsers[username];
-                localStorage.setItem('dekmerl_all_registered_users', JSON.stringify(allUsers));
+                const cleanUserKey = username.replace(/[^a-zA-Z0-9_]/g, '');
+                try {
+                    await remove(ref(db, 'users/' + cleanUserKey));
+                } catch(e) {}
 
                 let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
                 delete vipUsers[username];
@@ -1274,11 +1289,7 @@
             delete expiredList[tgUser];
             localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
 
-            let allUsers = JSON.parse(localStorage.getItem('dekmerl_all_registered_users')) || {};
-            if(!allUsers[tgUser]) {
-                allUsers[tgUser] = { username: tgUser, first_name: 'VIP User', photo_url: 'https://via.placeholder.com/32', registeredAt: Date.now() };
-                localStorage.setItem('dekmerl_all_registered_users', JSON.stringify(allUsers));
-            }
+            saveUserToDatabase({ username: tgUser, first_name: 'VIP User' });
 
             const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
             const unitLabel = unit === 'days' ? `${amount} ថ្ងៃ` : `${amount} ម៉ោង`;
@@ -1333,7 +1344,6 @@
                 }
                 renderVideos();
                 
-                // រក្សាការ Update Modal ភាគប្រសិនបើកំពុងបើក
                 const openModalSeries = document.getElementById('seriesModalTitle').innerText;
                 if (openModalSeries && !document.getElementById('seriesModal').classList.contains('hidden')) {
                     openSeriesModal(openModalSeries, false);
@@ -1538,7 +1548,6 @@
                 </div>
             `).join('');
 
-            // បន្ថែមប៊ូតុងសញ្ញាបូកសម្រាប់ Admin បង្ហោះភាគបន្ត
             if (isAdmin) {
                 episodesHTML += `
                     <div class="add-episode-card-btn" onclick="openQuickAddEpModal('${seriesName.replace(/'/g, "\\'")}')">
@@ -1557,7 +1566,6 @@
             document.body.style.overflow = 'hidden';
         }
 
-        /* មុខងារបើក និងបង្ហោះភាគបន្ត (Quick Add Episode Functions) */
         window.openQuickAddEpModal = function(seriesName) {
             const sEpisodes = window.videos.filter(v => v.series === seriesName);
             if(sEpisodes.length === 0) return;
@@ -1570,7 +1578,6 @@
             document.getElementById('quickAddImageUrl').value = refEp.imageUrl || '';
             document.getElementById('quickAddIsHot').value = refEp.isHot ? "true" : "false";
 
-            // ស្វែងរកលេខភាគចុងក្រោយដើម្បី Suggest
             const lastEpNum = sEpisodes.length + 1;
             document.getElementById('quickAddEpTitle').value = `ភាគទី ${lastEpNum}`;
             document.getElementById('quickAddVideoUrl').value = '';
