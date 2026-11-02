@@ -15,21 +15,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kantumruy Pro', sans-serif; }
         body { background-color: #121212; color: #ffffff; min-height: 100vh; padding-bottom: 40px; position: relative; user-select: none; }
         
-        /* Click Water Ripple Effect */
-        .click-ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(229, 9, 20, 0.4);
-            transform: scale(0);
-            animation: ripple-animation 0.6s linear;
-            pointer-events: none;
-            z-index: 9999;
-        }
-        @keyframes ripple-animation {
-            to { transform: scale(4); opacity: 0; }
-        }
-
-        header { position: sticky; top: 0; z-index: 50; background-color: rgba(18, 18, 18, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #2a2a2a; padding: 12px 16px; }
+        header { position: sticky; top: 0; z-index: 50; background-color: rgba(18, 18, 18, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid #2a2a2a; padding: 12px 16px; }
         .header-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .logo-box { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .logo-img { width: 38px; height: 38px; object-fit: contain; border-radius: 8px; }
@@ -37,9 +23,9 @@
         .brand-title span { color: #ffffff; }
 
         .banner-section { max-width: 1200px; margin: 16px auto 0; padding: 0 16px; }
-        .carousel-container { position: relative; width: 100%; height: 200px; border-radius: 16px; overflow: hidden; background-color: #000; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        .carousel-container { position: relative; width: 100%; height: 200px; border-radius: 16px; overflow: hidden; background-color: #000; box-shadow: 0 8px 24px rgba(0,0,0,0.5); transform: translateZ(0); }
         @media (min-width: 768px) { .carousel-container { height: 380px; } }
-        .carousel-track { display: flex; width: 100%; height: 100%; transition: transform 0.6s ease-in-out; }
+        .carousel-track { display: flex; width: 100%; height: 100%; transition: transform 0.6s ease-in-out; will-change: transform; }
         .slide { min-width: 100%; height: 100%; background-color: #000; display: flex; align-items: center; justify-content: center; }
         .slide img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -47,7 +33,7 @@
         .category-filter { max-width: 1200px; margin: 16px auto 0; padding: 0 16px; display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
         .category-filter::-webkit-scrollbar { height: 4px; }
         .category-filter::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        .cat-pill { background-color: #1e1e1e; border: 1px solid #333; color: #aaa; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .cat-pill { background-color: #1e1e1e; border: 1px solid #333; color: #aaa; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background-color 0.2s, color 0.2s; }
         .cat-pill.active-cat { background-color: #E50914; color: #fff; border-color: #E50914; }
 
         /* VIP Section */
@@ -55,14 +41,9 @@
         .vip-card { background: linear-gradient(135deg, #1f1c18 0%, #121212 100%); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
         @media (min-width: 768px) { .vip-card { flex-direction: row; align-items: center; justify-content: space-between; } }
         .vip-info { display: flex; align-items: center; gap: 10px; }
-        .vip-crown-icon { width: 36px; height: 36px; background-color: rgba(234, 179, 8, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; animation: crownGlow 2s infinite ease-in-out; }
+        .vip-crown-icon { width: 36px; height: 36px; background-color: rgba(234, 179, 8, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
         .vip-text h3 { color: #facc15; font-size: 0.85rem; font-weight: 700; }
         .vip-text p { color: #9ca3af; font-size: 0.65rem; margin-top: 2px; }
-        
-        @keyframes crownGlow {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.4); }
-            50% { transform: scale(1.08); box-shadow: 0 0 12px 4px rgba(250, 204, 21, 0.3); }
-        }
 
         .vip-btns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; }
         @media (min-width: 768px) { .vip-btns-grid { width: auto; min-width: 300px; } }
@@ -78,21 +59,11 @@
             text-align: center; 
             white-space: nowrap; 
             box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3); 
-            transition: transform 0.1s; 
-            animation: vipWaveShake 3s infinite ease-in-out;
+            transition: transform 0.15s ease;
             position: relative;
             overflow: hidden;
         }
-        .btn-vip-item:nth-child(2) { animation-delay: 0.3s; }
-        .btn-vip-item:nth-child(3) { animation-delay: 0.6s; }
-
-        @keyframes vipWaveShake {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            15% { transform: translateY(-3px) rotate(-2deg); }
-            30% { transform: translateY(2px) rotate(2deg); }
-            45% { transform: translateY(-1px) rotate(-1deg); }
-            60% { transform: translateY(0) rotate(0deg); }
-        }
+        .btn-vip-item:active { transform: scale(0.96); }
 
         .admin-trigger-wrap { max-width: 1200px; margin: 16px auto 0; padding: 0 16px; }
         .btn-admin-panel { width: 100%; background-color: #E50914; color: #ffffff; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(229, 9, 20, 0.4); }
@@ -147,8 +118,7 @@
         .badge-vip { background-color: #facc15; color: #000; }
         .badge-free { background-color: #E50914; color: #fff; }
 
-        .badge-hot { position: absolute; top: 4px; right: 4px; background-color: #ea580c; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; animation: hotPulse 1.5s infinite ease-in-out; }
-        @keyframes hotPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+        .badge-hot { position: absolute; top: 4px; right: 4px; background-color: #ea580c; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; }
 
         .video-details { padding: 8px 10px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .series-name { font-size: 0.78rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -357,7 +327,6 @@
             }
         }
 
-        /* ប៊ូតុងសញ្ញាបូកបង្ហោះភាគបន្ត (Add Episode Button Card) */
         .add-episode-card-btn {
             background-color: rgba(229, 9, 20, 0.08);
             border: 2px dashed #E50914;
@@ -370,11 +339,10 @@
             gap: 6px;
             cursor: pointer;
             color: #E50914;
-            transition: all 0.2s ease;
+            transition: background-color 0.2s ease;
         }
         .add-episode-card-btn:hover {
             background-color: rgba(229, 9, 20, 0.2);
-            transform: scale(1.02);
         }
         .add-episode-card-btn i {
             font-size: 1.8rem;
@@ -407,7 +375,7 @@
 
         .form-group { margin-bottom: 12px; text-align: left; }
         .form-group label { display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px; }
-        .form-control { width: 100%; background-color: #121212; border: 1px solid #333; border-radius: 8px; padding: 10px; color: #fff; font-size: 0.85rem; outline: none; }
+        .form-control { width: 100%; background-color: #121212; border: 1px solid #333; border-radius: 8px; padding: 10px; color: #fff; font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
         .btn-submit { width: 100%; background-color: #E50914; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 8px; }
 
         /* Telegram Floating Action Button */
@@ -427,15 +395,10 @@
             box-shadow: 0 8px 25px rgba(34, 158, 217, 0.6);
             z-index: 90;
             text-decoration: none;
-            transition: transform 0.3s ease;
-            animation: tgWaveFloat 2.5s infinite ease-in-out;
+            transition: transform 0.2s ease;
         }
         .telegram-float-btn:hover {
-            transform: scale(1.12) rotate(5deg);
-        }
-        @keyframes tgWaveFloat {
-            0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 6px 20px rgba(34, 158, 217, 0.5); }
-            50% { transform: translateY(-8px) scale(1.04); box-shadow: 0 12px 30px rgba(34, 158, 217, 0.8); }
+            transform: scale(1.08);
         }
 
         .hidden { display: none !important; }
@@ -753,20 +716,6 @@
     </div>
 
     <!-- Script Logic -->
-    <script>
-        document.addEventListener('click', function(e) {
-            const ripple = document.createElement('div');
-            ripple.classList.add('click-ripple');
-            const size = 60;
-            ripple.style.width = size + 'px';
-            ripple.style.height = size + 'px';
-            ripple.style.left = (e.pageX - size / 2) + 'px';
-            ripple.style.top = (e.pageY - size / 2) + 'px';
-            document.body.appendChild(ripple);
-            setTimeout(() => { ripple.remove(); }, 600);
-        });
-    </script>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -881,7 +830,9 @@
                 const data = snapshot.val();
                 if (data) {
                     window.dbUsersList = data;
-                    renderAdminMemberList();
+                    if(!document.getElementById('adminModal').classList.contains('hidden')) {
+                        renderAdminMemberList();
+                    }
                 }
             });
         }
@@ -890,7 +841,7 @@
             const track = document.getElementById('carouselSlides');
             if(!track) return;
             track.innerHTML = window.bannerImages.map(imgUrl => `
-                <div class="slide"><img src="${imgUrl}" alt="Banner"></div>
+                <div class="slide"><img src="${imgUrl}" alt="Banner" loading="lazy"></div>
             `).join('');
         }
 
@@ -941,10 +892,6 @@
                 localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
                 localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
                 renderTelegramLoginWidget();
-                renderAdminMemberList();
-                renderVipUserList();
-            } else {
-                renderTelegramLoginWidget();
                 if(!document.getElementById('adminModal').classList.contains('hidden')) {
                     renderAdminMemberList();
                     renderVipUserList();
@@ -957,7 +904,8 @@
             listenToBanners();
             listenToUsers();
             checkVipExpiryBackground();
-            setInterval(checkVipExpiryBackground, 10000);
+            // ដូរពី 10 វិនាទី ទៅ 60 វិនាទី ដើម្បីកាត់បន្ថយ Workload របស់ CPU
+            setInterval(checkVipExpiryBackground, 60000);
 
             const slides = document.getElementById('carouselSlides');
             let currentSlide = 0;
@@ -967,14 +915,12 @@
                         currentSlide = (currentSlide + 1) % window.bannerImages.length;
                         slides.style.transform = `translateX(-${currentSlide * 100}%)`;
                     }
-                }, 4000);
+                }, 5000);
             }
             renderTelegramLoginWidget();
             updateAuthUI();
             renderVipUI();
             listenToVideos();
-            renderVipUserList();
-            renderAdminMemberList();
 
             document.addEventListener('click', (e) => {
                 const wrap = document.querySelector('.search-box-wrap');
@@ -1442,7 +1388,7 @@
                 return `
                     <div class="video-card">
                         <div class="thumbnail-box" onclick="openSeriesModal('${s.series.replace(/'/g, "\\'")}')">
-                            <img src="${s.imageUrl}" alt="Thumbnail">
+                            <img src="${s.imageUrl}" alt="Thumbnail" loading="lazy">
                             <span class="badge-access ${isFreeEp ? 'badge-free' : 'badge-vip'}">
                                 ${isFreeSeries ? '🎁 ឥតគិតថ្លៃ' : (isFreeEp ? 'ឥតគិតថ្លៃ' : '👑 VIP')}
                             </span>
@@ -1494,7 +1440,7 @@
 
             dropdown.innerHTML = matched.map(s => `
                 <div class="suggestion-item" onclick="selectSuggestion('${s.series.replace(/'/g, "\\'")}')">
-                    <img src="${s.imageUrl}" class="suggestion-thumb" alt="Thumb">
+                    <img src="${s.imageUrl}" class="suggestion-thumb" alt="Thumb" loading="lazy">
                     <span class="suggestion-text">${s.series}</span>
                 </div>
             `).join('');
@@ -1542,7 +1488,7 @@
                 return `
                     <div id="ep_card_${ep.id}" class="episode-thumb-card">
                         <div class="ep-thumb-img-box" onclick="playEpisode('${ep.id}')" style="cursor: pointer;">
-                            <img src="${ep.imageUrl}" alt="Ep Thumbnail">
+                            <img src="${ep.imageUrl}" alt="Ep Thumbnail" loading="lazy">
                             <span class="ep-thumb-badge">${isEpFree ? '▶ ឥតគិតថ្លៃ' : '👑 VIP'}</span>
                         </div>
                         <div class="ep-thumb-title" onclick="playEpisode('${ep.id}')" style="cursor: pointer; flex: 1;">${ep.ep}</div>
