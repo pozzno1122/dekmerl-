@@ -65,7 +65,6 @@
         }
         .btn-vip-item:active { transform: scale(0.96); }
 
-        /* Glowing LED Animated Button for How to Buy VIP (Yellow Theme) */
         .btn-how-to-buy {
             position: relative;
             width: 100%;
@@ -89,7 +88,6 @@
         }
         .btn-how-to-buy:active { transform: scale(0.98); }
 
-        /* LED Glowing Border Effect (Yellow/Gold) */
         .btn-how-to-buy::before {
             content: '';
             position: absolute;
@@ -122,7 +120,6 @@
         .main-content { max-width: 1200px; margin: 24px auto 0; padding: 0 16px; }
         .section-header { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         
-        /* Search Bar & Auto-suggest Dropdown Styling */
         .search-box-wrap { margin-bottom: 16px; position: relative; }
         .search-input { width: 100%; background-color: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 12px 16px 12px 42px; color: #fff; font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
         .search-input:focus { border-color: #E50914; }
@@ -155,7 +152,6 @@
         .suggestion-thumb { width: 45px; height: 26px; object-fit: cover; border-radius: 4px; background-color: #000; }
         .suggestion-text { font-size: 0.8rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Video Grid */
         .video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         @media (min-width: 600px) { .video-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
         @media (min-width: 900px) { .video-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; } }
@@ -168,7 +164,6 @@
         .badge-access { position: absolute; top: 4px; left: 4px; padding: 3px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; }
         .badge-vip { background-color: #facc15; color: #000; }
         .badge-free { background-color: #E50914; color: #fff; }
-
         .badge-hot { position: absolute; top: 4px; right: 4px; background-color: #ea580c; color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; }
 
         .video-details { padding: 8px 10px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
@@ -180,7 +175,6 @@
         .btn-card-edit { background-color: #2563eb; color: #fff; }
         .btn-card-delete { background-color: #dc2626; color: #fff; }
 
-        /* Responsive Series Player Modal */
         .series-modal-overlay { 
             position: fixed; 
             inset: 0; 
@@ -240,180 +234,47 @@
             }
         }
 
-        .player-and-info-section {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .series-player-container {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background-color: #000000;
-            position: relative;
-            border-radius: 0;
-        }
+        .player-and-info-section { display: flex; flex-direction: column; width: 100%; }
+        .series-player-container { width: 100%; aspect-ratio: 16/9; background-color: #000000; position: relative; border-radius: 0; }
         @media (min-width: 1024px) {
-            .series-player-container {
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 8px 30px rgba(0,0,0,0.7);
-            }
+            .series-player-container { border-radius: 12px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.7); }
         }
+        .series-player-container iframe { width: 100%; height: 100%; border: none; }
 
-        .series-player-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+        .series-info-box { padding: 14px 16px; border-bottom: 1px solid #2a2a2a; background-color: #161616; }
+        @media (min-width: 1024px) { .series-info-box { border-bottom: none; background: transparent; padding: 14px 0; } }
 
-        .series-info-box {
-            padding: 14px 16px;
-            border-bottom: 1px solid #2a2a2a;
-            background-color: #161616;
-        }
+        .series-episodes-area { padding: 16px; flex: 1; background-color: #121212; }
         @media (min-width: 1024px) {
-            .series-info-box {
-                border-bottom: none;
-                background: transparent;
-                padding: 14px 0;
-            }
+            .series-episodes-area { background-color: #181818; border: 1px solid #2a2a2a; border-radius: 12px; max-height: calc(100vh - 100px); overflow-y: auto; }
         }
 
-        .series-episodes-area {
-            padding: 16px;
-            flex: 1;
-            background-color: #121212;
-        }
-        @media (min-width: 1024px) {
-            .series-episodes-area {
-                background-color: #181818;
-                border: 1px solid #2a2a2a;
-                border-radius: 12px;
-                max-height: calc(100vh - 100px);
-                overflow-y: auto;
-            }
-        }
+        .episode-grid-thumbnails { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
+        @media (min-width: 600px) and (max-width: 1023px) { .episode-grid-thumbnails { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1024px) { .episode-grid-thumbnails { grid-template-columns: 1fr; } }
 
-        .episode-grid-thumbnails {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-        @media (min-width: 600px) and (max-width: 1023px) {
-            .episode-grid-thumbnails {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        @media (min-width: 1024px) {
-            .episode-grid-thumbnails {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .episode-thumb-card {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: border-color 0.2s;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        @media (min-width: 1024px) {
-            .episode-thumb-card {
-                flex-direction: row;
-                align-items: center;
-                gap: 10px;
-                padding: 6px;
-            }
-        }
+        .episode-thumb-card { background-color: #1e1e1e; border: 1px solid #333; border-radius: 8px; overflow: hidden; cursor: pointer; transition: border-color 0.2s; display: flex; flex-direction: column; position: relative; }
+        @media (min-width: 1024px) { .episode-thumb-card { flex-direction: row; align-items: center; gap: 10px; padding: 6px; } }
         .episode-thumb-card:hover { border-color: #E50914; }
         .episode-thumb-card.active-ep { border-color: #E50914; background-color: rgba(229, 9, 20, 0.1); }
 
-        .ep-thumb-img-box {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16/9;
-            background-color: #000;
-        }
-        @media (min-width: 1024px) {
-            .ep-thumb-img-box {
-                width: 110px;
-                height: 62px;
-                flex-shrink: 0;
-                border-radius: 6px;
-                overflow: hidden;
-            }
-        }
+        .ep-thumb-img-box { position: relative; width: 100%; aspect-ratio: 16/9; background-color: #000; }
+        @media (min-width: 1024px) { .ep-thumb-img-box { width: 110px; height: 62px; flex-shrink: 0; border-radius: 6px; overflow: hidden; } }
         .ep-thumb-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .ep-thumb-badge {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            background: rgba(0,0,0,0.7);
-            color: #facc15;
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
+        .ep-thumb-badge { position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,0.7); color: #facc15; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
 
-        .ep-thumb-title {
-            padding: 6px 8px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .ep-thumb-title { padding: 6px 8px; font-size: 0.75rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        @media (min-width: 1024px) { .ep-thumb-title { padding: 0; flex: 1; } }
+
+        .add-episode-card-btn { background-color: rgba(229, 9, 20, 0.08); border: 2px dashed #E50914; border-radius: 8px; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; color: #E50914; transition: background-color 0.2s ease; }
+        .add-episode-card-btn:hover { background-color: rgba(229, 9, 20, 0.2); }
+        .add-episode-card-btn i { font-size: 1.8rem; }
+        .add-episode-card-btn span { font-size: 0.75rem; font-weight: 700; }
         @media (min-width: 1024px) {
-            .ep-thumb-title {
-                padding: 0;
-                flex: 1;
-            }
+            .add-episode-card-btn { min-height: 62px; flex-direction: row; gap: 10px; }
+            .add-episode-card-btn i { font-size: 1.3rem; }
         }
 
-        .add-episode-card-btn {
-            background-color: rgba(229, 9, 20, 0.08);
-            border: 2px dashed #E50914;
-            border-radius: 8px;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            cursor: pointer;
-            color: #E50914;
-            transition: background-color 0.2s ease;
-        }
-        .add-episode-card-btn:hover {
-            background-color: rgba(229, 9, 20, 0.2);
-        }
-        .add-episode-card-btn i {
-            font-size: 1.8rem;
-        }
-        .add-episode-card-btn span {
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-        @media (min-width: 1024px) {
-            .add-episode-card-btn {
-                min-height: 62px;
-                flex-direction: row;
-                gap: 10px;
-            }
-            .add-episode-card-btn i {
-                font-size: 1.3rem;
-            }
-        }
-
-        /* Admin / Edit Modals */
         .modal-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
         .modal-box { background-color: #1e1e1e; border: 1px solid #333; border-radius: 16px; width: 100%; max-width: 580px; padding: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
         .btn-close-modal { position: absolute; top: 14px; right: 14px; background: none; border: none; color: #888; font-size: 1.2rem; cursor: pointer; }
@@ -429,7 +290,6 @@
         .form-control { width: 100%; background-color: #121212; border: 1px solid #333; border-radius: 8px; padding: 10px; color: #fff; font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
         .btn-submit { width: 100%; background-color: #E50914; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 8px; }
 
-        /* Telegram Floating Action Button */
         .telegram-float-btn {
             position: fixed;
             bottom: 24px;
@@ -448,9 +308,7 @@
             text-decoration: none;
             transition: transform 0.2s ease;
         }
-        .telegram-float-btn:hover {
-            transform: scale(1.08);
-        }
+        .telegram-float-btn:hover { transform: scale(1.08); }
 
         .hidden { display: none !important; }
     </style>
@@ -501,7 +359,6 @@
             </div>
             <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
                 <div id="vipPlansContainer" class="vip-btns-grid"></div>
-                <!-- ប៊ូតុងរបៀបទិញ VIP ពណ៌លឿងស៊ីជាមួយកញ្ចប់ VIP -->
                 <a href="https://t.me/Dekmerl/292" target="_blank" class="btn-how-to-buy">
                     <i class="fa-solid fa-circle-play" style="color: #facc15; font-size: 1rem;"></i>
                     <span>របៀបទិញ VIP</span>
@@ -717,14 +574,6 @@
                 </form>
                 <div id="vipUserList" style="margin-top: 14px; display: flex; flex-direction: column; gap: 6px;"></div>
             </div>
-
-            <div id="adminTabCoadmin" class="hidden">
-                <form onsubmit="addCoAdmin(event)" style="display: flex; gap: 8px; margin-bottom: 12px;">
-                    <input type="text" id="coAdminInput" required placeholder="@username..." class="form-control" style="flex: 1;">
-                    <button type="submit" class="btn-submit" style="width: auto; background-color: #2563eb; padding: 0 16px; margin-top:0;">បន្ថែម</button>
-                </form>
-                <div id="coAdminList" style="display: flex; flex-direction: column; gap: 6px;"></div>
-            </div>
         </div>
     </div>
 
@@ -790,6 +639,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // 🟢 កំណត់ Username របស់អ្នកជា Admin ទី១ (អ្នកអាចដូរ @ktyofficial169 ជា Username របស់អ្នកផ្ទាល់បាន ប្រសិនបើខុសគ្នា)
         const superAdminTelegram = "@ktyofficial169".toLowerCase().trim();
         const secondAdminTelegram = "@rienml1".toLowerCase().trim();
         const botToken = "8153039437:AAHCNXE5fH_Po5REEYsb9ccs2PrcgmaRpXI";
@@ -1049,8 +899,7 @@
         function isUserAdmin() {
             if (!window.currentUserTgObj) return false;
             const currentUsername = window.currentUserTgObj.username.toLowerCase().trim();
-            const coAdmins = JSON.parse(localStorage.getItem('dekmerl_coadmins_tg')) || [];
-            return currentUsername === superAdminTelegram || currentUsername === secondAdminTelegram || coAdmins.map(e => e.toLowerCase()).includes(currentUsername);
+            return currentUsername === superAdminTelegram || currentUsername === secondAdminTelegram;
         }
 
         function isUserVip() {
@@ -1076,24 +925,13 @@
 
         function updateAuthUI() {
             const adminTrigger = document.getElementById('adminPanelTrigger');
-            const tabCoadminBtn = document.getElementById('tabCoadminBtn');
-
             if (window.currentUserTgObj) {
-                const currentUsername = window.currentUserTgObj.username.toLowerCase().trim();
-                const isSuperAdmin = currentUsername === superAdminTelegram;
-                const isSecondAdmin = currentUsername === secondAdminTelegram;
-
                 if (adminTrigger) {
                     if (isUserAdmin()) adminTrigger.classList.remove('hidden');
                     else adminTrigger.classList.add('hidden');
                 }
-                if (tabCoadminBtn) {
-                    if (isSuperAdmin || isSecondAdmin) tabCoadminBtn.classList.remove('hidden');
-                    else tabCoadminBtn.classList.add('hidden');
-                }
             } else {
                 if (adminTrigger) adminTrigger.classList.add('hidden');
-                if (tabCoadminBtn) tabCoadminBtn.classList.add('hidden');
             }
         }
 
@@ -1135,7 +973,6 @@
             document.getElementById('adminTabBanners').classList.add('hidden');
             document.getElementById('adminTabVip').classList.add('hidden');
             document.getElementById('adminTabUsers').classList.add('hidden');
-            document.getElementById('adminTabCoadmin').classList.add('hidden');
 
             document.getElementById('tabUploadBtn').classList.remove('active-tab');
             document.getElementById('tabEpisodesBtn').classList.remove('active-tab');
@@ -1143,7 +980,6 @@
             document.getElementById('tabBannersBtn').classList.remove('active-tab');
             document.getElementById('tabVipBtn').classList.remove('active-tab');
             document.getElementById('tabUsersBtn').classList.remove('active-tab');
-            document.getElementById('tabCoadminBtn').classList.remove('active-tab');
 
             if (tabName === 'upload') {
                 document.getElementById('adminTabUpload').classList.remove('hidden');
@@ -1170,10 +1006,6 @@
                 document.getElementById('adminTabUsers').classList.remove('hidden');
                 document.getElementById('tabUsersBtn').classList.add('active-tab');
                 renderVipUserList();
-            } else if (tabName === 'coadmin') {
-                document.getElementById('adminTabCoadmin').classList.remove('hidden');
-                document.getElementById('tabCoadminBtn').classList.add('active-tab');
-                renderCoAdminList();
             }
         }
 
@@ -1786,43 +1618,6 @@
             localStorage.setItem('dekmerl_vip_plans', JSON.stringify(vipPlans));
             renderVipUI();
             alert("បានរក្សាទុកកញ្ចប់ VIP ជោគជ័យ!");
-        }
-
-        function renderCoAdminList() {
-            const list = document.getElementById('coAdminList');
-            const coAdmins = JSON.parse(localStorage.getItem('dekmerl_coadmins_tg')) || [];
-            if (coAdmins.length === 0) {
-                list.innerHTML = `<p style="font-size: 0.75rem; color: #666;">គ្មាន Co-Admin ទេ។</p>`;
-                return;
-            }
-            list.innerHTML = coAdmins.map(tg => `
-                <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem;">
-                    <span style="color: #229ED9; font-weight: bold;">${tg}</span>
-                    <button onclick="removeCoAdmin('${tg}')" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: 700;">លុប</button>
-                </div>
-            `).join('');
-        }
-
-        window.addCoAdmin = function(e) {
-            e.preventDefault();
-            let inputTg = document.getElementById('coAdminInput').value.toLowerCase().trim();
-            if(!inputTg.startsWith('@')) inputTg = '@' + inputTg;
-
-            let coAdmins = JSON.parse(localStorage.getItem('dekmerl_coadmins_tg')) || [];
-            if (inputTg && !coAdmins.includes(inputTg)) {
-                coAdmins.push(inputTg);
-                localStorage.setItem('dekmerl_coadmins_tg', JSON.stringify(coAdmins));
-                document.getElementById('coAdminInput').value = "";
-                renderCoAdminList();
-                alert(`បានបន្ថែម ${inputTg} ជា Co-Admin រួចរាល់!`);
-            }
-        }
-
-        window.removeCoAdmin = function(tg) {
-            let coAdmins = JSON.parse(localStorage.getItem('dekmerl_coadmins_tg')) || [];
-            coAdmins = coAdmins.filter(e => e !== tg);
-            localStorage.setItem('dekmerl_coadmins_tg', JSON.stringify(coAdmins));
-            renderCoAdminList();
         }
     </script>
 </body>
