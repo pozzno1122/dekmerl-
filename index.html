@@ -833,6 +833,7 @@
                     if(!document.getElementById('adminModal').classList.contains('hidden')) {
                         renderAdminMemberList();
                     }
+                    renderTelegramLoginWidget();
                 }
             });
         }
@@ -904,7 +905,6 @@
             listenToBanners();
             listenToUsers();
             checkVipExpiryBackground();
-            // ដូរពី 10 វិនាទី ទៅ 60 វិនាទី ដើម្បីកាត់បន្ថយ Workload របស់ CPU
             setInterval(checkVipExpiryBackground, 60000);
 
             const slides = document.getElementById('carouselSlides');
@@ -936,14 +936,22 @@
             if (!container) return;
 
             if (window.currentUserTgObj) {
-                const username = window.currentUserTgObj.username.toLowerCase().trim();
-                const vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
-                const expiry = vipUsers[username];
-                const hasVip = expiry && expiry > Date.now();
-                
+                const hasVip = isUserVip();
                 let vipCountdownText = "";
-                if (hasVip) {
-                    vipCountdownText = formatTimeRemaining(expiry);
+                
+                if (hasVip && !isUserAdmin()) {
+                    const username = window.currentUserTgObj.username.toLowerCase().trim();
+                    const cleanUserKey = username.replace(/[^a-zA-Z0-9_]/g, '');
+                    let expiry = 0;
+                    if (window.dbUsersList && window.dbUsersList[cleanUserKey] && window.dbUsersList[cleanUserKey].vipExpiry) {
+                        expiry = window.dbUsersList[cleanUserKey].vipExpiry;
+                    } else {
+                        const vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
+                        expiry = vipUsers[username] || 0;
+                    }
+                    if (expiry > Date.now()) {
+                        vipCountdownText = formatTimeRemaining(expiry);
+                    }
                 }
 
                 const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
@@ -955,7 +963,7 @@
                         ${hasVip ? `
                             <div style="display: flex; align-items: center; gap: 4px;">
                                 <img src="${vipBadgeImgUrl}" style="height: 22px; object-fit: contain;" alt="VIP">
-                                <span style="font-size: 0.6rem; color: #facc15; font-weight: bold;">(នៅសល់ ${vipCountdownText})</span>
+                                ${vipCountdownText ? `<span style="font-size: 0.6rem; color: #facc15; font-weight: bold;">(នៅសល់ ${vipCountdownText})</span>` : ''}
                             </div>
                         ` : ''}
                         <button onclick="logoutUser()" style="background: rgba(255,255,255,0.08); border: none; color: #ff4d4d; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 2px;" title="ចាកចេញ"><i class="fa-solid fa-right-from-bracket" style="font-size: 0.75rem;"></i></button>
@@ -991,10 +999,23 @@
         function isUserVip() {
             if (!window.currentUserTgObj) return false;
             if (isUserAdmin()) return true;
+            
             const username = window.currentUserTgObj.username.toLowerCase().trim();
+            const cleanUserKey = username.replace(/[^a-zA-Z0-9_]/g, '');
+            
+            // ពិនិត្យទិន្នន័យផ្ទាល់ពី Firebase Database ທີ່បាន Sync រួច
+            if (window.dbUsersList && window.dbUsersList[cleanUserKey]) {
+                const userRecord = window.dbUsersList[cleanUserKey];
+                if (userRecord.vipExpiry && userRecord.vipExpiry > Date.now()) {
+                    return true;
+                }
+            }
+
+            // ត្រួតពិនិត្យ Backup ក្នុង localStorage ផងដែរ
             let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
             const expiry = vipUsers[username];
             if (expiry && expiry > Date.now()) return true;
+
             return false;
         }
 
@@ -1107,8 +1128,6 @@
             if(!container) return;
 
             const searchQuery = (document.getElementById('adminMemberSearchInput')?.value || '').toLowerCase().trim();
-            const vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
-
             let usersArr = Object.values(window.dbUsersList || {});
             
             if (searchQuery !== '') {
@@ -1116,7 +1135,7 @@
             }
 
             if(countBadge) {
-                const totalVipCount = Object.keys(vipUsers).filter(k => vipUsers[k] > Date.now()).length;
+                const totalVipCount = usersArr.filter(u => u.vipExpiry && u.vipExpiry > Date.now()).length;
                 countBadge.innerText = `សរុប: ${usersArr.length}នាក់ | VIP: ${totalVipCount}នាក់`;
             }
 
@@ -1128,8 +1147,8 @@
             const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
 
             container.innerHTML = usersArr.map(u => {
-                const expiry = vipUsers[u.username];
-                const isVip = expiry && expiry > Date.now();
+                const expiry = u.vipExpiry || 0;
+                const isVip = expiry > Date.now();
                 let timeStr = "";
                 if(isVip) {
                     timeStr = `(សល់ ${formatTimeRemaining(expiry)})`;
@@ -1231,52 +1250,78 @@
                 durationMs = amount * 60 * 60 * 1000;
             }
 
-            let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
             const expiryTime = Date.now() + durationMs;
-            vipUsers[tgUser] = expiryTime;
-            localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
+            const cleanUserKey = tgUser.replace(/[^a-zA-Z0-9_]/g, '');
 
-            let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
-            delete expiredList[tgUser];
-            localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
+            try {
+                // រក្សាទុកចូលទៅក្នុង Firebase Database ផ្ទាល់ ដើម្បីឱ្យគ្រប់ User ទាំងអស់មើលឃើញ
+                await update(ref(db, 'users/' + cleanUserKey), {
+                    username: tgUser,
+                    vipExpiry: expiryTime
+                });
 
-            saveUserToDatabase({ username: tgUser, first_name: 'VIP User' });
+                let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
+                vipUsers[tgUser] = expiryTime;
+                localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
 
-            const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
-            const unitLabel = unit === 'days' ? `${amount} ថ្ងៃ` : `${amount} ម៉ោង`;
-            sendTelegramAlert(`💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
+                delete expiredList[tgUser];
+                localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
 
-            document.getElementById('targetTgUser').value = "";
-            renderVipUserList();
-            renderAdminMemberList();
-            renderTelegramLoginWidget();
-            alert(`បានផ្ដល់សិទ្ធិ VIP ជូន ${tgUser} រយៈពេល ${unitLabel} ជោគជ័យ!`);
+                const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
+                const unitLabel = unit === 'days' ? `${amount} ថ្ងៃ` : `${amount} ម៉ោង`;
+                sendTelegramAlert(`💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+
+                document.getElementById('targetTgUser').value = "";
+                renderVipUserList();
+                renderAdminMemberList();
+                renderTelegramLoginWidget();
+                alert(`បានផ្ដល់សិទ្ធិ VIP ជូន ${tgUser} រយៈពេល ${unitLabel} ជោគជ័យ!`);
+            } catch(err) {
+                alert("កំហុស៖ " + err.message);
+            }
         }
 
         function renderVipUserList() {
             const list = document.getElementById('vipUserList');
             if(!list) return;
-            const vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
-            const keys = Object.keys(vipUsers);
-            if(keys.length === 0) {
+            
+            let vipUsersArr = [];
+            if (window.dbUsersList) {
+                Object.values(window.dbUsersList).forEach(u => {
+                    if (u.vipExpiry && u.vipExpiry > Date.now()) {
+                        vipUsersArr.push({ username: u.username, expiry: u.vipExpiry });
+                    }
+                });
+            }
+
+            if(vipUsersArr.length === 0) {
                 list.innerHTML = `<p style="font-size: 0.75rem; color: #666;">មិនទាន់មានសមាជិក VIP ទេ។</p>`;
                 return;
             }
-            list.innerHTML = keys.map(user => {
-                const timeStr = formatTimeRemaining(vipUsers[user]);
+            list.innerHTML = vipUsersArr.map(item => {
+                const timeStr = formatTimeRemaining(item.expiry);
                 return `
                     <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem;">
-                        <div><span style="color: #facc15; font-weight: bold;">${user}</span> <span style="color: #888; font-size: 0.7rem;">(នៅសល់ ${timeStr})</span></div>
-                        <button onclick="removeVipUser('${user}')" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: 700;">លុប VIP</button>
+                        <div><span style="color: #facc15; font-weight: bold;">${item.username}</span> <span style="color: #888; font-size: 0.7rem;">(នៅសល់ ${timeStr})</span></div>
+                        <button onclick="removeVipUser('${item.username}')" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: 700;">លុប VIP</button>
                     </div>
                 `;
             }).join('');
         }
 
-        window.removeVipUser = function(user) {
+        window.removeVipUser = async function(user) {
+            const cleanUserKey = user.replace(/[^a-zA-Z0-9_]/g, '');
+            try {
+                await update(ref(db, 'users/' + cleanUserKey), {
+                    vipExpiry: null
+                });
+            } catch(e) {}
+
             let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
             delete vipUsers[user];
             localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
+
             renderVipUserList();
             renderAdminMemberList();
             renderTelegramLoginWidget();
