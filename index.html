@@ -13,7 +13,7 @@
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kantumruy Pro', sans-serif; }
-        body { background-color: #121212; color: #ffffff; min-height: 100vh; padding-bottom: 40px; position: relative; user-select: none; }
+        body { background-color: #121212; color: #ffffff; min-height: 100vh; padding-bottom: 40px; position: relative; user-select: none; overflow-x: hidden; }
         
         header { position: sticky; top: 0; z-index: 50; background-color: rgba(18, 18, 18, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid #2a2a2a; padding: 12px 16px; }
         .header-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -311,6 +311,36 @@
         .telegram-float-btn:hover { transform: scale(1.08); }
 
         .hidden { display: none !important; }
+
+        /* ✨ 1. Click Ripple Effect (រង្វង់ពណ៌សតូចទៅធំរួចរលាយបាត់) */
+        .click-ripple {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            transform: translate(-50%, -50%) scale(0.2);
+            animation: rippleExpand 0.55s ease-out forwards;
+            z-index: 99999;
+        }
+
+        @keyframes rippleExpand {
+            0% {
+                width: 10px;
+                height: 10px;
+                opacity: 0.9;
+                transform: translate(-50%, -50%) scale(0.2);
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                width: 70px;
+                height: 70px;
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -639,11 +669,37 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // 🟢 កំណត់ Username របស់អ្នកជា Admin ទី១ (អ្នកអាចដូរ @ktyofficial169 ជា Username របស់អ្នកផ្ទាល់បាន ប្រសិនបើខុសគ្នា)
         const superAdminTelegram = "@ktyofficial169".toLowerCase().trim();
         const secondAdminTelegram = "@rienml1".toLowerCase().trim();
         const botToken = "8153039437:AAHCNXE5fH_Po5REEYsb9ccs2PrcgmaRpXI";
         const chatId = "-1004357183059";
+
+        /* ✨ JavaScript បង្កើត Effect ពេលចុច (Click Ripple Water Effect) */
+        function createClickRipple(e) {
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            if (!clientX && !clientY) return;
+
+            const circle = document.createElement('div');
+            circle.classList.add('click-ripple');
+            circle.style.left = `${clientX}px`;
+            circle.style.top = `${clientY}px`;
+
+            document.body.appendChild(circle);
+
+            setTimeout(() => {
+                circle.remove();
+            }, 600);
+        }
+
+        window.addEventListener('pointerdown', createClickRipple, { passive: true });
         
         async function sendTelegramAlert(textMsg) {
             try {
