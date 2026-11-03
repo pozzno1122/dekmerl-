@@ -65,6 +65,57 @@
         }
         .btn-vip-item:active { transform: scale(0.96); }
 
+        /* Glowing LED Animated Button for How to Buy VIP (Yellow Theme) */
+        .btn-how-to-buy {
+            position: relative;
+            width: 100%;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #facc15;
+            background-color: #1a1a1a;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            z-index: 1;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease;
+        }
+        .btn-how-to-buy:active { transform: scale(0.98); }
+
+        /* LED Glowing Border Effect (Yellow/Gold) */
+        .btn-how-to-buy::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, #d97706, #facc15, #fef08a, #facc15, #d97706);
+            background-size: 400%;
+            z-index: -1;
+            border-radius: 11px;
+            animation: ledGlow 4s linear infinite;
+        }
+
+        .btn-how-to-buy::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background: #181818;
+            border-radius: 9px;
+            z-index: -1;
+        }
+
+        @keyframes ledGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .admin-trigger-wrap { max-width: 1200px; margin: 16px auto 0; padding: 0 16px; }
         .btn-admin-panel { width: 100%; background-color: #E50914; color: #ffffff; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(229, 9, 20, 0.4); }
 
@@ -448,7 +499,14 @@
                     <p>ជ្រើសរើសកញ្ចប់ VIP ខាងក្រោមដើម្បីបញ្ជាក់ការទិញទៅ Telegram @RIENML1</p>
                 </div>
             </div>
-            <div id="vipPlansContainer" class="vip-btns-grid"></div>
+            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                <div id="vipPlansContainer" class="vip-btns-grid"></div>
+                <!-- ប៊ូតុងរបៀបទិញ VIP ពណ៌លឿងស៊ីជាមួយកញ្ចប់ VIP -->
+                <a href="https://t.me/Dekmerl/292" target="_blank" class="btn-how-to-buy">
+                    <i class="fa-solid fa-circle-play" style="color: #facc15; font-size: 1rem;"></i>
+                    <span>របៀបទិញ VIP</span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -1003,7 +1061,6 @@
             const username = window.currentUserTgObj.username.toLowerCase().trim();
             const cleanUserKey = username.replace(/[^a-zA-Z0-9_]/g, '');
             
-            // ពិនិត្យទិន្នន័យផ្ទាល់ពី Firebase Database ທີ່បាន Sync រួច
             if (window.dbUsersList && window.dbUsersList[cleanUserKey]) {
                 const userRecord = window.dbUsersList[cleanUserKey];
                 if (userRecord.vipExpiry && userRecord.vipExpiry > Date.now()) {
@@ -1011,7 +1068,6 @@
                 }
             }
 
-            // ត្រួតពិនិត្យ Backup ក្នុង localStorage ផងដែរ
             let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
             const expiry = vipUsers[username];
             if (expiry && expiry > Date.now()) return true;
@@ -1045,7 +1101,7 @@
         let vipPlans = JSON.parse(localStorage.getItem('dekmerl_vip_plans')) || [
             { id: 1, name: "VIP 5 ថ្ងៃ", price: "$0.60" },
             { id: 2, name: "VIP 15 ថ្ងៃ", price: "$1.50" },
-            { id: 3, name: "VIP 30 ថ្ងៃ", price: "$2" }
+            { id: 3, name: "VIP 30 ថ្ងៃ", price: "$2.00" }
         ];
 
         function renderVipUI() {
@@ -1254,7 +1310,6 @@
             const cleanUserKey = tgUser.replace(/[^a-zA-Z0-9_]/g, '');
 
             try {
-                // រក្សាទុកចូលទៅក្នុង Firebase Database ផ្ទាល់ ដើម្បីឱ្យគ្រប់ User ទាំងអស់មើលឃើញ
                 await update(ref(db, 'users/' + cleanUserKey), {
                     username: tgUser,
                     vipExpiry: expiryTime
