@@ -117,7 +117,6 @@
         .admin-trigger-wrap { max-width: 1200px; margin: 16px auto 0; padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
         .btn-admin-panel { width: 100%; background-color: #E50914; color: #ffffff; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(229, 9, 20, 0.4); }
         
-        /* ប៊ូតុង Refresh ៧០% សម្រាប់ Admin */
         .btn-admin-refresh { width: 100%; background: linear-gradient(90deg, #2563eb, #1d4ed8); color: #ffffff; border: none; padding: 10px; border-radius: 12px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); transition: background-color 0.2s; }
         .btn-admin-refresh:active { transform: scale(0.98); }
 
@@ -410,7 +409,7 @@
         <!-- ប៊ូតុង Refresh រឿង ៧០% ខាងក្រោមសម្រាប់ Admin -->
         <button onclick="refreshBottom70Movies()" class="btn-admin-refresh">
             <i class="fa-solid fa-arrows-rotate"></i>
-            <span> រីហ្វ្រេសរឿងចាស់ៗ 70% ខាងក្រោមឡើងលើ</span>
+            <span> រីហ្វ្រេសរឿងចាស់ៗ 70% ខាងក្រោមឡើងលើ </span>
         </button>
     </div>
 
@@ -683,8 +682,19 @@
 
         const superAdminTelegram = "@ktyofficial169".toLowerCase().trim();
         const secondAdminTelegram = "@rienml1".toLowerCase().trim();
+
+        /* Telegram Bots Settings */
+        // 1. Bot សម្រាប់ព័ត៌មានអ្នកចុះឈ្មោះថ្មី
         const botToken = "8153039437:AAHCNXE5fH_Po5REEYsb9ccs2PrcgmaRpXI";
         const chatId = "-1004357183059";
+
+        // 2. Bot សម្រាប់ព័ត៌មាន VIP (បន្ថែម/ផ្ដល់ VIP និង VIP អស់សុពលភាព)
+        const vipBotToken = "9260453589:AAHTu0QrFkmoYugNuCGCOhD_lBTHM3N4qZs";
+        const vipChatId = "-1004493438456";
+
+        // 3. Bot សម្រាប់ព័ត៌មានបង្ហោះរឿងថ្មីៗ
+        const movieBotToken = "9284674255:AAHP3kX9xipGvouXRXx4sZWcL_x_BnGnNaE";
+        const movieChatId = "-1004381190574";
 
         /* Click Ripple Water Effect */
         function createClickRipple(e) {
@@ -713,14 +723,33 @@
 
         window.addEventListener('pointerdown', createClickRipple, { passive: true });
         
-        async function sendTelegramAlert(textMsg) {
+        // មុខងារផ្ញើសារទូទៅ
+        async function sendTelegramAlert(textMsg, token = botToken, targetChatId = chatId) {
             try {
-                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: chatId, text: textMsg, parse_mode: 'Markdown' })
+                    body: JSON.stringify({ chat_id: targetChatId, text: textMsg, parse_mode: 'Markdown' })
                 });
             } catch (err) {}
+        }
+
+        // មុខងារផ្ញើព័ត៌មាន VIP ទៅ Bot VIP ទី 2
+        async function sendVipTelegramAlert(textMsg) {
+            await sendTelegramAlert(textMsg, vipBotToken, vipChatId);
+        }
+
+        // មុខងារផ្ញើព័ត៌មានបង្ហោះរឿងទៅ Bot ទី 3
+        async function sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl) {
+            const textMsg = `🎬 **មានការបង្ហោះរឿងថ្មីនៅលើវេបសាយ!**\n\n` +
+                            `📌 **ឈ្មោះរឿង:** ${series}\n` +
+                            `🎞️ **ចំណងជើងភាគ/រដូវកាល:** ${ep}\n` +
+                            `📽️ **ប្រភេទរឿង:** ${type}\n` +
+                            `🏷️ **ប្រភេទសាច់រឿង:** ${category}\n` +
+                            `🔗 **លីងវីដេអូ:** ${videoUrl}\n` +
+                            `🖼️ **លីងរូបភាព:** ${imageUrl}\n\n` +
+                            `🌐 **វេបសាយ:** DekMerl-ដេកមើល`;
+            await sendTelegramAlert(textMsg, movieBotToken, movieChatId);
         }
 
         function formatTimeRemaining(expiryTime) {
@@ -792,7 +821,7 @@
         window.videos = [];
         window.dbUsersList = {};
         window.currentCategory = 'all';
-        window.shuffledBottom70Order = null; // រក្សាលំដាប់រឿង ៧០% ពេល Admin ចុច Refresh
+        window.shuffledBottom70Order = null;
 
         window.bannerImages = JSON.parse(localStorage.getItem('dekmerl_banners')) || [
             "https://cdn.phototourl.com/member/2026-10-29-129eff2d-f0d6-443d-af59-579a762356ff.jpg",
@@ -848,6 +877,7 @@
             });
         }
 
+        // មុខងារត្រួតពិនិត្យ VIP អស់សុពលភាព និងផ្ញើសារទៅកាន់ Bot ទី 2
         function checkVipExpiryBackground() {
             let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
             let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
@@ -857,7 +887,7 @@
             Object.keys(vipUsers).forEach(user => {
                 if (vipUsers[user] <= now) {
                     if (!expiredList[user]) {
-                        sendTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${user}\n📅 ពេលវាលាផុតកំណត់: ${new Date().toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                        sendVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${user}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date().toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
                         expiredList[user] = true;
                     }
                     delete vipUsers[user];
@@ -1193,6 +1223,7 @@
             }
         }
 
+        // ផ្ដល់សិទ្ធិ VIP ជូនសមាជិក និងផ្ញើសារ Alert ទៅ Bot VIP ទី 2
         window.assignVipToUser = async function(e) {
             e.preventDefault();
             let tgUser = document.getElementById('targetTgUser').value.toLowerCase().trim();
@@ -1225,7 +1256,9 @@
 
                 const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
                 const unitLabel = unit === 'days' ? `${amount} ថ្ងៃ` : `${amount} ម៉ោង`;
-                sendTelegramAlert(`💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                
+                // ផ្ញើ Alert ទៅ Bot VIP ទី 2
+                sendVipTelegramAlert(`💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n📅 ថ្ងៃផុតកំណត់: ${new Date(expiryTime).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
 
                 document.getElementById('targetTgUser').value = "";
                 renderVipUserList();
@@ -1265,6 +1298,7 @@
             }).join('');
         }
 
+        // ដកសិទ្ធិ VIP និងផ្ញើសារ Alert ទៅ Bot VIP ទី 2
         window.removeVipUser = async function(user) {
             const cleanUserKey = user.replace(/[^a-zA-Z0-9_]/g, '');
             try {
@@ -1276,6 +1310,8 @@
             let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
             delete vipUsers[user];
             localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
+
+            sendVipTelegramAlert(`🗑️ **ដកសិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${user}\n🔻 ស្ថានភាព: បានដកសិទ្ធិ VIP ដោយ Admin\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
 
             renderVipUserList();
             renderAdminMemberList();
@@ -1313,9 +1349,7 @@
         window.refreshBottom70Movies = function() {
             if (!isUserAdmin()) return;
 
-            // យកបញ្ជីរឿងទាំងអស់ដែលមិនមែនជា Hot
-            let normalSeriesList = [];
-            const seriesMap = {};
+            let seriesMap = {};
             window.videos.forEach(v => {
                 if (!seriesMap[v.series]) {
                     seriesMap[v.series] = {
@@ -1335,26 +1369,23 @@
                 return;
             }
 
-            // តម្រៀបតាមកាលបរិច្ឆេទ
             nonHotSeries.sort((a, b) => b.createdAt - a.createdAt);
 
-            // គណនាចំនួន ៧០% ខាងក្រោម
             const bottomCount = Math.ceil(nonHotSeries.length * 0.7);
             const bottomPart = nonHotSeries.slice(nonHotSeries.length - bottomCount);
             
-            // ធ្វើការបង្វិល (Shuffle) រឿង ៧០% នោះឡើងមកលើ
             for (let i = bottomPart.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [bottomPart[i], bottomPart[j]] = [bottomPart[j], bottomPart[i]];
             }
 
-            // រក្សាលំដាប់ឈ្មោះរឿងដែលបាន Shuffle រួច
             window.shuffledBottom70Order = bottomPart.map(s => s.series);
 
             renderVideos();
             alert("✨ បានរៀបចំ និងរីហ្វ្រេសរឿង ៧០% ខាងក្រោមលោតឡើងមកលើជោគជ័យ!");
         }
 
+        // បង្ហោះវីដេអូ និងផ្ញើសារ Alert ទៅ Bot ទី 3 (Movie Bot)
         window.handleVideoUpload = async function(e) {
             e.preventDefault();
             const series = document.getElementById('seriesTitle').value.trim();
@@ -1374,9 +1405,13 @@
             try {
                 const newVideoRef = push(ref(db, 'videos'));
                 await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
+                
+                // ផ្ញើព័ត៌មានរឿងទៅកាន់ Telegram Bot ទី ៣
+                sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
+
                 document.getElementById('uploadForm').reset();
                 toggleAdminModal();
-                alert("បង្ហោះវីដេអូរឿងទៅកាន់ Database ជោគជ័យ!");
+                alert("បង្ហោះវីដេអូរឿងទៅកាន់ Database និង Telegram ជោគជ័យ!");
             } catch (err) {
                 alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
             }
@@ -1414,14 +1449,11 @@
 
             let seriesList = Object.values(seriesMap);
 
-            // បំបែករឿង Hot និង រឿងធម្មតា
             let hotSeries = seriesList.filter(s => s.isHot);
             let normalSeries = seriesList.filter(s => !s.isHot);
 
-            // តម្រៀបរឿង Hot ឲ្យនៅខាងលើជានិច្ច
             hotSeries.sort((a, b) => b.createdAt - a.createdAt);
 
-            // ប្រសិនបើ Admin បានចុច Refresh ៧០% ខាងក្រោម
             if (window.shuffledBottom70Order && window.shuffledBottom70Order.length > 0) {
                 normalSeries.sort((a, b) => {
                     let indexA = window.shuffledBottom70Order.indexOf(a.series);
@@ -1436,7 +1468,6 @@
                 normalSeries.sort((a, b) => b.createdAt - a.createdAt);
             }
 
-            // បញ្ចូលរឿង Hot ខាងលើ + រឿងធម្មតាខាងក្រោម
             seriesList = [...hotSeries, ...normalSeries];
 
             if(seriesList.length === 0) {
@@ -1610,6 +1641,7 @@
             document.getElementById('quickAddEpModal').classList.add('hidden');
         }
 
+        // បង្ហោះភាគបន្ត និងផ្ញើសារ Alert ទៅ Bot ទី 3 (Movie Bot)
         window.handleQuickAddEpisode = async function(e) {
             e.preventDefault();
             const series = document.getElementById('quickAddSeriesTitle').value;
@@ -1625,8 +1657,12 @@
             try {
                 const newVideoRef = push(ref(db, 'videos'));
                 await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
+                
+                // ផ្ញើព័ត៌មានភាគបន្តទៅកាន់ Telegram Bot ទី ៣
+                sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
+
                 closeQuickAddEpModal();
-                alert(`បានបង្ហោះ ${ep} សម្រាប់រឿង "${series}" ជោគជ័យ!`);
+                alert(`បានបង្ហោះ ${ep} សម្រាប់រឿង "${series}" ទៅកាន់ Database និង Telegram ជោគជ័យ!`);
             } catch (err) {
                 alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
             }
