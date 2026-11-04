@@ -578,11 +578,16 @@
 
             <div id="adminTabBanners" class="hidden">
                 <form onsubmit="saveBannerSettings(event)">
-                    <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 12px;">🖼️ កែសម្រួលលីងរូបភាព Banner Carousel៖</h4>
-                    <div class="form-group"><label>Banner ទី ១ (Image URL 1)</label><input type="url" id="bannerUrl1" required class="form-control" placeholder="https://..."></div>
-                    <div class="form-group"><label>Banner ទី ២ (Image URL 2)</label><input type="url" id="bannerUrl2" required class="form-control" placeholder="https://..."></div>
-                    <div class="form-group"><label>Banner ទី ៣ (Image URL 3)</label><input type="url" id="bannerUrl3" required class="form-control" placeholder="https://..."></div>
-                    <button type="submit" class="btn-submit" style="background-color: #2563eb; color: #fff; margin-top: 8px;">រក្សាទុក Banner</button>
+                    <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 12px;">🖼️ កែសម្រួលលីងរូបភាព Banner Carousel (៣ ទៅដល់ ៨ រូបភាព)៖</h4>
+                    <div class="form-group"><label>Banner ទី ១ (តម្រូវឱ្យមាន)</label><input type="url" id="bannerUrl1" required class="form-control" placeholder="https://..."></div>
+                    <div class="form-group"><label>Banner ទី ២ (តម្រូវឱ្យមាន)</label><input type="url" id="bannerUrl2" required class="form-control" placeholder="https://..."></div>
+                    <div class="form-group"><label>Banner ទី ៣ (តម្រូវឱ្យមាន)</label><input type="url" id="bannerUrl3" required class="form-control" placeholder="https://..."></div>
+                    <div class="form-group"><label>Banner ទី ៤ (ជម្រើសបន្ថែម)</label><input type="url" id="bannerUrl4" class="form-control" placeholder="https://... (ទុកទទេបើមិនប្រើ)"></div>
+                    <div class="form-group"><label>Banner ទី ៥ (ជម្រើសបន្ថែម)</label><input type="url" id="bannerUrl5" class="form-control" placeholder="https://... (ទុកទទេបើមិនប្រើ)"></div>
+                    <div class="form-group"><label>Banner ទី ៦ (ជម្រើសបន្ថែម)</label><input type="url" id="bannerUrl6" class="form-control" placeholder="https://... (ទុកទទេបើមិនប្រើ)"></div>
+                    <div class="form-group"><label>Banner ទី ៧ (ជម្រើសបន្ថែម)</label><input type="url" id="bannerUrl7" class="form-control" placeholder="https://... (ទុកទទេបើមិនប្រើ)"></div>
+                    <div class="form-group"><label>Banner ទី ៨ (ជម្រើសបន្ថែម)</label><input type="url" id="bannerUrl8" class="form-control" placeholder="https://... (ទុកទទេបើមិនប្រើ)"></div>
+                    <button type="submit" class="btn-submit" style="background-color: #2563eb; color: #fff; margin-top: 8px;">រក្សាទុក Banner ទាំងអស់</button>
                 </form>
             </div>
 
@@ -852,16 +857,25 @@
 
         window.saveBannerSettings = function(e) {
             e.preventDefault();
-            const b1 = document.getElementById('bannerUrl1').value.trim();
-            const b2 = document.getElementById('bannerUrl2').value.trim();
-            const b3 = document.getElementById('bannerUrl3').value.trim();
+            const banners = [];
+            for (let i = 1; i <= 8; i++) {
+                const val = document.getElementById(`bannerUrl${i}`).value.trim();
+                if (val !== "") {
+                    banners.push(val);
+                }
+            }
 
-            window.bannerImages = [b1, b2, b3];
+            if (banners.length < 3) {
+                alert("សូមបញ្ចូលយ៉ាងហោចណាស់ Banner ចំនួន ៣ រូបភាព!");
+                return;
+            }
+
+            window.bannerImages = banners;
             localStorage.setItem('dekmerl_banners', JSON.stringify(window.bannerImages));
             try { set(ref(db, 'banners'), window.bannerImages); } catch(err) {}
 
             renderBanners();
-            alert("បានរក្សាទុក និងប្ដូររូបភាព Banner ជោគជ័យ!");
+            alert(`បានរក្សាទុក និងប្ដូររូបភាព Banner ចំនួន ${banners.length} ជោគជ័យ!`);
         }
 
         function listenToBanners() {
@@ -1092,9 +1106,10 @@
             } else if (tabName === 'banners') {
                 document.getElementById('adminTabBanners').classList.remove('hidden');
                 document.getElementById('tabBannersBtn').classList.add('active-tab');
-                document.getElementById('bannerUrl1').value = window.bannerImages[0] || '';
-                document.getElementById('bannerUrl2').value = window.bannerImages[1] || '';
-                document.getElementById('bannerUrl3').value = window.bannerImages[2] || '';
+                for (let i = 1; i <= 8; i++) {
+                    const el = document.getElementById(`bannerUrl${i}`);
+                    if (el) el.value = window.bannerImages[i - 1] || '';
+                }
             } else if (tabName === 'vip') {
                 document.getElementById('adminTabVip').classList.remove('hidden');
                 document.getElementById('tabVipBtn').classList.add('active-tab');
