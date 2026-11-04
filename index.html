@@ -114,11 +114,15 @@
             100% { background-position: 0% 50%; }
         }
 
-        .admin-trigger-wrap { max-width: 1200px; margin: 16px auto 0; padding: 0 16px; }
+        .admin-trigger-wrap { max-width: 1200px; margin: 16px auto 0; padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
         .btn-admin-panel { width: 100%; background-color: #E50914; color: #ffffff; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(229, 9, 20, 0.4); }
+        
+        /* ប៊ូតុង Refresh ៧០% សម្រាប់ Admin */
+        .btn-admin-refresh { width: 100%; background: linear-gradient(90deg, #2563eb, #1d4ed8); color: #ffffff; border: none; padding: 10px; border-radius: 12px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); transition: background-color 0.2s; }
+        .btn-admin-refresh:active { transform: scale(0.98); }
 
         .main-content { max-width: 1200px; margin: 24px auto 0; padding: 0 16px; }
-        .section-header { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .section-header { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
         
         .search-box-wrap { margin-bottom: 16px; position: relative; }
         .search-input { width: 100%; background-color: #1e1e1e; border: 1px solid #333; border-radius: 12px; padding: 12px 16px 12px 42px; color: #fff; font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
@@ -312,7 +316,7 @@
 
         .hidden { display: none !important; }
 
-        /* ✨ 1. Click Ripple Effect (រង្វង់ពណ៌សតូចទៅធំរួចរលាយបាត់) */
+        /* Click Ripple Effect */
         .click-ripple {
             position: fixed;
             border-radius: 50%;
@@ -397,17 +401,25 @@
         </div>
     </section>
 
+    <!-- Admin Tools Section -->
     <div id="adminPanelTrigger" class="admin-trigger-wrap hidden">
         <button onclick="toggleAdminModal()" class="btn-admin-panel">
             <i class="fa-solid fa-gear"></i>
             <span>⚙️ គ្រប់គ្រងវិបសាយ (Admin Control Panel)</span>
         </button>
+        <!-- ប៊ូតុង Refresh រឿង ៧០% ខាងក្រោមសម្រាប់ Admin -->
+        <button onclick="refreshBottom70Movies()" class="btn-admin-refresh">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span> រីហ្វ្រេសរឿងចាស់ៗ 70% ខាងក្រោមឡើងលើ</span>
+        </button>
     </div>
 
     <main class="main-content">
         <div class="section-header">
-            <i class="fa-solid fa-film" style="color: #E50914;"></i>
-            <span>រឿងពេញនិយម</span>
+            <div>
+                <i class="fa-solid fa-film" style="color: #E50914;"></i>
+                <span>រឿងពេញនិយម</span>
+            </div>
         </div>
         
         <div class="search-box-wrap">
@@ -674,7 +686,7 @@
         const botToken = "8153039437:AAHCNXE5fH_Po5REEYsb9ccs2PrcgmaRpXI";
         const chatId = "-1004357183059";
 
-        /* ✨ JavaScript បង្កើត Effect ពេលចុច (Click Ripple Water Effect) */
+        /* Click Ripple Water Effect */
         function createClickRipple(e) {
             let clientX, clientY;
             if (e.touches && e.touches.length > 0) {
@@ -780,6 +792,7 @@
         window.videos = [];
         window.dbUsersList = {};
         window.currentCategory = 'all';
+        window.shuffledBottom70Order = null; // រក្សាលំដាប់រឿង ៧០% ពេល Admin ចុច Refresh
 
         window.bannerImages = JSON.parse(localStorage.getItem('dekmerl_banners')) || [
             "https://cdn.phototourl.com/member/2026-10-29-129eff2d-f0d6-443d-af59-579a762356ff.jpg",
@@ -1296,6 +1309,52 @@
             renderVideos();
         }
 
+        /* 🔄 មុខងារ Refresh រឿង ៧០% ខាងក្រោមមកលើវិញសម្រាប់ Admin */
+        window.refreshBottom70Movies = function() {
+            if (!isUserAdmin()) return;
+
+            // យកបញ្ជីរឿងទាំងអស់ដែលមិនមែនជា Hot
+            let normalSeriesList = [];
+            const seriesMap = {};
+            window.videos.forEach(v => {
+                if (!seriesMap[v.series]) {
+                    seriesMap[v.series] = {
+                        series: v.series,
+                        isHot: v.isHot || false,
+                        createdAt: v.createdAt || 0
+                    };
+                }
+                if (v.isHot) seriesMap[v.series].isHot = true;
+            });
+
+            const allSeries = Object.values(seriesMap);
+            const nonHotSeries = allSeries.filter(s => !s.isHot);
+
+            if (nonHotSeries.length === 0) {
+                alert("មិនមានរឿងចាស់ៗ (Non-Hot) សម្រាប់ Refresh ទេ!");
+                return;
+            }
+
+            // តម្រៀបតាមកាលបរិច្ឆេទ
+            nonHotSeries.sort((a, b) => b.createdAt - a.createdAt);
+
+            // គណនាចំនួន ៧០% ខាងក្រោម
+            const bottomCount = Math.ceil(nonHotSeries.length * 0.7);
+            const bottomPart = nonHotSeries.slice(nonHotSeries.length - bottomCount);
+            
+            // ធ្វើការបង្វិល (Shuffle) រឿង ៧០% នោះឡើងមកលើ
+            for (let i = bottomPart.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [bottomPart[i], bottomPart[j]] = [bottomPart[j], bottomPart[i]];
+            }
+
+            // រក្សាលំដាប់ឈ្មោះរឿងដែលបាន Shuffle រួច
+            window.shuffledBottom70Order = bottomPart.map(s => s.series);
+
+            renderVideos();
+            alert("✨ បានរៀបចំ និងរីហ្វ្រេសរឿង ៧០% ខាងក្រោមលោតឡើងមកលើជោគជ័យ!");
+        }
+
         window.handleVideoUpload = async function(e) {
             e.preventDefault();
             const series = document.getElementById('seriesTitle').value.trim();
@@ -1355,11 +1414,30 @@
 
             let seriesList = Object.values(seriesMap);
 
-            seriesList.sort((a, b) => {
-                if (a.isHot && !b.isHot) return -1;
-                if (!a.isHot && b.isHot) return 1;
-                return b.createdAt - a.createdAt;
-            });
+            // បំបែករឿង Hot និង រឿងធម្មតា
+            let hotSeries = seriesList.filter(s => s.isHot);
+            let normalSeries = seriesList.filter(s => !s.isHot);
+
+            // តម្រៀបរឿង Hot ឲ្យនៅខាងលើជានិច្ច
+            hotSeries.sort((a, b) => b.createdAt - a.createdAt);
+
+            // ប្រសិនបើ Admin បានចុច Refresh ៧០% ខាងក្រោម
+            if (window.shuffledBottom70Order && window.shuffledBottom70Order.length > 0) {
+                normalSeries.sort((a, b) => {
+                    let indexA = window.shuffledBottom70Order.indexOf(a.series);
+                    let indexB = window.shuffledBottom70Order.indexOf(b.series);
+                    
+                    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                    if (indexA !== -1) return -1;
+                    if (indexB !== -1) return 1;
+                    return b.createdAt - a.createdAt;
+                });
+            } else {
+                normalSeries.sort((a, b) => b.createdAt - a.createdAt);
+            }
+
+            // បញ្ចូលរឿង Hot ខាងលើ + រឿងធម្មតាខាងក្រោម
+            seriesList = [...hotSeries, ...normalSeries];
 
             if(seriesList.length === 0) {
                 grid.innerHTML = `<p style="color: #666; grid-column: 1/-1; text-align: center; padding: 30px 0; font-size: 0.85rem;">គ្មានវីដេអូរឿងទេ</p>`;
