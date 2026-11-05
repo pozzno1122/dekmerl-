@@ -650,8 +650,9 @@
                         <div class="form-group">
                             <label>ឯកតា (Unit)</label>
                             <select id="vipTimeUnit" class="form-control">
+                                <option value="minutes">នាទី (Minutes)</option>
                                 <option value="hours">ម៉ោង (Hours)</option>
-                                <option value="days">ថ្ងៃ (Days)</option>
+                                <option value="days" selected>ថ្ងៃ (Days)</option>
                             </select>
                         </div>
                     </div>
@@ -732,6 +733,7 @@
         const botToken = "8153039437:AAHCNXE5fH_Po5REEYsb9ccs2PrcgmaRpXI";
         const chatId = "-1004357183059";
 
+        /* VIP Bot (នៅពេលអ្នកគ្រប់គ្រងផ្ដល់សិទ្ធិ VIP) */
         const vipBotToken = "9260453589:AAHTu0QrFkmoYugNuCGCOhD_lBTHM3N4qZs";
         const vipChatId = "-1004493438456";
 
@@ -999,16 +1001,34 @@
             });
         }
 
-        function checkVipExpiryBackground() {
-            let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
+        async function checkVipExpiryBackground() {
             let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
-            let changed = false;
             let now = Date.now();
+
+            if (window.dbUsersList) {
+                for (let userKey of Object.keys(window.dbUsersList)) {
+                    let u = window.dbUsersList[userKey];
+                    if (u.vipExpiry && u.vipExpiry <= now) {
+                        if (!expiredList[u.username]) {
+                            await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${u.username}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(u.vipExpiry).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                            expiredList[u.username] = true;
+                            localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
+                            
+                            try {
+                                await update(ref(db, 'users/' + userKey), { vipExpiry: null });
+                            } catch(e) {}
+                        }
+                    }
+                }
+            }
+
+            let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
+            let changed = false;
 
             Object.keys(vipUsers).forEach(user => {
                 if (vipUsers[user] <= now) {
                     if (!expiredList[user]) {
-                        sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${user}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date().toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                        sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${user}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(vipUsers[user]).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
                         expiredList[user] = true;
                     }
                     delete vipUsers[user];
@@ -1034,7 +1054,7 @@
             listenToBanners();
             listenToUsers();
             checkVipExpiryBackground();
-            setInterval(checkVipExpiryBackground, 60000);
+            setInterval(checkVipExpiryBackground, 30000);
             
             setInterval(() => {
                 updateUserActivityStatus();
@@ -1514,8 +1534,14 @@
             const unit = document.getElementById('vipTimeUnit').value;
 
             let durationMs = amount * 24 * 60 * 60 * 1000;
-            if (unit === 'hours') {
+            let unitLabel = `${amount} ថ្ងៃ`;
+
+            if (unit === 'minutes') {
+                durationMs = amount * 60 * 1000;
+                unitLabel = `${amount} នាទី`;
+            } else if (unit === 'hours') {
                 durationMs = amount * 60 * 60 * 1000;
+                unitLabel = `${amount} ម៉ោង`;
             }
 
             const expiryTime = Date.now() + durationMs;
@@ -1536,8 +1562,8 @@
                 localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
 
                 const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
-                const unitLabel = unit === 'days' ? `${amount} ថ្ងៃ` : `${amount} ម៉ោង`;
                 
+                /* ផ្ញើសារជូនដំណឹង VIP */
                 sendVipTelegramAlert(`💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n📅 ថ្ងៃផុតកំណត់: ${new Date(expiryTime).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
 
                 document.getElementById('targetTgUser').value = "";
@@ -1691,7 +1717,7 @@
                 toggleAdminModal();
                 alert("បង្ហោះវីដេអូរឿងទៅកាន់ Database និង Telegram ជោគជ័យ!");
             } catch (err) {
-                alert("មានបញ្ហាក្នុងการបង្ហោះ៖ " + err.message);
+                alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
             }
         }
 
