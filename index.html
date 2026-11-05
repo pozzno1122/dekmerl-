@@ -479,7 +479,7 @@
         </div>
     </div>
 
-    <!-- Quick Add Next Episode Modal for Admin -->
+    <!-- Quick Add Next Episode Modal for Admin (Updated with Schedule Feature) -->
     <div id="quickAddEpModal" class="modal-overlay hidden">
         <div class="modal-box" style="text-align: left; max-width: 500px;">
             <button onclick="closeQuickAddEpModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
@@ -510,7 +510,23 @@
                         <option value="vip">សម្រាប់ VIP (VIP Only)</option>
                     </select>
                 </div>
-                <button type="submit" class="btn-submit" style="background-color: #E50914; color: #fff;">➕ បង្ហោះភាគនេះឥឡូវនេះ</button>
+
+                <!-- មុខងារកំណត់ពេលវេលាបង្ហោះសម្រាប់ Quick Add -->
+                <div class="form-group">
+                    <label style="color: #facc15; font-weight: bold;">⏰ ជម្រើសពេលវេលាបង្ហោះ</label>
+                    <select id="quickAddScheduleOption" class="form-control" onchange="toggleQuickAddScheduleInput(this.value)">
+                        <option value="now">បង្ហោះឥឡូវ (Publish Now)</option>
+                        <option value="schedule">កំណត់ពេលវេលា (Schedule)</option>
+                    </select>
+                </div>
+
+                <div id="quickAddScheduleInputGroup" class="form-group hidden" style="background: rgba(250,204,21,0.05); border: 1px dashed #facc15; padding: 10px; border-radius: 8px;">
+                    <label style="color: #facc15;">📅 កាលបរិច្ឆេទ និង ម៉ោងត្រូវបង្ហោះ</label>
+                    <input type="datetime-local" id="quickAddScheduleTime" class="form-control">
+                    <small style="color: #aaa; font-size: 0.65rem; display: block; margin-top: 4px;">* ប្រព័ន្ធនឹងផ្ញើសារចូល Group កំណត់ពេលភ្លាមៗ ហើយនឹងបង្ហោះចូលវេបសាយស្វ័យប្រវត្តិតាមម៉ោងដែលបានកំណត់។</small>
+                </div>
+
+                <button type="submit" class="btn-submit" style="background-color: #E50914; color: #fff; margin-top: 10px;">➕ បង្ហោះភាគនេះ</button>
             </form>
         </div>
     </div>
@@ -588,7 +604,6 @@
                     <div class="form-group"><label>លីងរូបភាព Thumbnail រឿង (Image URL)</label><input type="url" id="imageUrl" required placeholder="https://..." class="form-control"></div>
                     <div class="form-group"><label>ប្រភេទការមើល</label><select id="accessType" class="form-control"><option value="free">ឥតគិតថ្លៃ (Free)</option><option value="vip">សម្រាប់ VIP (VIP Only)</option></select></div>
                     
-                    <!-- មុខងារកំណត់ពេលវេលាបង្ហោះ (Schedule Option) -->
                     <div class="form-group">
                         <label style="color: #facc15; font-weight: bold;">⏰ ជម្រើសពេលវេលាបង្ហោះ</label>
                         <select id="scheduleOption" class="form-control" onchange="toggleScheduleInput(this.value)">
@@ -1667,7 +1682,7 @@
             });
         }
 
-        /* មុខងារឆེគមើលវីដេអូដែលដល់ម៉ោងកំណត់បង្ហោះ (Background Scheduler Checker) */
+        /* Background Scheduler Checker */
         async function checkScheduledVideosPublish() {
             let scheduledQueue = JSON.parse(localStorage.getItem('dekmerl_scheduled_videos')) || [];
             if (scheduledQueue.length === 0) return;
@@ -1677,7 +1692,6 @@
 
             for (let item of scheduledQueue) {
                 if (now >= item.publishTime) {
-                    // ដល់ម៉ោងបង្ហោះចូលវេបសាយ
                     try {
                         const newVideoRef = push(ref(db, 'videos'));
                         await set(newVideoRef, {
@@ -1692,7 +1706,6 @@
                             createdAt: Date.now()
                         });
 
-                        // ផ្ញើសារចូល Group កំណត់ពេលវេលា បញ្ជាក់ថាបានបង្ហោះចូលវេបសាយហើយ
                         await sendSchedulePublishedAlert(item.series, item.ep, item.type, item.category, item.videoUrl, item.imageUrl);
                     } catch (err) {}
                 } else {
@@ -1711,6 +1724,17 @@
             } else {
                 group.classList.add('hidden');
                 document.getElementById('scheduleTime').required = false;
+            }
+        }
+
+        window.toggleQuickAddScheduleInput = function(val) {
+            const group = document.getElementById('quickAddScheduleInputGroup');
+            if (val === 'schedule') {
+                group.classList.remove('hidden');
+                document.getElementById('quickAddScheduleTime').required = true;
+            } else {
+                group.classList.add('hidden');
+                document.getElementById('quickAddScheduleTime').required = false;
             }
         }
 
@@ -1760,7 +1784,7 @@
             alert("✨ បានរៀបចំ និងរីហ្វ្រេសរឿង ៧០% ខាងក្រោមលោតឡើងមកលើជោគជ័យ!");
         }
 
-        /* មុខងារបង្ហោះវីដេអូ (គាំទ្រទាំងបង្ហោះឥឡូវ និងកំណត់ពេលវេលា) */
+        /* មុខងារបង្ហោះវីដេអូ (Admin Main Tab) */
         window.handleVideoUpload = async function(e) {
             e.preventDefault();
             const series = document.getElementById('seriesTitle').value.trim();
@@ -1779,7 +1803,6 @@
             const scheduleOption = document.getElementById('scheduleOption').value;
 
             if (scheduleOption === 'now') {
-                // បង្ហោះឥឡូវ
                 try {
                     const newVideoRef = push(ref(db, 'videos'));
                     await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
@@ -1790,10 +1813,9 @@
                     toggleAdminModal();
                     alert("បង្ហោះវីដេអូរឿងទៅកាន់ Database និង Telegram ជោគជ័យ!");
                 } catch (err) {
-                    alert("មានបញ្ហាក្នុងการបង្ហោះ៖ " + err.message);
+                    alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
                 }
             } else {
-                // កំណត់ពេលវេលាបង្ហោះ (Schedule)
                 const scheduleTimeVal = document.getElementById('scheduleTime').value;
                 if (!scheduleTimeVal) {
                     alert("សូមជ្រើសរើសថ្ងៃ និងម៉ោងឱ្យបានត្រឹមត្រូវ!");
@@ -1807,19 +1829,68 @@
                 }
 
                 let scheduledQueue = JSON.parse(localStorage.getItem('dekmerl_scheduled_videos')) || [];
-                const newItem = {
-                    series, ep, type, category, videoUrl, imageUrl, accessType, isHot, publishTime
-                };
+                const newItem = { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, publishTime };
                 scheduledQueue.push(newItem);
                 localStorage.setItem('dekmerl_scheduled_videos', JSON.stringify(scheduledQueue));
 
-                // ផ្ញើសារចូល Group កំណត់ពេលវេលាភ្លាមៗ
                 const scheduleDateStr = new Date(publishTime).toLocaleString();
                 await sendScheduleCreatedAlert(series, ep, type, category, scheduleDateStr, videoUrl);
 
                 document.getElementById('uploadForm').reset();
                 toggleAdminModal();
                 alert(`បានកំណត់ពេលវេលាបង្ហោះ (Schedule) ជោគជ័យ! សារបានផ្ញើទៅកាន់ Group ព័ត៌មានកំណត់ពេលរួចរាល់។`);
+            }
+        }
+
+        /* មុខងារបង្ហោះភាគបន្ត (Quick Add Episode Modal with Schedule) */
+        window.handleQuickAddEpisode = async function(e) {
+            e.preventDefault();
+            const series = document.getElementById('quickAddSeriesTitle').value;
+            const ep = document.getElementById('quickAddEpTitle').value.trim();
+            const type = document.getElementById('quickAddVideoType').value;
+            const category = document.getElementById('quickAddVideoCategory').value;
+            const imageUrl = document.getElementById('quickAddImageUrl').value;
+            const videoUrl = document.getElementById('quickAddVideoUrl').value.trim();
+            let accessType = document.getElementById('quickAddAccessType').value;
+            if (category === 'រឿងឥតគិតថ្លៃ') accessType = 'free';
+            const isHot = document.getElementById('quickAddIsHot').value === "true";
+            const scheduleOption = document.getElementById('quickAddScheduleOption').value;
+
+            if (scheduleOption === 'now') {
+                try {
+                    const newVideoRef = push(ref(db, 'videos'));
+                    await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
+                    
+                    sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
+
+                    closeQuickAddEpModal();
+                    alert(`បានបង្ហោះ ${ep} សម្រាប់រឿង "${series}" ទៅកាន់ Database និង Telegram ជោគជ័យ!`);
+                } catch (err) {
+                    alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
+                }
+            } else {
+                const scheduleTimeVal = document.getElementById('quickAddScheduleTime').value;
+                if (!scheduleTimeVal) {
+                    alert("សូមជ្រើសរើសថ្ងៃ និងម៉ោងឱ្យបានត្រឹមត្រូវ!");
+                    return;
+                }
+
+                const publishTime = new Date(scheduleTimeVal).getTime();
+                if (publishTime <= Date.now()) {
+                    alert("ពេលវេលាដែលបានកំណត់ត្រូវតែស្ថិតនៅពេលអនាគត!");
+                    return;
+                }
+
+                let scheduledQueue = JSON.parse(localStorage.getItem('dekmerl_scheduled_videos')) || [];
+                const newItem = { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, publishTime };
+                scheduledQueue.push(newItem);
+                localStorage.setItem('dekmerl_scheduled_videos', JSON.stringify(scheduledQueue));
+
+                const scheduleDateStr = new Date(publishTime).toLocaleString();
+                await sendScheduleCreatedAlert(series, ep, type, category, scheduleDateStr, videoUrl);
+
+                closeQuickAddEpModal();
+                alert(`បានកំណត់ពេលវេលាបង្ហោះភាគបន្ត (Schedule) ជោគជ័យ!`);
             }
         }
 
@@ -2040,36 +2111,16 @@
             document.getElementById('quickAddVideoUrl').value = '';
             document.getElementById('quickAddAccessType').value = (refEp.category === 'រឿងឥតគិតថ្លៃ') ? 'free' : 'vip';
 
+            // Reset Schedule selection to Now
+            document.getElementById('quickAddScheduleOption').value = 'now';
+            document.getElementById('quickAddScheduleInputGroup').classList.add('hidden');
+            document.getElementById('quickAddScheduleTime').value = '';
+
             document.getElementById('quickAddEpModal').classList.remove('hidden');
         }
 
         window.closeQuickAddEpModal = function() {
             document.getElementById('quickAddEpModal').classList.add('hidden');
-        }
-
-        window.handleQuickAddEpisode = async function(e) {
-            e.preventDefault();
-            const series = document.getElementById('quickAddSeriesTitle').value;
-            const ep = document.getElementById('quickAddEpTitle').value.trim();
-            const type = document.getElementById('quickAddVideoType').value;
-            const category = document.getElementById('quickAddVideoCategory').value;
-            const imageUrl = document.getElementById('quickAddImageUrl').value;
-            const videoUrl = document.getElementById('quickAddVideoUrl').value.trim();
-            let accessType = document.getElementById('quickAddAccessType').value;
-            if (category === 'រឿងឥតគិតថ្លៃ') accessType = 'free';
-            const isHot = document.getElementById('quickAddIsHot').value === "true";
-
-            try {
-                const newVideoRef = push(ref(db, 'videos'));
-                await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
-                
-                sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
-
-                closeQuickAddEpModal();
-                alert(`បានបង្ហោះ ${ep} សម្រាប់រឿង "${series}" ទៅកាន់ Database និង Telegram ជោគជ័យ!`);
-            } catch (err) {
-                alert("មានបញ្ហាក្នុងการបង្ហោះ៖ " + err.message);
-            }
         }
 
         window.closeSeriesModal = function() {
