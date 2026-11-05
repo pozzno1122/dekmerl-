@@ -479,7 +479,7 @@
         </div>
     </div>
 
-    <!-- Quick Add Next Episode Modal for Admin (Updated with Schedule Feature) -->
+    <!-- Quick Add Next Episode Modal for Admin -->
     <div id="quickAddEpModal" class="modal-overlay hidden">
         <div class="modal-box" style="text-align: left; max-width: 500px;">
             <button onclick="closeQuickAddEpModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
@@ -511,7 +511,6 @@
                     </select>
                 </div>
 
-                <!-- មុខងារកំណត់ពេលវេលាបង្ហោះសម្រាប់ Quick Add -->
                 <div class="form-group">
                     <label style="color: #facc15; font-weight: bold;">⏰ ជម្រើសពេលវេលាបង្ហោះ</label>
                     <select id="quickAddScheduleOption" class="form-control" onchange="toggleQuickAddScheduleInput(this.value)">
@@ -578,7 +577,7 @@
                 <div id="vipRankingsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
             </div>
 
-            <!-- Upload Tab with Schedule Function -->
+            <!-- Upload Tab -->
             <div id="adminTabUpload" class="hidden">
                 <form id="uploadForm" onsubmit="handleVideoUpload(event)">
                     <div class="form-group"><label>ចំណងជើងរឿងដុំ / ស៊េរី (ឧ. កំពូលព្រះបិសាច)</label><input type="text" id="seriesTitle" required placeholder="ឧ. កំពូលព្រះបិសាច" class="form-control"></div>
@@ -626,13 +625,25 @@
                 </form>
             </div>
 
+            <!-- Tab ភាគទាំងអស់ (With Multi-Select & Delete All) -->
             <div id="adminTabEpisodes" class="hidden">
-                <div class="search-box-wrap" style="margin-bottom: 12px;">
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" id="adminEpisodeSearchInput" oninput="renderAdminAllEpisodesList()" placeholder="ស្វែងរកឈ្មោះរឿង ឬភាគដើម្បីកែប្រែ/លុប..." class="search-input" autocomplete="off">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px;">
+                    <div class="search-box-wrap" style="margin-bottom: 0; flex: 1;">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="adminEpisodeSearchInput" oninput="renderAdminAllEpisodesList()" placeholder="ស្វែងរកឈ្មោះរឿង ឬភាគ..." class="search-input" autocomplete="off">
+                    </div>
+                    <button onclick="deleteSelectedEpisodes()" style="background-color: #dc2626; color: #fff; border: none; padding: 10px 14px; border-radius: 10px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 4px;" title="លុបទាំងអស់ដែលបានជ្រើសរើស">
+                        <i class="fa-solid fa-trash-can"></i> លុបទាំងអស់
+                    </button>
                 </div>
-                <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 10px;">📋 បញ្ជីភាគវីដេអូសរុប៖</h4>
-                <div id="adminAllEpisodesList" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
+                
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 0.75rem; color: #aaa;">
+                    <input type="checkbox" id="selectAllEpisodesCheckbox" onclick="toggleSelectAllEpisodes(this)" style="width: 16px; height: 16px; accent-color: #E50914; cursor: pointer;">
+                    <label for="selectAllEpisodesCheckbox" style="cursor: pointer;">ជ្រើសរើសទាំងអស់ (Select All)</label>
+                </div>
+
+                <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 8px;">📋 បញ្ជីភាគវីដេអូសរុប៖</h4>
+                <div id="adminAllEpisodesList" style="display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto;"></div>
             </div>
 
             <!-- Tab បញ្ជីសមាជិក (Member List) -->
@@ -769,11 +780,11 @@
         const vipBotToken = "9260453589:AAHTu0QrFkmoYugNuCGCOhD_lBTHM3N4qZs";
         const vipChatId = "-1004493438456";
 
-        /* Telegram Bot សម្រាប់រឿងបង្ហោះភ្លាមៗ (Instant Upload) */
+        /* Telegram Bot សម្រាប់រឿងបង្ហោះភ្លាមៗ (Instant Upload)[span_1](start_span)[span_1](end_span) */
         const movieBotToken = "9284674255:AAHP3kX9xipGvouXRXx4sZWcL_x_BnGnNaE";
         const movieChatId = "-1004381190574";
 
-        /* Telegram Bot សម្រាប់កន្លែងកំណត់ពេលវេលាបង្ហោះ (Scheduled Upload) */
+        /* Telegram Bot សម្រាប់កន្លែងកំណត់ពេលវេលាបង្ហោះ (Scheduled Upload)[span_2](start_span)[span_2](end_span) */
         const scheduleBotToken = "9122037857:AAFWXSDTRuhVAu8D4TEDHUI3vFDGfRH0Mvg";
         const scheduleChatId = "-1004373607990";
 
@@ -826,7 +837,6 @@
             await sendTelegramAlert(textMsg, expiredVipBotToken, expiredVipChatId);
         }
 
-        /* ផ្ញើសាររឿងបង្ហោះភ្លាមៗ */
         async function sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl) {
             const textMsg = `🎬 **មានការបង្ហោះរឿងថ្មីនៅលើវេបសាយ!**\n\n` +
                             `📌 **ឈ្មោះរឿង:** ${series}\n` +
@@ -839,7 +849,6 @@
             await sendTelegramAlert(textMsg, movieBotToken, movieChatId);
         }
 
-        /* ផ្ញើសារកំណត់ពេលបង្ហោះ (ពេលកំណត់ជោគជ័យ) */
         async function sendScheduleCreatedAlert(series, ep, type, category, scheduleDateStr, videoUrl) {
             const textMsg = `⏰ **បានកំណត់ពេលវេលាបង្ហោះរឿងថ្មី!**\n\n` +
                             `📌 **ឈ្មោះរឿង:** ${series}\n` +
@@ -847,11 +856,10 @@
                             `📽️ **ប្រភេទរឿង:** ${type} (${category})\n` +
                             `📅 **ពេលត្រូវបង្ហោះ:** ${scheduleDateStr}\n` +
                             `🔗 **លីងវីដេអូ:** ${videoUrl}\n\n` +
-                            `🤖 **ស្ថានភាព:** ប្រព័ន្ធនឹងបង្ហោះចូលវេបសាយ និងរាយការណ៍ជូនដំណឹងម្ដងទៀតនៅពេលដល់ម៉ោង!`;
+                            `🤖 **ស្ថានភាព:** ប្រព័ន្ធនឹងបង្ហោះចូលវេបសាយ តែ ១ ភាគនេះគត់ និងរាយការណ៍ជូនដំណឹងនៅពេលដល់ម៉ោង!`;
             await sendTelegramAlert(textMsg, scheduleBotToken, scheduleChatId);
         }
 
-        /* ផ្ញើសារបញ្ជាក់ពេលដល់ម៉ោងបង្ហោះចូលវេបសាយ */
         async function sendSchedulePublishedAlert(series, ep, type, category, videoUrl, imageUrl) {
             const textMsg = `✅ **រឿងដែលបានកំណត់ពេល ត្រូវបានបង្ហោះចូលវេបសាយជោគជ័យហើយ!**\n\n` +
                             `📌 **ឈ្មោះរឿង:** ${series}\n` +
@@ -1522,6 +1530,7 @@
             }
         }
 
+        /* មុខងារបង្ហាញបញ្ជីភាគវីដេអូសរុប (ជាមួយ Checkbox សម្រាប់លុបច្រើន) */
         window.renderAdminAllEpisodesList = function() {
             const listContainer = document.getElementById('adminAllEpisodesList');
             if(!listContainer) return;
@@ -1537,17 +1546,46 @@
                 return;
             }
             listContainer.innerHTML = list.map(v => `
-                <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 10px; border-radius: 8px; font-size: 0.75rem;">
-                    <div>
-                        <span style="color: #fff; font-weight: bold;">${v.series}</span> - <span style="color: #facc15;">${v.ep}</span>
-                        <div style="color: #888; font-size: 0.65rem;">ប្រភេទ: ${v.type || 'រឿងភាគ'} | មើល: ${(v.accessType === 'free' || v.accessType === 'ឥតគិតថ្លៃ') ? 'FREE' : 'VIP'} ${v.isHot ? '| 🔥 HOT' : ''}</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 10px; border-radius: 8px; font-size: 0.75rem; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; flex: 1;">
+                        <input type="checkbox" class="episode-select-checkbox" value="${v.id}" style="width: 16px; height: 16px; accent-color: #E50914; cursor: pointer; flex-shrink: 0;">
+                        <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <span style="color: #fff; font-weight: bold;">${v.series}</span> - <span style="color: #facc15;">${v.ep}</span>
+                            <div style="color: #888; font-size: 0.65rem;">ប្រភេទ: ${v.type || 'រឿងភាគ'} | មើល: ${(v.accessType === 'free' || v.accessType === 'ឥតគិតថ្លៃ') ? 'FREE' : 'VIP'} ${v.isHot ? '| 🔥 HOT' : ''}</div>
+                        </div>
                     </div>
-                    <div style="display: flex; gap: 6px;">
+                    <div style="display: flex; gap: 6px; flex-shrink: 0;">
                         <button onclick="openEditModal('${v.id}')" style="background-color: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">✏️ កែ</button>
                         <button onclick="deleteEpisode('${v.id}')" style="background-color: #dc2626; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">🗑️ លុប</button>
                     </div>
                 </div>
             `).join('');
+        }
+
+        window.toggleSelectAllEpisodes = function(masterCheckbox) {
+            const checkboxes = document.querySelectorAll('.episode-select-checkbox');
+            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+        }
+
+        window.deleteSelectedEpisodes = async function() {
+            const checkedBoxes = document.querySelectorAll('.episode-select-checkbox:checked');
+            if (checkedBoxes.length === 0) {
+                alert("សូមជ្រើសរើស (គ្រីស) ភាគវីដេអូយ៉ាងហោចណាស់មួយ ដើម្បីលុប!");
+                return;
+            }
+
+            if (confirm(`តើអ្នកពិតជាចង់លុបភាគវីដេអូចំនួន ${checkedBoxes.length} ដែលបានជ្រើសរើសមែនទេ?`)) {
+                try {
+                    for (let cb of checkedBoxes) {
+                        await remove(ref(db, 'videos/' + cb.value));
+                    }
+                    document.getElementById('selectAllEpisodesCheckbox').checked = false;
+                    renderAdminAllEpisodesList();
+                    alert("បានលុបភាគវីដេអូដែលបានជ្រើសរើសជោគជ័យ!");
+                } catch (err) {
+                    alert("កំហុស៖ " + err.message);
+                }
+            }
         }
 
         window.deleteEpisode = async function(id) {
@@ -1682,7 +1720,7 @@
             });
         }
 
-        /* Background Scheduler Checker */
+        /* Background Scheduler Checker (បង្ហោះតែ ១ ភាគគត់ដែលបានកំណត់ពេល) */
         async function checkScheduledVideosPublish() {
             let scheduledQueue = JSON.parse(localStorage.getItem('dekmerl_scheduled_videos')) || [];
             if (scheduledQueue.length === 0) return;
@@ -1784,7 +1822,6 @@
             alert("✨ បានរៀបចំ និងរីហ្វ្រេសរឿង ៧០% ខាងក្រោមលោតឡើងមកលើជោគជ័យ!");
         }
 
-        /* មុខងារបង្ហោះវីដេអូ (Admin Main Tab) */
         window.handleVideoUpload = async function(e) {
             e.preventDefault();
             const series = document.getElementById('seriesTitle').value.trim();
@@ -1842,7 +1879,6 @@
             }
         }
 
-        /* មុខងារបង្ហោះភាគបន្ត (Quick Add Episode Modal with Schedule) */
         window.handleQuickAddEpisode = async function(e) {
             e.preventDefault();
             const series = document.getElementById('quickAddSeriesTitle').value;
@@ -2111,7 +2147,6 @@
             document.getElementById('quickAddVideoUrl').value = '';
             document.getElementById('quickAddAccessType').value = (refEp.category === 'រឿងឥតគិតថ្លៃ') ? 'free' : 'vip';
 
-            // Reset Schedule selection to Now
             document.getElementById('quickAddScheduleOption').value = 'now';
             document.getElementById('quickAddScheduleInputGroup').classList.add('hidden');
             document.getElementById('quickAddScheduleTime').value = '';
