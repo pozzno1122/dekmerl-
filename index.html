@@ -279,7 +279,7 @@
         }
 
         .modal-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
-        .modal-box { background-color: #1e1e1e; border: 1px solid #333; border-radius: 16px; width: 100%; max-width: 580px; padding: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-box { background-color: #1e1e1e; border: 1px solid #333; border-radius: 16px; width: 100%; max-width: 650px; padding: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
         .btn-close-modal { position: absolute; top: 14px; right: 14px; background: none; border: none; color: #888; font-size: 1.2rem; cursor: pointer; }
         
         .admin-tabs { display: flex; gap: 12px; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 16px; overflow-x: auto; }
@@ -314,6 +314,12 @@
         .telegram-float-btn:hover { transform: scale(1.08); }
 
         .hidden { display: none !important; }
+
+        /* Stats Card UI */
+        .stats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+        .stat-card { background: #121212; border: 1px solid #333; border-radius: 10px; padding: 12px; text-align: center; }
+        .stat-card h4 { font-size: 0.65rem; color: #888; }
+        .stat-card p { font-size: 1.2rem; font-weight: bold; color: #E50914; margin-top: 4px; }
 
         /* Click Ripple Effect */
         .click-ripple {
@@ -406,7 +412,6 @@
             <i class="fa-solid fa-gear"></i>
             <span>⚙️ គ្រប់គ្រងវិបសាយ (Admin Control Panel)</span>
         </button>
-        <!-- ប៊ូតុង Refresh រឿង ៧០% ខាងក្រោមសម្រាប់ Admin -->
         <button onclick="refreshBottom70Movies()" class="btn-admin-refresh">
             <i class="fa-solid fa-arrows-rotate"></i>
             <span>🔄 រីហ្វ្រេសរឿងចាស់ៗ (Refresh 70% ខាងក្រោមឡើងលើ)</span>
@@ -512,10 +517,12 @@
 
     <!-- Admin Management Modal -->
     <div id="adminModal" class="modal-overlay hidden">
-        <div class="modal-box" style="max-width: 620px; text-align: left;">
+        <div class="modal-box" style="max-width: 650px; text-align: left;">
             <button onclick="toggleAdminModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
             <div class="admin-tabs">
-                <button onclick="switchAdminTab('upload')" id="tabUploadBtn" class="tab-btn active-tab">➕ បង្ហោះវីដេអូ</button>
+                <button onclick="switchAdminTab('stats')" id="tabStatsBtn" class="tab-btn active-tab">📊 ស្ថិតិ & ប្រវត្តិមើល</button>
+                <button onclick="switchAdminTab('vipRank')" id="tabVipRankBtn" class="tab-btn">🏆 ថ្ងៃ VIP ភាគច្រើន</button>
+                <button onclick="switchAdminTab('upload')" id="tabUploadBtn" class="tab-btn">➕ បង្ហោះវីដេអូ</button>
                 <button onclick="switchAdminTab('episodes')" id="tabEpisodesBtn" class="tab-btn">📋 ភាគទាំងអស់</button>
                 <button onclick="switchAdminTab('members')" id="tabMembersBtn" class="tab-btn">👥 បញ្ជីសមាជិក</button>
                 <button onclick="switchAdminTab('banners')" id="tabBannersBtn" class="tab-btn">🖼️ កែ Banner</button>
@@ -523,7 +530,39 @@
                 <button onclick="switchAdminTab('users')" id="tabUsersBtn" class="tab-btn">💎 ផ្ដល់ VIP</button>
             </div>
             
-            <div id="adminTabUpload">
+            <!-- ស្ថិតិ & ប្រវត្តិមើលរឿងរបស់អតិថិជន -->
+            <div id="adminTabStats">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h4>👁️ អ្នកចូលមើលសរុប</h4>
+                        <p id="totalVisitsCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>📝 អ្នកចុះឈ្មោះសរុប</h4>
+                        <p id="totalRegUsersCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>🟢 កំពុងសកម្ម (Online)</h4>
+                        <p id="activeOnlineUsersCount">0</p>
+                    </div>
+                </div>
+
+                <div class="search-box-wrap" style="margin-bottom: 12px;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="adminWatchHistorySearch" oninput="renderAdminWatchHistoryList()" placeholder="ស្វែងរកឈ្មោះអតិថិជន ដើម្បីមើលប្រវត្តិរឿង..." class="search-input" autocomplete="off">
+                </div>
+                
+                <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 10px;">👁️ ប្រវត្តិមើលរឿងរបស់អតិថិជនទាំងអស់៖</h4>
+                <div id="adminWatchHistoryContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 340px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- បញ្ជីសមាជិក VIP តម្រៀបតាមចំនួនថ្ងៃច្រើនជាងគេ -->
+            <div id="adminTabVipRank" class="hidden">
+                <h4 style="font-size: 0.85rem; color: #facc15; margin-bottom: 12px;">🏆 បញ្ជីសមាជិក VIP ដែលមានចំនួនថ្ងៃច្រើនជាងគេ (១ ដល់ ក្រោម)៖</h4>
+                <div id="vipRankingsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
+            </div>
+
+            <div id="adminTabUpload" class="hidden">
                 <form id="uploadForm" onsubmit="handleVideoUpload(event)">
                     <div class="form-group"><label>ចំណងជើងរឿងដុំ / ស៊េរី (ឧ. កំពូលព្រះបិសាច)</label><input type="text" id="seriesTitle" required placeholder="ឧ. កំពូលព្រះបិសាច" class="form-control"></div>
                     <div class="form-group"><label>ចំណងជើងភាគ (ឧ. ភាគទី ១)</label><input type="text" id="epTitle" required placeholder="ឧ. ភាគទី ១" class="form-control"></div>
@@ -564,6 +603,7 @@
                 <div id="adminAllEpisodesList" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
             </div>
 
+            <!-- Tab បញ្ជីសមាជិក (Member List) -->
             <div id="adminTabMembers" class="hidden">
                 <div class="search-box-wrap" style="margin-bottom: 12px;">
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
@@ -670,7 +710,7 @@
     <!-- Script Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, push, set, update, remove, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBoPW-X64pI39xkOIwrKJqp-CFSRUSMSCI",
@@ -689,17 +729,18 @@
         const secondAdminTelegram = "@rienml1".toLowerCase().trim();
 
         /* Telegram Bots Settings */
-        // 1. Bot សម្រាប់ព័ត៌មានអ្នកចុះឈ្មោះថ្មី
         const botToken = "8153039437:AAHCNXE5fH_Po5REEYsb9ccs2PrcgmaRpXI";
         const chatId = "-1004357183059";
 
-        // 2. Bot សម្រាប់ព័ត៌មាន VIP (ផ្ញើចូលគ្រុប Dekmerl VIP ត្រឹមត្រូវ)
         const vipBotToken = "9260453589:AAHTu0QrFkmoYugNuCGCOhD_lBTHM3N4qZs";
         const vipChatId = "-1004493438456";
 
-        // 3. Bot សម្រាប់ព័ត៌មានបង្ហោះរឿងថ្មីៗ
         const movieBotToken = "9284674255:AAHP3kX9xipGvouXRXx4sZWcL_x_BnGnNaE";
         const movieChatId = "-1004381190574";
+
+        /* Telegram Bot សម្រាប់ VIP អស់សុពលភាព */
+        const expiredVipBotToken = "9246036170:AAHb7bTyGetzB0hV5YwNAT-5-izAlogkBY0";
+        const expiredVipChatId = "-1004387202073";
 
         /* Click Ripple Water Effect */
         function createClickRipple(e) {
@@ -738,12 +779,14 @@
             } catch (err) {}
         }
 
-        // ផ្ញើព័ត៌មាន VIP ទៅកាន់ Bot និង Group VIP ត្រឹមត្រូវ (-1004493438456)
         async function sendVipTelegramAlert(textMsg) {
             await sendTelegramAlert(textMsg, vipBotToken, vipChatId);
         }
 
-        // ផ្ញើព័ត៌មានបង្ហោះរឿងទៅ Bot ទី 3
+        async function sendExpiredVipTelegramAlert(textMsg) {
+            await sendTelegramAlert(textMsg, expiredVipBotToken, expiredVipChatId);
+        }
+
         async function sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl) {
             const textMsg = `🎬 **មានការបង្ហោះរឿងថ្មីនៅលើវេបសាយ!**\n\n` +
                             `📌 **ឈ្មោះរឿង:** ${series}\n` +
@@ -773,6 +816,13 @@
             }
         }
 
+        function trackSiteVisits() {
+            const visitRef = ref(db, 'analytics/totalVisits');
+            runTransaction(visitRef, (currentValue) => {
+                return (currentValue || 0) + 1;
+            });
+        }
+
         async function saveUserToDatabase(user) {
             if (!user || !user.username) return;
             const cleanUserKey = user.username.replace(/[^a-zA-Z0-9_]/g, '');
@@ -788,6 +838,41 @@
             try {
                 await update(userRef, userData);
             } catch(e) {}
+        }
+
+        function updateUserActivityStatus(currentlyWatching = null) {
+            if (!window.currentUserTgObj || !window.currentUserTgObj.username) return;
+            const cleanUserKey = window.currentUserTgObj.username.replace(/[^a-zA-Z0-9_]/g, '');
+            const userRef = ref(db, 'users/' + cleanUserKey);
+
+            const payload = {
+                lastSeen: Date.now()
+            };
+            if (currentlyWatching !== null) {
+                payload.currentlyWatching = currentlyWatching;
+            }
+
+            try {
+                update(userRef, payload);
+            } catch(e) {}
+        }
+
+        function recordWatchHistory(seriesName, epTitle) {
+            if (!window.currentUserTgObj || !window.currentUserTgObj.username) return;
+            const cleanUserKey = window.currentUserTgObj.username.replace(/[^a-zA-Z0-9_]/g, '');
+            const historyRef = ref(db, `users/${cleanUserKey}/watchHistory/${seriesName.replace(/[^a-zA-Z0-9_]/g, '_')}`);
+
+            const historyData = {
+                series: seriesName,
+                lastEp: epTitle,
+                updatedAt: Date.now()
+            };
+
+            try {
+                set(historyRef, historyData);
+            } catch(e) {}
+
+            updateUserActivityStatus(`កំពុងមើលរឿង៖ ${seriesName} (${epTitle})`);
         }
 
         function getTelegramUserData() {
@@ -824,6 +909,7 @@
         window.currentUserTgObj = getTelegramUserData();
         window.videos = [];
         window.dbUsersList = {};
+        window.totalVisits = 0;
         window.currentCategory = 'all';
         window.shuffledBottom70Order = null;
 
@@ -841,10 +927,33 @@
                     window.dbUsersList = data;
                     if(!document.getElementById('adminModal').classList.contains('hidden')) {
                         renderAdminMemberList();
+                        renderAdminWatchHistoryList();
+                        renderVipRankingsList();
+                        updateStatsUI();
                     }
                     renderTelegramLoginWidget();
                 }
             });
+
+            const visitsRef = ref(db, 'analytics/totalVisits');
+            onValue(visitsRef, (snapshot) => {
+                window.totalVisits = snapshot.val() || 0;
+                updateStatsUI();
+            });
+        }
+
+        function updateStatsUI() {
+            const visitsEl = document.getElementById('totalVisitsCount');
+            const regEl = document.getElementById('totalRegUsersCount');
+            const onlineEl = document.getElementById('activeOnlineUsersCount');
+
+            const usersArr = Object.values(window.dbUsersList || {});
+            const now = Date.now();
+            const onlineCount = usersArr.filter(u => u.lastSeen && (now - u.lastSeen < 3 * 60 * 1000)).length;
+
+            if (visitsEl) visitsEl.innerText = window.totalVisits;
+            if (regEl) regEl.innerText = usersArr.length;
+            if (onlineEl) onlineEl.innerText = onlineCount;
         }
 
         function renderBanners() {
@@ -899,7 +1008,7 @@
             Object.keys(vipUsers).forEach(user => {
                 if (vipUsers[user] <= now) {
                     if (!expiredList[user]) {
-                        sendVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${user}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date().toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                        sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${user}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date().toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
                         expiredList[user] = true;
                     }
                     delete vipUsers[user];
@@ -914,16 +1023,22 @@
                 if(!document.getElementById('adminModal').classList.contains('hidden')) {
                     renderAdminMemberList();
                     renderVipUserList();
+                    renderVipRankingsList();
                 }
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            trackSiteVisits();
             renderBanners();
             listenToBanners();
             listenToUsers();
             checkVipExpiryBackground();
             setInterval(checkVipExpiryBackground, 60000);
+            
+            setInterval(() => {
+                updateUserActivityStatus();
+            }, 60000);
 
             const slides = document.getElementById('carouselSlides');
             let currentSlide = 0;
@@ -956,6 +1071,7 @@
             if (window.currentUserTgObj) {
                 const hasVip = isUserVip();
                 let vipCountdownText = "";
+                const isDeveloper = window.currentUserTgObj.username.toLowerCase().trim() === superAdminTelegram;
                 
                 if (hasVip && !isUserAdmin()) {
                     const username = window.currentUserTgObj.username.toLowerCase().trim();
@@ -978,7 +1094,8 @@
                     <div style="display: flex; align-items: center; gap: 6px; background-color: #1e1e1e; border: 1px solid ${hasVip ? '#facc15' : '#333'}; padding: 4px 8px; border-radius: 20px;">
                         <img src="${window.currentUserTgObj.photo_url || 'https://via.placeholder.com/28'}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #444;" alt="Avatar">
                         <i class="fa-brands fa-telegram" style="color: #229ED9; font-size: 1.1rem; margin-right: 2px;"></i>
-                        ${hasVip ? `
+                        ${isDeveloper ? '<span style="color: red; font-weight: bold; font-size: 0.75rem;">Developer</span>' : ''}
+                        ${hasVip && !isDeveloper ? `
                             <div style="display: flex; align-items: center; gap: 4px;">
                                 <img src="${vipBadgeImgUrl}" style="height: 22px; object-fit: contain;" alt="VIP">
                                 ${vipCountdownText ? `<span style="font-size: 0.6rem; color: #facc15; font-weight: bold;">(នៅសល់ ${vipCountdownText})</span>` : ''}
@@ -1073,11 +1190,15 @@
 
         window.toggleAdminModal = function() {
             document.getElementById('adminModal').classList.toggle('hidden');
-            renderAdminAllEpisodesList();
+            renderAdminWatchHistoryList();
             renderAdminMemberList();
+            renderVipRankingsList();
+            updateStatsUI();
         }
 
         window.switchAdminTab = function(tabName) {
+            document.getElementById('adminTabStats').classList.add('hidden');
+            document.getElementById('adminTabVipRank').classList.add('hidden');
             document.getElementById('adminTabUpload').classList.add('hidden');
             document.getElementById('adminTabEpisodes').classList.add('hidden');
             document.getElementById('adminTabMembers').classList.add('hidden');
@@ -1085,6 +1206,8 @@
             document.getElementById('adminTabVip').classList.add('hidden');
             document.getElementById('adminTabUsers').classList.add('hidden');
 
+            document.getElementById('tabStatsBtn').classList.remove('active-tab');
+            document.getElementById('tabVipRankBtn').classList.remove('active-tab');
             document.getElementById('tabUploadBtn').classList.remove('active-tab');
             document.getElementById('tabEpisodesBtn').classList.remove('active-tab');
             document.getElementById('tabMembersBtn').classList.remove('active-tab');
@@ -1092,7 +1215,16 @@
             document.getElementById('tabVipBtn').classList.remove('active-tab');
             document.getElementById('tabUsersBtn').classList.remove('active-tab');
 
-            if (tabName === 'upload') {
+            if (tabName === 'stats') {
+                document.getElementById('adminTabStats').classList.remove('hidden');
+                document.getElementById('tabStatsBtn').classList.add('active-tab');
+                renderAdminWatchHistoryList();
+                updateStatsUI();
+            } else if (tabName === 'vipRank') {
+                document.getElementById('adminTabVipRank').classList.remove('hidden');
+                document.getElementById('tabVipRankBtn').classList.add('active-tab');
+                renderVipRankingsList();
+            } else if (tabName === 'upload') {
                 document.getElementById('adminTabUpload').classList.remove('hidden');
                 document.getElementById('tabUploadBtn').classList.add('active-tab');
             } else if (tabName === 'episodes') {
@@ -1119,6 +1251,141 @@
                 document.getElementById('tabUsersBtn').classList.add('active-tab');
                 renderVipUserList();
             }
+        }
+
+        window.renderAdminWatchHistoryList = function() {
+            const container = document.getElementById('adminWatchHistoryContainer');
+            if (!container) return;
+
+            const searchQuery = (document.getElementById('adminWatchHistorySearch')?.value || '').toLowerCase().trim();
+            let usersArr = Object.values(window.dbUsersList || {});
+
+            if (searchQuery !== '') {
+                usersArr = usersArr.filter(u => u.username.toLowerCase().includes(searchQuery) || (u.first_name && u.first_name.toLowerCase().includes(searchQuery)));
+            }
+
+            const now = Date.now();
+
+            usersArr.sort((a, b) => {
+                const aIsOnline = a.lastSeen && (now - a.lastSeen < 3 * 60 * 1000);
+                const bIsOnline = b.lastSeen && (now - b.lastSeen < 3 * 60 * 1000);
+                const aIsWatching = aIsOnline && a.currentlyWatching && a.currentlyWatching !== "";
+                const bIsWatching = bIsOnline && b.currentlyWatching && b.currentlyWatching !== "";
+
+                if (aIsWatching && !bIsWatching) return -1;
+                if (!aIsWatching && bIsWatching) return 1;
+
+                if (aIsOnline && !bIsOnline) return -1;
+                if (!aIsOnline && bIsOnline) return 1;
+
+                return (b.lastSeen || 0) - (a.lastSeen || 0);
+            });
+
+            if (usersArr.length === 0) {
+                container.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 15px;">មិនទាន់មានប្រវត្តិមើលរឿង ឬរកមិនឃើញឡើយ។</p>`;
+                return;
+            }
+
+            container.innerHTML = usersArr.map(u => {
+                const isOnline = u.lastSeen && (now - u.lastSeen < 3 * 60 * 1000);
+                const isWatching = isOnline && u.currentlyWatching && u.currentlyWatching !== "";
+
+                const historyItems = u.watchHistory ? Object.values(u.watchHistory) : [];
+                historyItems.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+                let historyHTML = '';
+                if (historyItems.length > 0) {
+                    historyHTML = historyItems.map(h => `
+                        <div style="font-size: 0.7rem; color: #aaa; background: #181818; padding: 4px 8px; border-radius: 4px; margin-top: 4px;">
+                            🎬 <span style="color: #fff; font-weight: bold;">${h.series}</span> — <span style="color: #facc15;">${h.lastEp}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    historyHTML = `<div style="font-size: 0.7rem; color: #666; margin-top: 4px;">មិនទាន់មានប្រវត្តិមើលរឿងនៅឡើយ</div>`;
+                }
+
+                return `
+                    <div style="background-color: #121212; border: 1px solid ${isWatching ? '#22c55e' : '#2a2a2a'}; border-radius: 10px; padding: 10px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <img src="${u.photo_url || 'https://via.placeholder.com/32'}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;" alt="Avatar">
+                                <div>
+                                    <div style="font-size: 0.8rem; font-weight: bold; color: #fff;">
+                                        ${u.username} ${u.username.toLowerCase().trim() === superAdminTelegram ? '<span style="color: red;">[Developer]</span>' : ''}
+                                    </div>
+                                    <div style="font-size: 0.65rem; color: #888;">${u.first_name || 'គ្មានឈ្មោះ'}</div>
+                                </div>
+                            </div>
+                            <div>
+                                ${isWatching ? `<span style="font-size: 0.65rem; background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid #22c55e; padding: 2px 8px; border-radius: 12px; font-weight: bold;">🟢 ${u.currentlyWatching}</span>` : (isOnline ? `<span style="font-size: 0.65rem; background: rgba(34,197,94,0.1); color: #22c55e; padding: 2px 6px; border-radius: 4px;">🟢 កំពុងសកម្ម</span>` : `<span style="font-size: 0.65rem; color: #666;">Offline</span>`)}
+                            </div>
+                        </div>
+                        <div style="margin-top: 8px; border-top: 1px solid #222; padding-top: 6px;">
+                            <div style="font-size: 0.7rem; font-weight: bold; color: #E50914;">📚 ប្រវត្តិរឿងដែលបានមើល៖</div>
+                            ${historyHTML}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.renderVipRankingsList = function() {
+            const container = document.getElementById('vipRankingsContainer');
+            if(!container) return;
+
+            let vipUsersArr = [];
+            const now = Date.now();
+
+            if (window.dbUsersList) {
+                Object.values(window.dbUsersList).forEach(u => {
+                    if (u.vipExpiry && u.vipExpiry > now) {
+                        vipUsersArr.push({
+                            username: u.username,
+                            first_name: u.first_name,
+                            photo_url: u.photo_url,
+                            expiry: u.vipExpiry,
+                            diffMs: u.vipExpiry - now
+                        });
+                    }
+                });
+            }
+
+            vipUsersArr.sort((a, b) => b.diffMs - a.diffMs);
+
+            if (vipUsersArr.length === 0) {
+                container.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 15px;">មិនទាន់មានសមាជិក VIP ឡើយ។</p>`;
+                return;
+            }
+
+            const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
+
+            container.innerHTML = vipUsersArr.map((item, index) => {
+                const rankNum = index + 1;
+                const timeStr = formatTimeRemaining(item.expiry);
+                let rankColor = "#aaa";
+                if(rankNum === 1) rankColor = "#facc15";
+                else if(rankNum === 2) rankColor = "#e2e8f0";
+                else if(rankNum === 3) rankColor = "#b45309";
+
+                return `
+                    <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid ${rankNum === 1 ? '#facc15' : '#2a2a2a'}; padding: 10px 14px; border-radius: 10px; height: 56px;">
+                        <div style="display: flex; align-items: center; gap: 12px; overflow: hidden;">
+                            <div style="font-size: 0.9rem; font-weight: bold; color: ${rankColor}; min-width: 24px; text-align: center;">#${rankNum}</div>
+                            <img src="${item.photo_url || 'https://via.placeholder.com/32'}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="Avatar">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="color: #fff; font-weight: bold; font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis;">${item.username}</span>
+                                    <img src="${vipBadgeImgUrl}" style="height: 16px; object-fit: contain; flex-shrink: 0;" alt="VIP">
+                                </div>
+                                <div style="color: #888; font-size: 0.6rem; overflow: hidden; text-overflow: ellipsis;">ឈ្មោះ: ${item.first_name || 'គ្មាន'}</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right; flex-shrink: 0;">
+                            <span style="font-size: 0.7rem; color: #facc15; font-weight: bold; background: rgba(250,204,21,0.1); padding: 4px 8px; border-radius: 6px; white-space: nowrap;">⏳ នៅសល់ ${timeStr}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         window.renderAdminMemberList = function() {
@@ -1148,26 +1415,27 @@
             container.innerHTML = usersArr.map(u => {
                 const expiry = u.vipExpiry || 0;
                 const isVip = expiry > Date.now();
+                const isDeveloper = u.username.toLowerCase().trim() === superAdminTelegram;
                 let timeStr = "";
                 if(isVip) {
                     timeStr = `(សល់ ${formatTimeRemaining(expiry)})`;
                 }
 
                 return `
-                    <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid ${isVip ? '#facc15' : '#333'}; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <img src="${u.photo_url || 'https://via.placeholder.com/32'}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;" alt="Avatar">
-                            <div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid ${isVip ? '#facc15' : '#333'}; padding: 8px 12px; border-radius: 10px; height: 56px;">
+                        <div style="display: flex; align-items: center; gap: 10px; overflow: hidden; flex: 1;">
+                            <img src="${u.photo_url || 'https://via.placeholder.com/32'}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="Avatar">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <span style="color: #fff; font-weight: bold;">${u.username}</span>
-                                    ${isVip ? `<img src="${vipBadgeImgUrl}" style="height: 18px; object-fit: contain;" alt="VIP">` : '<span style="font-size: 0.6rem; background: #333; color: #aaa; padding: 1px 6px; border-radius: 4px;">សមាជិកធម្មតា</span>'}
+                                    <span style="color: #fff; font-weight: bold; font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis;">${u.username}</span>
+                                    ${isDeveloper ? '<span style="color: red; font-weight: bold; font-size: 0.65rem; flex-shrink: 0;">[Developer]</span>' : (isVip ? `<img src="${vipBadgeImgUrl}" style="height: 16px; object-fit: contain; flex-shrink: 0;" alt="VIP">` : '<span style="font-size: 0.55rem; background: #333; color: #aaa; padding: 1px 5px; border-radius: 4px; flex-shrink: 0;">សមាជិកធម្មតា</span>')}
                                 </div>
-                                <div style="color: #888; font-size: 0.65rem;">ឈ្មោះ: ${u.first_name || 'គ្មាន'} ${timeStr}</div>
+                                <div style="color: #888; font-size: 0.6rem; overflow: hidden; text-overflow: ellipsis;">ឈ្មោះ: ${u.first_name || 'គ្មាន'} ${timeStr}</div>
                             </div>
                         </div>
-                        <div style="display: flex; gap: 6px;">
-                            <button onclick="quickManageVip('${u.username}')" style="background-color: #229ED9; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">👑 កែ VIP</button>
-                            <button onclick="removeUserRecord('${u.username}')" style="background-color: #dc2626; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">🗑️ លុប</button>
+                        <div style="display: flex; gap: 6px; flex-shrink: 0; margin-left: 8px;">
+                            <button onclick="quickManageVip('${u.username}')" style="background-color: #229ED9; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: bold; cursor: pointer;">👑 កែ VIP</button>
+                            <button onclick="removeUserRecord('${u.username}')" style="background-color: #dc2626; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: bold; cursor: pointer;">🗑️ លុប</button>
                         </div>
                     </div>
                 `;
@@ -1192,6 +1460,7 @@
 
                 renderAdminMemberList();
                 renderVipUserList();
+                renderVipRankingsList();
                 alert("បានលុបជោគជ័យ!");
             }
         }
@@ -1236,7 +1505,6 @@
             }
         }
 
-        // ផ្ដល់សិទ្ធិ VIP និងផ្ញើសារចូលគ្រុប Dekmerl VIP (-1004493438456)
         window.assignVipToUser = async function(e) {
             e.preventDefault();
             let tgUser = document.getElementById('targetTgUser').value.toLowerCase().trim();
@@ -1270,12 +1538,12 @@
                 const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
                 const unitLabel = unit === 'days' ? `${amount} ថ្ងៃ` : `${amount} ម៉ោង`;
                 
-                // ផ្ញើ Alert ចូលគ្រុប Dekmerl VIP ត្រឹមត្រូវ
                 sendVipTelegramAlert(`💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n📅 ថ្ងៃផុតកំណត់: ${new Date(expiryTime).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
 
                 document.getElementById('targetTgUser').value = "";
                 renderVipUserList();
                 renderAdminMemberList();
+                renderVipRankingsList();
                 renderTelegramLoginWidget();
                 alert(`បានផ្ដល់សិទ្ធិ VIP ជូន ${tgUser} រយៈពេល ${unitLabel} ជោគជ័យ!`);
             } catch(err) {
@@ -1311,7 +1579,6 @@
             }).join('');
         }
 
-        // ដកសិទ្ធិ VIP និងផ្ញើសារចូលគ្រុប Dekmerl VIP (-1004493438456)
         window.removeVipUser = async function(user) {
             const cleanUserKey = user.replace(/[^a-zA-Z0-9_]/g, '');
             try {
@@ -1328,6 +1595,7 @@
 
             renderVipUserList();
             renderAdminMemberList();
+            renderVipRankingsList();
             renderTelegramLoginWidget();
             alert(`បានដកសិទ្ធិ VIP របស់ ${user} រួចរាល់!`);
         }
@@ -1423,7 +1691,7 @@
                 toggleAdminModal();
                 alert("បង្ហោះវីដេអូរឿងទៅកាន់ Database និង Telegram ជោគជ័យ!");
             } catch (err) {
-                alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
+                alert("មានបញ្ហាក្នុងการបង្ហោះ៖ " + err.message);
             }
         }
 
@@ -1680,6 +1948,7 @@
             document.getElementById('seriesModal').classList.add('hidden');
             document.getElementById('seriesPlayerFrame').src = "";
             document.body.style.overflow = '';
+            updateUserActivityStatus("");
         }
 
         window.playEpisode = function(id) {
@@ -1702,11 +1971,14 @@
                 iframe.style.display = "none";
                 lockedMsg.classList.remove('hidden');
                 lockedMsg.style.display = "flex";
+                updateUserActivityStatus(`មើលមិនទាន់បាន (ទាមទារ VIP): ${v.series}`);
             } else {
                 iframe.style.display = "block";
                 lockedMsg.classList.add('hidden');
                 lockedMsg.style.display = "none";
                 iframe.src = v.videoUrl;
+
+                recordWatchHistory(v.series, v.ep);
             }
         }
 
