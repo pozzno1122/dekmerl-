@@ -545,7 +545,6 @@
                 <button onclick="switchAdminTab('users')" id="tabUsersBtn" class="tab-btn">💎 ផ្ដល់ VIP</button>
             </div>
             
-            <!-- ស្ថិតិ & ប្រវត្តិមើលរឿងរបស់អតិថិជន -->
             <div id="adminTabStats">
                 <div class="stats-container">
                     <div class="stat-card">
@@ -571,13 +570,11 @@
                 <div id="adminWatchHistoryContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 340px; overflow-y: auto;"></div>
             </div>
 
-            <!-- បញ្ជីសមាជិក VIP តម្រៀបតាមចំនួនថ្ងៃច្រើនជាងគេ -->
             <div id="adminTabVipRank" class="hidden">
                 <h4 style="font-size: 0.85rem; color: #facc15; margin-bottom: 12px;">🏆 បញ្ជីសមាជិក VIP ដែលមានចំនួនថ្ងៃច្រើនជាងគេ (១ ដល់ ក្រោម)៖</h4>
                 <div id="vipRankingsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
             </div>
 
-            <!-- Upload Tab -->
             <div id="adminTabUpload" class="hidden">
                 <form id="uploadForm" onsubmit="handleVideoUpload(event)">
                     <div class="form-group"><label>ចំណងជើងរឿងដុំ / ស៊េរី (ឧ. កំពូលព្រះបិសាច)</label><input type="text" id="seriesTitle" required placeholder="ឧ. កំពូលព្រះបិសាច" class="form-control"></div>
@@ -625,28 +622,15 @@
                 </form>
             </div>
 
-            <!-- Tab ភាគទាំងអស់ (With Multi-Select & Delete All) -->
             <div id="adminTabEpisodes" class="hidden">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px;">
-                    <div class="search-box-wrap" style="margin-bottom: 0; flex: 1;">
-                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="text" id="adminEpisodeSearchInput" oninput="renderAdminAllEpisodesList()" placeholder="ស្វែងរកឈ្មោះរឿង ឬភាគ..." class="search-input" autocomplete="off">
-                    </div>
-                    <button onclick="deleteSelectedEpisodes()" style="background-color: #dc2626; color: #fff; border: none; padding: 10px 14px; border-radius: 10px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 4px;" title="លុបទាំងអស់ដែលបានជ្រើសរើស">
-                        <i class="fa-solid fa-trash-can"></i> លុបទាំងអស់
-                    </button>
+                <div class="search-box-wrap" style="margin-bottom: 12px;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="adminEpisodeSearchInput" oninput="renderAdminAllEpisodesList()" placeholder="ស្វែងរកឈ្មោះរឿង ឬភាគដើម្បីកែប្រែ/លុប..." class="search-input" autocomplete="off">
                 </div>
-                
-                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 0.75rem; color: #aaa;">
-                    <input type="checkbox" id="selectAllEpisodesCheckbox" onclick="toggleSelectAllEpisodes(this)" style="width: 16px; height: 16px; accent-color: #E50914; cursor: pointer;">
-                    <label for="selectAllEpisodesCheckbox" style="cursor: pointer;">ជ្រើសរើសទាំងអស់ (Select All)</label>
-                </div>
-
-                <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 8px;">📋 បញ្ជីភាគវីដេអូសរុប៖</h4>
-                <div id="adminAllEpisodesList" style="display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto;"></div>
+                <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 10px;">📋 បញ្ជីភាគវីដេអូសរុប៖</h4>
+                <div id="adminAllEpisodesList" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
             </div>
 
-            <!-- Tab បញ្ជីសមាជិក (Member List) -->
             <div id="adminTabMembers" class="hidden">
                 <div class="search-box-wrap" style="margin-bottom: 12px;">
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
@@ -660,7 +644,7 @@
             </div>
 
             <div id="adminTabBanners" class="hidden">
-                <form onsubmit="saveBannerSettings(event)">
+                <form onsave="saveBannerSettings(event)">
                     <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 12px;">🖼️ កែសម្រួលលីងរូបភាព Banner Carousel (៣ ទៅដល់ ៨ រូបភាព)៖</h4>
                     <div class="form-group"><label>Banner ទី ១ (តម្រូវឱ្យមាន)</label><input type="url" id="bannerUrl1" required class="form-control" placeholder="https://..."></div>
                     <div class="form-group"><label>Banner ទី ២ (តម្រូវឱ្យមាន)</label><input type="url" id="bannerUrl2" required class="form-control" placeholder="https://..."></div>
@@ -780,11 +764,11 @@
         const vipBotToken = "9260453589:AAHTu0QrFkmoYugNuCGCOhD_lBTHM3N4qZs";
         const vipChatId = "-1004493438456";
 
-        /* Telegram Bot សម្រាប់រឿងបង្ហោះភ្លាមៗ (Instant Upload)[span_1](start_span)[span_1](end_span) */
+        /* Telegram Bot សម្រាប់រឿងបង្ហោះភ្លាមៗ (Instant Upload) */
         const movieBotToken = "9284674255:AAHP3kX9xipGvouXRXx4sZWcL_x_BnGnNaE";
         const movieChatId = "-1004381190574";
 
-        /* Telegram Bot សម្រាប់កន្លែងកំណត់ពេលវេលាបង្ហោះ (Scheduled Upload)[span_2](start_span)[span_2](end_span) */
+        /* Telegram Bot សម្រាប់កន្លែងកំណត់ពេលវេលាបង្ហោះ (Scheduled Upload) */
         const scheduleBotToken = "9122037857:AAFWXSDTRuhVAu8D4TEDHUI3vFDGfRH0Mvg";
         const scheduleChatId = "-1004373607990";
 
@@ -856,7 +840,7 @@
                             `📽️ **ប្រភេទរឿង:** ${type} (${category})\n` +
                             `📅 **ពេលត្រូវបង្ហោះ:** ${scheduleDateStr}\n` +
                             `🔗 **លីងវីដេអូ:** ${videoUrl}\n\n` +
-                            `🤖 **ស្ថានភាព:** ប្រព័ន្ធនឹងបង្ហោះចូលវេបសាយ តែ ១ ភាគនេះគត់ និងរាយការណ៍ជូនដំណឹងនៅពេលដល់ម៉ោង!`;
+                            `🤖 **ស្ថានភាព:** ប្រព័ន្ធនឹងបង្ហោះចូលវេបសាយ និងរាយការណ៍ជូនដំណឹងម្ដងទៀតនៅពេលដល់ម៉ោង!`;
             await sendTelegramAlert(textMsg, scheduleBotToken, scheduleChatId);
         }
 
@@ -1530,7 +1514,6 @@
             }
         }
 
-        /* មុខងារបង្ហាញបញ្ជីភាគវីដេអូសរុប (ជាមួយ Checkbox សម្រាប់លុបច្រើន) */
         window.renderAdminAllEpisodesList = function() {
             const listContainer = document.getElementById('adminAllEpisodesList');
             if(!listContainer) return;
@@ -1546,46 +1529,17 @@
                 return;
             }
             listContainer.innerHTML = list.map(v => `
-                <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 10px; border-radius: 8px; font-size: 0.75rem; gap: 8px;">
-                    <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; flex: 1;">
-                        <input type="checkbox" class="episode-select-checkbox" value="${v.id}" style="width: 16px; height: 16px; accent-color: #E50914; cursor: pointer; flex-shrink: 0;">
-                        <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            <span style="color: #fff; font-weight: bold;">${v.series}</span> - <span style="color: #facc15;">${v.ep}</span>
-                            <div style="color: #888; font-size: 0.65rem;">ប្រភេទ: ${v.type || 'រឿងភាគ'} | មើល: ${(v.accessType === 'free' || v.accessType === 'ឥតគិតថ្លៃ') ? 'FREE' : 'VIP'} ${v.isHot ? '| 🔥 HOT' : ''}</div>
-                        </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 10px; border-radius: 8px; font-size: 0.75rem;">
+                    <div>
+                        <span style="color: #fff; font-weight: bold;">${v.series}</span> - <span style="color: #facc15;">${v.ep}</span>
+                        <div style="color: #888; font-size: 0.65rem;">ប្រភេទ: ${v.type || 'រឿងភាគ'} | មើល: ${(v.accessType === 'free' || v.accessType === 'ឥតគិតថ្លៃ') ? 'FREE' : 'VIP'} ${v.isHot ? '| 🔥 HOT' : ''}</div>
                     </div>
-                    <div style="display: flex; gap: 6px; flex-shrink: 0;">
+                    <div style="display: flex; gap: 6px;">
                         <button onclick="openEditModal('${v.id}')" style="background-color: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">✏️ កែ</button>
                         <button onclick="deleteEpisode('${v.id}')" style="background-color: #dc2626; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer;">🗑️ លុប</button>
                     </div>
                 </div>
             `).join('');
-        }
-
-        window.toggleSelectAllEpisodes = function(masterCheckbox) {
-            const checkboxes = document.querySelectorAll('.episode-select-checkbox');
-            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
-        }
-
-        window.deleteSelectedEpisodes = async function() {
-            const checkedBoxes = document.querySelectorAll('.episode-select-checkbox:checked');
-            if (checkedBoxes.length === 0) {
-                alert("សូមជ្រើសរើស (គ្រីស) ភាគវីដេអូយ៉ាងហោចណាស់មួយ ដើម្បីលុប!");
-                return;
-            }
-
-            if (confirm(`តើអ្នកពិតជាចង់លុបភាគវីដេអូចំនួន ${checkedBoxes.length} ដែលបានជ្រើសរើសមែនទេ?`)) {
-                try {
-                    for (let cb of checkedBoxes) {
-                        await remove(ref(db, 'videos/' + cb.value));
-                    }
-                    document.getElementById('selectAllEpisodesCheckbox').checked = false;
-                    renderAdminAllEpisodesList();
-                    alert("បានលុបភាគវីដេអូដែលបានជ្រើសរើសជោគជ័យ!");
-                } catch (err) {
-                    alert("កំហុស៖ " + err.message);
-                }
-            }
         }
 
         window.deleteEpisode = async function(id) {
@@ -1720,16 +1674,19 @@
             });
         }
 
-        /* Background Scheduler Checker (បង្ហោះតែ ១ ភាគគត់ដែលបានកំណត់ពេល) */
+        /* មុខងារឆែគពេលវេលាបង្ហោះដែលបានកែតម្រូវការពារការជាន់គ្នា (Fixed Duplicate Push Bug) */
         async function checkScheduledVideosPublish() {
             let scheduledQueue = JSON.parse(localStorage.getItem('dekmerl_scheduled_videos')) || [];
             if (scheduledQueue.length === 0) return;
 
             let now = Date.now();
-            let remainingQueue = [];
+            let updatedQueue = [];
+            let isModified = false;
 
             for (let item of scheduledQueue) {
+                // ប្រសិនបើដល់ម៉ោងកំណត់បង្ហោះ
                 if (now >= item.publishTime) {
+                    isModified = true;
                     try {
                         const newVideoRef = push(ref(db, 'videos'));
                         await set(newVideoRef, {
@@ -1747,11 +1704,13 @@
                         await sendSchedulePublishedAlert(item.series, item.ep, item.type, item.category, item.videoUrl, item.imageUrl);
                     } catch (err) {}
                 } else {
-                    remainingQueue.push(item);
+                    updatedQueue.push(item);
                 }
             }
 
-            localStorage.setItem('dekmerl_scheduled_videos', JSON.stringify(remainingQueue));
+            if (isModified) {
+                localStorage.setItem('dekmerl_scheduled_videos', JSON.stringify(updatedQueue));
+            }
         }
 
         window.toggleScheduleInput = function(val) {
