@@ -321,6 +321,46 @@
         .stat-card h4 { font-size: 0.65rem; color: #888; }
         .stat-card p { font-size: 1.2rem; font-weight: bold; color: #E50914; margin-top: 4px; }
 
+        /* Maintenance Screen Overlay */
+        .maintenance-screen {
+            position: fixed;
+            inset: 0;
+            background-color: #0d0d0d;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .maintenance-box {
+            background-color: #181818;
+            border: 1px solid #E50914;
+            border-radius: 20px;
+            padding: 30px 24px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(229, 9, 20, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .maintenance-icon {
+            font-size: 3.5rem;
+            color: #E50914;
+            animation: pulseGear 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseGear {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
         /* Click Ripple Effect */
         .click-ripple {
             position: fixed;
@@ -353,6 +393,19 @@
     </style>
 </head>
 <body oncontextmenu="return false;">
+
+    <!-- Maintenance Screen Overlay (បង្ហាញនៅពេល Admin បិទវេបសាយ) -->
+    <div id="maintenanceOverlay" class="maintenance-screen hidden">
+        <div class="maintenance-box">
+            <i class="fa-solid fa-gears maintenance-icon"></i>
+            <h2 style="color: #ffffff; font-size: 1.3rem; font-weight: 700;">វេបសាយកំពុងត្រូវបានសម្រួល / ជួសជុល</h2>
+            <div id="maintenanceReasonDisplay" style="background: rgba(229, 9, 20, 0.1); border: 1px dashed #E50914; color: #facc15; padding: 12px 16px; border-radius: 10px; font-size: 0.85rem; width: 100%; word-break: break-word;">
+                សូមរង់ចាំបន្តិច...
+            </div>
+            <p style="color: #aaa; font-size: 0.75rem;">សូមអភ័យទោសចំពោះការរំខាន។ អ្នកគ្រប់គ្រងកំពុងធ្វើបច្ចុប្បន្នភាពប្រព័ន្ធ វេបសាយនឹងដំណើការឡើងវិញក្នុងពេលឆាប់ៗនេះ!</p>
+            <div style="font-size: 0.65rem; color: #666; margin-top: 8px;">DekMerl - ដេកមើល</div>
+        </div>
+    </div>
 
     <header>
         <div class="header-container">
@@ -535,7 +588,8 @@
         <div class="modal-box" style="max-width: 650px; text-align: left;">
             <button onclick="toggleAdminModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
             <div class="admin-tabs">
-                <button onclick="switchAdminTab('stats')" id="tabStatsBtn" class="tab-btn active-tab">📊 ស្ថិតិ & ប្រវត្តិមើល</button>
+                <button onclick="switchAdminTab('status')" id="tabStatusBtn" class="tab-btn active-tab">🔴 បិទ/បើក វេបសាយ</button>
+                <button onclick="switchAdminTab('stats')" id="tabStatsBtn" class="tab-btn">📊 ស្ថិតិ & ប្រវត្តិមើល</button>
                 <button onclick="switchAdminTab('vipRank')" id="tabVipRankBtn" class="tab-btn">🏆 ថ្ងៃ VIP ភាគច្រើន</button>
                 <button onclick="switchAdminTab('upload')" id="tabUploadBtn" class="tab-btn">➕ បង្ហោះវីដេអូ</button>
                 <button onclick="switchAdminTab('episodes')" id="tabEpisodesBtn" class="tab-btn">📋 ភាគទាំងអស់</button>
@@ -544,8 +598,36 @@
                 <button onclick="switchAdminTab('vip')" id="tabVipBtn" class="tab-btn">👑 តម្លៃ VIP</button>
                 <button onclick="switchAdminTab('users')" id="tabUsersBtn" class="tab-btn">💎 ផ្ដល់ VIP</button>
             </div>
+
+            <!-- Tab Maintenance Status (មុខងារបិទ/បើកវេបសាយ) -->
+            <div id="adminTabStatus">
+                <div style="background-color: #121212; border: 1px solid #333; padding: 16px; border-radius: 12px; margin-bottom: 12px;">
+                    <h4 style="font-size: 0.9rem; color: #facc15; margin-bottom: 10px;">🛑 គ្រប់គ្រងស្ថានភាពដំណើរការវេបសាយ (Maintenance Mode)</h4>
+                    
+                    <div class="form-group">
+                        <label>ស្ថានភាពបច្ចុប្បន្ន៖</label>
+                        <div id="currentSiteStatusBadge" style="font-weight: bold; font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; display: inline-block; margin-bottom: 10px;">
+                            ...
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>មូលហេតុ ឬសារជូនដំណឹង (សម្រាប់បង្ហាញដល់អ្នកមើលពេលបិទ)៖</label>
+                        <textarea id="maintenanceReasonInput" class="form-control" rows="3" placeholder="ឧ. វេបសាយកំពុងជួសជុល រង់ចាំប្រហែលជា ៥នាទី..."></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px;">
+                        <button onclick="toggleWebsiteMaintenance(false)" style="background-color: #22c55e; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                            🟢 បើកវេបសាយ (Online)
+                        </button>
+                        <button onclick="toggleWebsiteMaintenance(true)" style="background-color: #dc2626; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                            🔴 បិទវេបសាយ (Maintenance)
+                        </button>
+                    </div>
+                </div>
+            </div>
             
-            <div id="adminTabStats">
+            <div id="adminTabStats" class="hidden">
                 <div class="stats-container">
                     <div class="stat-card">
                         <h4>👁️ អ្នកចូលមើលសរុប</h4>
@@ -776,6 +858,9 @@
         const expiredVipBotToken = "9246036170:AAHb7bTyGetzB0hV5YwNAT-5-izAlogkBY0";
         const expiredVipChatId = "-1004387202073";
 
+        /* Global Status Variable */
+        window.siteMaintenanceStatus = { isClosed: false, reason: "" };
+
         /* Click Ripple Water Effect */
         function createClickRipple(e) {
             let clientX, clientY;
@@ -802,6 +887,92 @@
         }
 
         window.addEventListener('pointerdown', createClickRipple, { passive: true });
+
+        /* Listen to Site Maintenance Status Realtime */
+        function listenToMaintenanceStatus() {
+            const maintenanceRef = ref(db, 'systemSettings/maintenance');
+            onValue(maintenanceRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    window.siteMaintenanceStatus = data;
+                } else {
+                    window.siteMaintenanceStatus = { isClosed: false, reason: "" };
+                }
+                applyMaintenanceModeUI();
+            });
+        }
+
+        function applyMaintenanceModeUI() {
+            const overlay = document.getElementById('maintenanceOverlay');
+            const reasonEl = document.getElementById('maintenanceReasonDisplay');
+            const statusBadge = document.getElementById('currentSiteStatusBadge');
+            const reasonInput = document.getElementById('maintenanceReasonInput');
+
+            const isClosed = window.siteMaintenanceStatus.isClosed || false;
+            const reason = window.siteMaintenanceStatus.reason || "វេបសាយកំពុងជួសជុលរង់ចាំប្រហែលជា៥នាទី...";
+
+            // បង្ហាញ Badge ក្នុង Admin Modal
+            if (statusBadge) {
+                if (isClosed) {
+                    statusBadge.style.backgroundColor = "rgba(220, 38, 38, 0.2)";
+                    statusBadge.style.color = "#ef4444";
+                    statusBadge.style.border = "1px solid #ef4444";
+                    statusBadge.innerText = "🔴 ស្ថានភាព៖ បិទវេបសាយ (Maintenance Active)";
+                } else {
+                    statusBadge.style.backgroundColor = "rgba(34, 197, 94, 0.2)";
+                    statusBadge.style.color = "#22c55e";
+                    statusBadge.style.border = "1px solid #22c55e";
+                    statusBadge.innerText = "🟢 ស្ថានភាព៖ បើកដំណើរការធម្មតា (Online)";
+                }
+            }
+
+            if (reasonInput && !reasonInput.dataset.userEdited) {
+                reasonInput.value = reason;
+            }
+
+            // ប្រសិនបើបិទវេបសាយ និងមិនមែនជា Admin ត្រូវបង្ហាញផ្ទាំង Maintenance រារាំង
+            if (isClosed && !isUserAdmin()) {
+                if (overlay) {
+                    overlay.classList.remove('hidden');
+                    if (reasonEl) reasonEl.innerText = reason;
+                }
+                closeSeriesModal();
+            } else {
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                }
+            }
+        }
+
+        window.toggleWebsiteMaintenance = async function(shouldClose) {
+            if (!isUserAdmin()) return;
+
+            const reasonInput = document.getElementById('maintenanceReasonInput');
+            const reason = reasonInput ? reasonInput.value.trim() : "";
+
+            if (shouldClose && !reason) {
+                alert("សូមបញ្ចូលមូលហេតុ ឬសារជូនដំណឹងនៅពេលបិទវេបសាយ!");
+                return;
+            }
+
+            const maintenanceRef = ref(db, 'systemSettings/maintenance');
+            try {
+                await set(maintenanceRef, {
+                    isClosed: shouldClose,
+                    reason: reason || "វេបសាយកំពុងជួសជុលរង់ចាំប្រហែលជា៥នាទី...",
+                    updatedBy: window.currentUserTgObj ? window.currentUserTgObj.username : "Admin",
+                    updatedAt: Date.now()
+                });
+
+                if (shouldClose) {
+                    alert("បានបិទវេបសាយជោគជ័យ! អ្នកមើលទាំងអស់នឹងឃើញសារជូនដំណឹងនេះភ្លាមៗ។");
+                } else {
+                    alert("បានបើកដំណើរការវេបសាយឡើងវិញជោគជ័យ! អតិថិជនទាំងអស់អាចមើលរឿងបានជាធម្មតាវិញ។");
+                }
+            } catch (err) {
+                alert("កំហុស៖ " + err.message);
+            }
+        }
         
         async function sendTelegramAlert(textMsg, token = botToken, targetChatId = chatId) {
             try {
@@ -1082,6 +1253,7 @@
             renderBanners();
             listenToBanners();
             listenToUsers();
+            listenToMaintenanceStatus();
             checkVipExpiryBackground();
             setInterval(checkVipExpiryBackground, 30000);
             
@@ -1111,6 +1283,13 @@
                     dropdown.classList.add('hidden');
                 }
             });
+
+            const reasonInput = document.getElementById('maintenanceReasonInput');
+            if (reasonInput) {
+                reasonInput.addEventListener('input', () => {
+                    reasonInput.dataset.userEdited = "true";
+                });
+            }
         });
 
         function renderTelegramLoginWidget() {
@@ -1210,6 +1389,7 @@
             } else {
                 if (adminTrigger) adminTrigger.classList.add('hidden');
             }
+            applyMaintenanceModeUI();
         }
 
         let vipPlans = JSON.parse(localStorage.getItem('dekmerl_vip_plans')) || [
@@ -1243,9 +1423,11 @@
             renderAdminMemberList();
             renderVipRankingsList();
             updateStatsUI();
+            applyMaintenanceModeUI();
         }
 
         window.switchAdminTab = function(tabName) {
+            document.getElementById('adminTabStatus').classList.add('hidden');
             document.getElementById('adminTabStats').classList.add('hidden');
             document.getElementById('adminTabVipRank').classList.add('hidden');
             document.getElementById('adminTabUpload').classList.add('hidden');
@@ -1255,6 +1437,7 @@
             document.getElementById('adminTabVip').classList.add('hidden');
             document.getElementById('adminTabUsers').classList.add('hidden');
 
+            document.getElementById('tabStatusBtn').classList.remove('active-tab');
             document.getElementById('tabStatsBtn').classList.remove('active-tab');
             document.getElementById('tabVipRankBtn').classList.remove('active-tab');
             document.getElementById('tabUploadBtn').classList.remove('active-tab');
@@ -1264,7 +1447,11 @@
             document.getElementById('tabVipBtn').classList.remove('active-tab');
             document.getElementById('tabUsersBtn').classList.remove('active-tab');
 
-            if (tabName === 'stats') {
+            if (tabName === 'status') {
+                document.getElementById('adminTabStatus').classList.remove('hidden');
+                document.getElementById('tabStatusBtn').classList.add('active-tab');
+                applyMaintenanceModeUI();
+            } else if (tabName === 'stats') {
                 document.getElementById('adminTabStats').classList.remove('hidden');
                 document.getElementById('tabStatsBtn').classList.add('active-tab');
                 renderAdminWatchHistoryList();
@@ -2023,6 +2210,11 @@
         }
 
         window.openSeriesModal = function(seriesName, resetPlay = true) {
+            if (window.siteMaintenanceStatus.isClosed && !isUserAdmin()) {
+                alert("វេបសាយកំពុងតែត្រូវបានសម្រួល/ជួសជុល សូមរង់ចាំបន្តិច!");
+                return;
+            }
+
             const sEpisodes = window.videos.filter(v => v.series === seriesName);
             if(sEpisodes.length === 0) return;
 
@@ -2125,6 +2317,11 @@
         }
 
         window.playEpisode = function(id) {
+            if (window.siteMaintenanceStatus.isClosed && !isUserAdmin()) {
+                alert("វេបសាយកំពុងតែត្រូវបានសម្រួល/ជួសជុល សូមរង់ចាំបន្តិច!");
+                return;
+            }
+
             const v = window.videos.find(item => item.id === id);
             if(!v) return;
 
