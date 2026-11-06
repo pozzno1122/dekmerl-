@@ -532,7 +532,7 @@
         </div>
     </div>
 
-    <!-- Quick Add Next Episode Modal for Admin -->
+    <!-- Quick Add Next Episode Modal for Admin (ដក Schedule ចេញ) -->
     <div id="quickAddEpModal" class="modal-overlay hidden">
         <div class="modal-box" style="text-align: left; max-width: 500px;">
             <button onclick="closeQuickAddEpModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
@@ -564,21 +564,7 @@
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label style="color: #facc15; font-weight: bold;">⏰ ជម្រើសពេលវេលាបង្ហោះ</label>
-                    <select id="quickAddScheduleOption" class="form-control" onchange="toggleQuickAddScheduleInput(this.value)">
-                        <option value="now">បង្ហោះឥឡូវ (Publish Now)</option>
-                        <option value="schedule">កំណត់ពេលវេលា (Schedule)</option>
-                    </select>
-                </div>
-
-                <div id="quickAddScheduleInputGroup" class="form-group hidden" style="background: rgba(250,204,21,0.05); border: 1px dashed #facc15; padding: 10px; border-radius: 8px;">
-                    <label style="color: #facc15;">📅 កាលបរិច្ឆេទ និង ម៉ោងត្រូវបង្ហោះ</label>
-                    <input type="datetime-local" id="quickAddScheduleTime" class="form-control">
-                    <small style="color: #aaa; font-size: 0.65rem; display: block; margin-top: 4px;">* ប្រព័ន្ធនឹងផ្ញើសារចូល Group កំណត់ពេលភ្លាមៗ ហើយនឹងបង្ហោះចូលវេបសាយស្វ័យប្រវត្តិតាមម៉ោងដែលបានកំណត់។</small>
-                </div>
-
-                <button type="submit" class="btn-submit" style="background-color: #E50914; color: #fff; margin-top: 10px;">➕ បង្ហោះភាគនេះ</button>
+                <button type="submit" class="btn-submit" style="background-color: #E50914; color: #fff; margin-top: 10px;">➕ បង្ហោះភាគនេះឥឡូវ</button>
             </form>
         </div>
     </div>
@@ -657,6 +643,7 @@
                 <div id="vipRankingsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
             </div>
 
+            <!-- Upload Tab (ដក Schedule ចេញ) -->
             <div id="adminTabUpload" class="hidden">
                 <form id="uploadForm" onsubmit="handleVideoUpload(event)">
                     <div class="form-group"><label>ចំណងជើងរឿងដុំ / ស៊េរី (ឧ. កំពូលព្រះបិសាច)</label><input type="text" id="seriesTitle" required placeholder="ឧ. កំពូលព្រះបិសាច" class="form-control"></div>
@@ -681,20 +668,6 @@
                     <div class="form-group"><label>លីងវីដេអូ (Video URL)</label><input type="url" id="videoUrl" required placeholder="https://..." class="form-control"></div>
                     <div class="form-group"><label>លីងរូបភាព Thumbnail រឿង (Image URL)</label><input type="url" id="imageUrl" required placeholder="https://..." class="form-control"></div>
                     <div class="form-group"><label>ប្រភេទការមើល</label><select id="accessType" class="form-control"><option value="free">ឥតគិតថ្លៃ (Free)</option><option value="vip">សម្រាប់ VIP (VIP Only)</option></select></div>
-                    
-                    <div class="form-group">
-                        <label style="color: #facc15; font-weight: bold;">⏰ ជម្រើសពេលវេលាបង្ហោះ</label>
-                        <select id="scheduleOption" class="form-control" onchange="toggleScheduleInput(this.value)">
-                            <option value="now">បង្ហោះឥឡូវ (Publish Now)</option>
-                            <option value="schedule">កំណត់ពេលវេលា (Schedule)</option>
-                        </select>
-                    </div>
-
-                    <div id="scheduleInputGroup" class="form-group hidden" style="background: rgba(250,204,21,0.05); border: 1px dashed #facc15; padding: 10px; border-radius: 8px;">
-                        <label style="color: #facc15;">📅 កាលបរិច្ឆេទ និង ម៉ោងត្រូវបង្ហោះ</label>
-                        <input type="datetime-local" id="scheduleTime" class="form-control">
-                        <small style="color: #aaa; font-size: 0.65rem; display: block; margin-top: 4px;">* ប្រព័ន្ធនឹងផ្ញើសារចូល Group កំណត់ពេលភ្លាមៗ ហើយនឹងបង្ហោះចូលវេបសាយស្វ័យប្រវត្តិតាមម៉ោងដែលបានកំណត់។</small>
-                    </div>
 
                     <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
                         <input type="checkbox" id="isHot" style="width: 18px; height: 18px; accent-color: #E50914; cursor: pointer;">
@@ -726,7 +699,7 @@
             </div>
 
             <div id="adminTabBanners" class="hidden">
-                <form onsave="saveBannerSettings(event)">
+                <form onsubmit="saveBannerSettings(event)">
                     <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 12px;">🖼️ កែសម្រួលលីងរូបភាព Banner Carousel (៣ ទៅដល់ ៨ រូបភាព)៖</h4>
                     <div class="form-group"><label>Banner ទី ១ (តម្រូវឱ្យមាន)</label><input type="url" id="bannerUrl1" required class="form-control" placeholder="https://..."></div>
                     <div class="form-group"><label>Banner ទី ២ (តម្រូវឱ្យមាន)</label><input type="url" id="bannerUrl2" required class="form-control" placeholder="https://..."></div>
@@ -850,10 +823,6 @@
         const movieBotToken = "9284674255:AAHP3kX9xipGvouXRXx4sZWcL_x_BnGnNaE";
         const movieChatId = "-1004381190574";
 
-        /* Telegram Bot សម្រាប់កន្លែងកំណត់ពេលវេលាបង្ហោះ (Scheduled Upload) */
-        const scheduleBotToken = "9122037857:AAFWXSDTRuhVAu8D4TEDHUI3vFDGfRH0Mvg";
-        const scheduleChatId = "-1004373607990";
-
         /* Telegram Bot សម្រាប់ VIP អស់សុពលភាព */
         const expiredVipBotToken = "9246036170:AAHb7bTyGetzB0hV5YwNAT-5-izAlogkBY0";
         const expiredVipChatId = "-1004387202073";
@@ -911,7 +880,6 @@
             const isClosed = window.siteMaintenanceStatus.isClosed || false;
             const reason = window.siteMaintenanceStatus.reason || "វេបសាយកំពុងជួសជុលរង់ចាំប្រហែលជា៥នាទី...";
 
-            // បង្ហាញ Badge ក្នុង Admin Modal
             if (statusBadge) {
                 if (isClosed) {
                     statusBadge.style.backgroundColor = "rgba(220, 38, 38, 0.2)";
@@ -930,7 +898,6 @@
                 reasonInput.value = reason;
             }
 
-            // ប្រសិនបើបិទវេបសាយ និងមិនមែនជា Admin ត្រូវបង្ហាញផ្ទាំង Maintenance រារាំង
             if (isClosed && !isUserAdmin()) {
                 if (overlay) {
                     overlay.classList.remove('hidden');
@@ -1002,28 +969,6 @@
                             `🖼️ **លីងរូបភាព:** ${imageUrl}\n\n` +
                             `🌐 **វេបសាយ:** DekMerl-ដេកមើល`;
             await sendTelegramAlert(textMsg, movieBotToken, movieChatId);
-        }
-
-        async function sendScheduleCreatedAlert(series, ep, type, category, scheduleDateStr, videoUrl) {
-            const textMsg = `⏰ **បានកំណត់ពេលវេលាបង្ហោះរឿងថ្មី!**\n\n` +
-                            `📌 **ឈ្មោះរឿង:** ${series}\n` +
-                            `🎞️ **ចំណងជើងភាគ:** ${ep}\n` +
-                            `📽️ **ប្រភេទរឿង:** ${type} (${category})\n` +
-                            `📅 **ពេលត្រូវបង្ហោះ:** ${scheduleDateStr}\n` +
-                            `🔗 **លីងវីដេអូ:** ${videoUrl}\n\n` +
-                            `🤖 **ស្ថានភាព:** ប្រព័ន្ធនឹងបង្ហោះចូលវេបសាយ និងរាយការណ៍ជូនដំណឹងម្ដងទៀតនៅពេលដល់ម៉ោង!`;
-            await sendTelegramAlert(textMsg, scheduleBotToken, scheduleChatId);
-        }
-
-        async function sendSchedulePublishedAlert(series, ep, type, category, videoUrl, imageUrl) {
-            const textMsg = `✅ **រឿងដែលបានកំណត់ពេល ត្រូវបានបង្ហោះចូលវេបសាយជោគជ័យហើយ!**\n\n` +
-                            `📌 **ឈ្មោះរឿង:** ${series}\n` +
-                            `🎞️ **ចំណងជើងភាគ:** ${ep}\n` +
-                            `📽️ **ប្រភេទរឿង:** ${type} (${category})\n` +
-                            `🔗 **លីងវីដេអូ:** ${videoUrl}\n` +
-                            `🖼️ **លីងរូបភាព:** ${imageUrl}\n\n` +
-                            `🌐 **វេបសាយ:** DekMerl-ដេកមើល`;
-            await sendTelegramAlert(textMsg, scheduleBotToken, scheduleChatId);
         }
 
         function formatTimeRemaining(expiryTime) {
@@ -1158,7 +1103,10 @@
                         renderVipRankingsList();
                         updateStatsUI();
                     }
-                    renderTelegramLoginWidget();
+                    // កែប្រែដើម្បីកុំឲ្យ re-render ញាក់ Widget
+                    if (window.currentUserTgObj) {
+                        renderTelegramLoginWidget();
+                    }
                 }
             });
 
@@ -1292,6 +1240,7 @@
             }
         });
 
+        /* កែប្រែមុខងារបង្ហាញ Telegram Widget ដើម្បីដោះស្រាយបញ្ហាលោតញាក់ */
         function renderTelegramLoginWidget() {
             const container = document.getElementById('telegramLoginButton');
             if (!container) return;
@@ -1333,6 +1282,9 @@
                     </div>
                 `;
             } else {
+                // ប្រសិនបើបង្កើត Widget រួចហើយ កុំបង្កើតដដែលៗ នាំឲ្យលោតញាក់
+                if (container.querySelector('script') || container.querySelector('iframe')) return;
+                
                 container.innerHTML = '';
                 const script = document.createElement('script');
                 script.async = true;
@@ -1852,74 +1804,12 @@
                     });
                 }
                 renderVideos();
-                checkScheduledVideosPublish();
                 
                 const openModalSeries = document.getElementById('seriesModalTitle').innerText;
                 if (openModalSeries && !document.getElementById('seriesModal').classList.contains('hidden')) {
                     openSeriesModal(openModalSeries, false);
                 }
             });
-        }
-
-        /* មុខងារឆែគពេលវេលាបង្ហោះដែលបានកែតម្រូវការពារការជាន់គ្នា (Fixed Duplicate Push Bug) */
-        async function checkScheduledVideosPublish() {
-            let scheduledQueue = JSON.parse(localStorage.getItem('dekmerl_scheduled_videos')) || [];
-            if (scheduledQueue.length === 0) return;
-
-            let now = Date.now();
-            let updatedQueue = [];
-            let isModified = false;
-
-            for (let item of scheduledQueue) {
-                // ប្រសិនបើដល់ម៉ោងកំណត់បង្ហោះ
-                if (now >= item.publishTime) {
-                    isModified = true;
-                    try {
-                        const newVideoRef = push(ref(db, 'videos'));
-                        await set(newVideoRef, {
-                            series: item.series,
-                            ep: item.ep,
-                            type: item.type,
-                            category: item.category,
-                            videoUrl: item.videoUrl,
-                            imageUrl: item.imageUrl,
-                            accessType: item.accessType,
-                            isHot: item.isHot,
-                            createdAt: Date.now()
-                        });
-
-                        await sendSchedulePublishedAlert(item.series, item.ep, item.type, item.category, item.videoUrl, item.imageUrl);
-                    } catch (err) {}
-                } else {
-                    updatedQueue.push(item);
-                }
-            }
-
-            if (isModified) {
-                localStorage.setItem('dekmerl_scheduled_videos', JSON.stringify(updatedQueue));
-            }
-        }
-
-        window.toggleScheduleInput = function(val) {
-            const group = document.getElementById('scheduleInputGroup');
-            if (val === 'schedule') {
-                group.classList.remove('hidden');
-                document.getElementById('scheduleTime').required = true;
-            } else {
-                group.classList.add('hidden');
-                document.getElementById('scheduleTime').required = false;
-            }
-        }
-
-        window.toggleQuickAddScheduleInput = function(val) {
-            const group = document.getElementById('quickAddScheduleInputGroup');
-            if (val === 'schedule') {
-                group.classList.remove('hidden');
-                document.getElementById('quickAddScheduleTime').required = true;
-            } else {
-                group.classList.add('hidden');
-                document.getElementById('quickAddScheduleTime').required = false;
-            }
         }
 
         window.filterCategory = function(cat) {
@@ -1968,6 +1858,7 @@
             alert("✨ បានរៀបចំ និងរីហ្វ្រេសរឿង ៧០% ខាងក្រោមលោតឡើងមកលើជោគជ័យ!");
         }
 
+        /* បង្ហោះវីដេអូភ្លាមៗ (ដក Schedule Logic) */
         window.handleVideoUpload = async function(e) {
             e.preventDefault();
             const series = document.getElementById('seriesTitle').value.trim();
@@ -1983,48 +1874,22 @@
             }
 
             const isHot = document.getElementById('isHot').checked;
-            const scheduleOption = document.getElementById('scheduleOption').value;
 
-            if (scheduleOption === 'now') {
-                try {
-                    const newVideoRef = push(ref(db, 'videos'));
-                    await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
-                    
-                    sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
-
-                    document.getElementById('uploadForm').reset();
-                    toggleAdminModal();
-                    alert("បង្ហោះវីដេអូរឿងទៅកាន់ Database និង Telegram ជោគជ័យ!");
-                } catch (err) {
-                    alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
-                }
-            } else {
-                const scheduleTimeVal = document.getElementById('scheduleTime').value;
-                if (!scheduleTimeVal) {
-                    alert("សូមជ្រើសរើសថ្ងៃ និងម៉ោងឱ្យបានត្រឹមត្រូវ!");
-                    return;
-                }
-
-                const publishTime = new Date(scheduleTimeVal).getTime();
-                if (publishTime <= Date.now()) {
-                    alert("ពេលវេលាដែលបានកំណត់ត្រូវតែស្ថិតនៅពេលអនាគត!");
-                    return;
-                }
-
-                let scheduledQueue = JSON.parse(localStorage.getItem('dekmerl_scheduled_videos')) || [];
-                const newItem = { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, publishTime };
-                scheduledQueue.push(newItem);
-                localStorage.setItem('dekmerl_scheduled_videos', JSON.stringify(scheduledQueue));
-
-                const scheduleDateStr = new Date(publishTime).toLocaleString();
-                await sendScheduleCreatedAlert(series, ep, type, category, scheduleDateStr, videoUrl);
+            try {
+                const newVideoRef = push(ref(db, 'videos'));
+                await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
+                
+                sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
 
                 document.getElementById('uploadForm').reset();
                 toggleAdminModal();
-                alert(`បានកំណត់ពេលវេលាបង្ហោះ (Schedule) ជោគជ័យ! សារបានផ្ញើទៅកាន់ Group ព័ត៌មានកំណត់ពេលរួចរាល់។`);
+                alert("បង្ហោះវីដេអូរឿងទៅកាន់ Database និង Telegram ជោគជ័យ!");
+            } catch (err) {
+                alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
             }
         }
 
+        /* បង្ហោះភាគបន្តភ្លាមៗ (ដក Schedule Logic) */
         window.handleQuickAddEpisode = async function(e) {
             e.preventDefault();
             const series = document.getElementById('quickAddSeriesTitle').value;
@@ -2036,43 +1901,17 @@
             let accessType = document.getElementById('quickAddAccessType').value;
             if (category === 'រឿងឥតគិតថ្លៃ') accessType = 'free';
             const isHot = document.getElementById('quickAddIsHot').value === "true";
-            const scheduleOption = document.getElementById('quickAddScheduleOption').value;
 
-            if (scheduleOption === 'now') {
-                try {
-                    const newVideoRef = push(ref(db, 'videos'));
-                    await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
-                    
-                    sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
-
-                    closeQuickAddEpModal();
-                    alert(`បានបង្ហោះ ${ep} សម្រាប់រឿង "${series}" ទៅកាន់ Database និង Telegram ជោគជ័យ!`);
-                } catch (err) {
-                    alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
-                }
-            } else {
-                const scheduleTimeVal = document.getElementById('quickAddScheduleTime').value;
-                if (!scheduleTimeVal) {
-                    alert("សូមជ្រើសរើសថ្ងៃ និងម៉ោងឱ្យបានត្រឹមត្រូវ!");
-                    return;
-                }
-
-                const publishTime = new Date(scheduleTimeVal).getTime();
-                if (publishTime <= Date.now()) {
-                    alert("ពេលវេលាដែលបានកំណត់ត្រូវតែស្ថិតនៅពេលអនាគត!");
-                    return;
-                }
-
-                let scheduledQueue = JSON.parse(localStorage.getItem('dekmerl_scheduled_videos')) || [];
-                const newItem = { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, publishTime };
-                scheduledQueue.push(newItem);
-                localStorage.setItem('dekmerl_scheduled_videos', JSON.stringify(scheduledQueue));
-
-                const scheduleDateStr = new Date(publishTime).toLocaleString();
-                await sendScheduleCreatedAlert(series, ep, type, category, scheduleDateStr, videoUrl);
+            try {
+                const newVideoRef = push(ref(db, 'videos'));
+                await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
+                
+                sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
 
                 closeQuickAddEpModal();
-                alert(`បានកំណត់ពេលវេលាបង្ហោះភាគបន្ត (Schedule) ជោគជ័យ!`);
+                alert(`បានបង្ហោះ ${ep} សម្រាប់រឿង "${series}" ទៅកាន់ Database និង Telegram ជោគជ័យ!`);
+            } catch (err) {
+                alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
             }
         }
 
@@ -2297,10 +2136,6 @@
             document.getElementById('quickAddEpTitle').value = `រដូវកាលទី ${lastEpNum}`;
             document.getElementById('quickAddVideoUrl').value = '';
             document.getElementById('quickAddAccessType').value = (refEp.category === 'រឿងឥតគិតថ្លៃ') ? 'free' : 'vip';
-
-            document.getElementById('quickAddScheduleOption').value = 'now';
-            document.getElementById('quickAddScheduleInputGroup').classList.add('hidden');
-            document.getElementById('quickAddScheduleTime').value = '';
 
             document.getElementById('quickAddEpModal').classList.remove('hidden');
         }
