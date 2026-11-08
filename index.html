@@ -1103,7 +1103,6 @@
                         renderVipRankingsList();
                         updateStatsUI();
                     }
-                    // កែប្រែដើម្បីកុំឲ្យ re-render ញាក់ Widget
                     if (window.currentUserTgObj) {
                         renderTelegramLoginWidget();
                     }
@@ -1174,6 +1173,7 @@
             });
         }
 
+        /* 🟢 កូដដែលបានកែសម្រួលដើម្បីការពារការផ្ញើសារซ้ำៗ (Spam) ទៅ Telegram */
         async function checkVipExpiryBackground() {
             let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
             let now = Date.now();
@@ -1181,11 +1181,14 @@
             if (window.dbUsersList) {
                 for (let userKey of Object.keys(window.dbUsersList)) {
                     let u = window.dbUsersList[userKey];
-                    if (u.vipExpiry && u.vipExpiry <= now) {
-                        if (!expiredList[u.username]) {
-                            await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${u.username}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(u.vipExpiry).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
-                            expiredList[u.username] = true;
-                            localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
+                    if (u.vipExpiry && u.vipExpiry > 0) {
+                        if (u.vipExpiry <= now) {
+                            if (!expiredList[u.username]) {
+                                await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${u.username}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(u.vipExpiry).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                                
+                                expiredList[u.username] = true;
+                                localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
+                            }
                             
                             try {
                                 await update(ref(db, 'users/' + userKey), { vipExpiry: null });
@@ -1240,7 +1243,6 @@
             }
         });
 
-        /* កែប្រែមុខងារបង្ហាញ Telegram Widget ដើម្បីដោះស្រាយបញ្ហាលោតញាក់ */
         function renderTelegramLoginWidget() {
             const container = document.getElementById('telegramLoginButton');
             if (!container) return;
@@ -1282,7 +1284,6 @@
                     </div>
                 `;
             } else {
-                // ប្រសិនបើបង្កើត Widget រួចហើយ កុំបង្កើតដដែលៗ នាំឲ្យលោតញាក់
                 if (container.querySelector('script') || container.querySelector('iframe')) return;
                 
                 container.innerHTML = '';
@@ -1858,7 +1859,6 @@
             alert("✨ បានរៀបចំ និងរីហ្វ្រេសរឿង ៧០% ខាងក្រោមលោតឡើងមកលើជោគជ័យ!");
         }
 
-        /* បង្ហោះវីដេអូភ្លាមៗ (ដក Schedule Logic) */
         window.handleVideoUpload = async function(e) {
             e.preventDefault();
             const series = document.getElementById('seriesTitle').value.trim();
@@ -1889,7 +1889,6 @@
             }
         }
 
-        /* បង្ហោះភាគបន្តភ្លាមៗ (ដក Schedule Logic) */
         window.handleQuickAddEpisode = async function(e) {
             e.preventDefault();
             const series = document.getElementById('quickAddSeriesTitle').value;
