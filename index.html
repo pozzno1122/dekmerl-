@@ -1173,7 +1173,7 @@
             });
         }
 
-        /* 🟢 មុខងារកែប្រែដោះស្រាយបញ្ហាសារលោតផ្ញើซ้ำៗ (Spam) ទៅ Telegram ពេល VIP អស់សុពលភាព */
+        /* 🟢 មុខងារពិនិត្យ VIP ផុតកំណត់ ដែលទប់ស្កាត់ការផ្ញើសារซ้ำ ១០០% ដោយប្រើ Flag ក្នុង Database */
         async function checkVipExpiryBackground() {
             let now = Date.now();
 
@@ -1181,21 +1181,23 @@
                 for (let userKey of Object.keys(window.dbUsersList)) {
                     let u = window.dbUsersList[userKey];
                     
-                    // ពិនិត្យមើលថាតើសមាជិកនេះធ្លាប់មាន vipExpiry ហើយបានផុតកំណត់ឬនៅ
-                    if (u.vipExpiry && u.vipExpiry > 0) {
-                        if (u.vipExpiry <= now) {
-                            // ពិនិត្យមើលក្នុង Database ផ្ទាល់ថាតើធ្លាប់ផ្ញើសារជូនដំណឹង (notifiedExpired) រួចហើយឬនៅ
-                            if (!u.notifiedExpired) {
-                                // ផ្ញើសារទៅកាន់ Telegram Group តែ ១ ដងគត់
-                                await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${u.username}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(u.vipExpiry).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
-                            }
-                            
-                            // កែប្រែក្នុង Database ភ្លាម៖ លុប vipExpiry ចោល និងកំណត់ notifiedExpired ជា true ដើម្បីកុំឱ្យផ្ញើសារซ้ำទៀត
+                    // ពិនិត្យថាមាន vipExpiry ហើយបានផុតកំណត់ (vipExpiry <= now) ហើយមិនទាន់ធ្លាប់ផ្ញើសារជូនដំណឹង (notifiedExpired មិនមែន true)
+                    if (u.vipExpiry && u.vipExpiry > 0 && u.vipExpiry <= now) {
+                        if (u.notifiedExpired !== true) {
+                            // កំណត់ទិន្នន័យដក vipExpiry ចោល និងដាក់ notifiedExpired: true ជាបន្ទាន់ មុននឹងផ្ញើសារ ដើម្បីការពារការហៅซ้ำក្នុងពេលដំណាលគ្នា
                             try {
                                 await update(ref(db, 'users/' + userKey), { 
                                     vipExpiry: null,
                                     notifiedExpired: true 
                                 });
+                                
+                                // ផ្ញើសារទៅកាន់ Telegram Group តែ ១ ដងគត់
+                                await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${u.username}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(u.vipExpiry).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                            } catch(e) {}
+                        } else if (u.vipExpiry !== null) {
+                            // ប្រសិនបើធ្លាប់ផ្ញើសាររួចហើយ ប៉ុន្តែ vipExpiry មិនទាន់លុប ត្រូវលុបវាចោលស្ងៀមៗ
+                            try {
+                                await update(ref(db, 'users/' + userKey), { vipExpiry: null });
                             } catch(e) {}
                         }
                     }
@@ -1721,7 +1723,7 @@
             const cleanUserKey = tgUser.replace(/[^a-zA-Z0-9_]/g, '');
 
             try {
-                // នៅពេលផ្ដល់ VIP ថ្មី ត្រូវកែប្រែ notifiedExpired ជា false វិញដើម្បីឱ្យអាចផ្ញើសារបានពេលអស់សុពលភាពលើកក្រោយ
+                // នៅពេលផ្ដល់ VIP ថ្មី ត្រូវកំណត់ notifiedExpired ជា false វិញ ដើម្បីឱ្យពេលអស់សុពលភាពលើកក្រោយអាចផ្ញើសារបានម្តងទៀត
                 await update(ref(db, 'users/' + cleanUserKey), {
                     username: tgUser,
                     vipExpiry: expiryTime,
@@ -1779,7 +1781,8 @@
             const cleanUserKey = user.replace(/[^a-zA-Z0-9_]/g, '');
             try {
                 await update(ref(db, 'users/' + cleanUserKey), {
-                    vipExpiry: null
+                    vipExpiry: null,
+                    notifiedExpired: true
                 });
             } catch(e) {}
 
