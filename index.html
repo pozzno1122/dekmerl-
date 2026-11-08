@@ -1173,25 +1173,29 @@
             });
         }
 
-        /* 🟢 កូដដែលបានកែសម្រួលដើម្បីការពារការផ្ញើសារซ้ำៗ (Spam) ទៅ Telegram */
+        /* 🟢 មុខងារកែប្រែដោះស្រាយបញ្ហាសារលោតផ្ញើซ้ำៗ (Spam) ទៅ Telegram ពេល VIP អស់សុពលភាព */
         async function checkVipExpiryBackground() {
-            let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
             let now = Date.now();
 
             if (window.dbUsersList) {
                 for (let userKey of Object.keys(window.dbUsersList)) {
                     let u = window.dbUsersList[userKey];
+                    
+                    // ពិនិត្យមើលថាតើសមាជិកនេះធ្លាប់មាន vipExpiry ហើយបានផុតកំណត់ឬនៅ
                     if (u.vipExpiry && u.vipExpiry > 0) {
                         if (u.vipExpiry <= now) {
-                            if (!expiredList[u.username]) {
+                            // ពិនិត្យមើលក្នុង Database ផ្ទាល់ថាតើធ្លាប់ផ្ញើសារជូនដំណឹង (notifiedExpired) រួចហើយឬនៅ
+                            if (!u.notifiedExpired) {
+                                // ផ្ញើសារទៅកាន់ Telegram Group តែ ១ ដងគត់
                                 await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${u.username}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(u.vipExpiry).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
-                                
-                                expiredList[u.username] = true;
-                                localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
                             }
                             
+                            // កែប្រែក្នុង Database ភ្លាម៖ លុប vipExpiry ចោល និងកំណត់ notifiedExpired ជា true ដើម្បីកុំឱ្យផ្ញើសារซ้ำទៀត
                             try {
-                                await update(ref(db, 'users/' + userKey), { vipExpiry: null });
+                                await update(ref(db, 'users/' + userKey), { 
+                                    vipExpiry: null,
+                                    notifiedExpired: true 
+                                });
                             } catch(e) {}
                         }
                     }
@@ -1717,18 +1721,16 @@
             const cleanUserKey = tgUser.replace(/[^a-zA-Z0-9_]/g, '');
 
             try {
+                // នៅពេលផ្ដល់ VIP ថ្មី ត្រូវកែប្រែ notifiedExpired ជា false វិញដើម្បីឱ្យអាចផ្ញើសារបានពេលអស់សុពលភាពលើកក្រោយ
                 await update(ref(db, 'users/' + cleanUserKey), {
                     username: tgUser,
-                    vipExpiry: expiryTime
+                    vipExpiry: expiryTime,
+                    notifiedExpired: false
                 });
 
                 let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
                 vipUsers[tgUser] = expiryTime;
                 localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
-
-                let expiredList = JSON.parse(localStorage.getItem('dekmerl_expired_notified')) || {};
-                delete expiredList[tgUser];
-                localStorage.setItem('dekmerl_expired_notified', JSON.stringify(expiredList));
 
                 const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
                 
