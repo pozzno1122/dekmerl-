@@ -40,10 +40,34 @@
         .vip-section { max-width: 1200px; margin: 14px auto 0; padding: 0 16px; }
         .vip-card { background: linear-gradient(135deg, #1f1c18 0%, #121212 100%); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
         @media (min-width: 768px) { .vip-card { flex-direction: row; align-items: center; justify-content: space-between; } }
-        .vip-info { display: flex; align-items: center; gap: 10px; }
+        
+        .vip-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; width: 100%; }
+        .vip-info { display: flex; align-items: center; gap: 10px; flex: 1; }
         .vip-crown-icon { width: 36px; height: 36px; background-color: rgba(234, 179, 8, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
         .vip-text h3 { color: #facc15; font-size: 0.85rem; font-weight: 700; }
         .vip-text p { color: #9ca3af; font-size: 0.65rem; margin-top: 2px; }
+
+        /* Public VIP Leaderboard Button */
+        .btn-vip-leaderboard {
+            background: rgba(250, 204, 21, 0.12);
+            border: 1px solid rgba(250, 204, 21, 0.45);
+            color: #facc15;
+            padding: 6px 10px;
+            border-radius: 10px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            flex-shrink: 0;
+            transition: transform 0.15s ease, background-color 0.2s;
+            box-shadow: 0 2px 10px rgba(250, 204, 21, 0.15);
+        }
+        .btn-vip-leaderboard:hover { background: rgba(250, 204, 21, 0.22); }
+        .btn-vip-leaderboard:active { transform: scale(0.95); }
 
         .vip-btns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; }
         @media (min-width: 768px) { .vip-btns-grid { width: auto; min-width: 300px; } }
@@ -442,12 +466,19 @@
     <!-- VIP Section -->
     <section class="vip-section">
         <div class="vip-card">
-            <div class="vip-info">
-                <div class="vip-crown-icon">👑</div>
-                <div class="vip-text">
-                    <h3>ទិញសមាជិក VIP</h3>
-                    <p>ជ្រើសរើសកញ្ចប់ VIP ខាងក្រោមដើម្បីបញ្ជាក់ការទិញទៅ Telegram @RIENML1</p>
+            <div class="vip-header-row">
+                <div class="vip-info">
+                    <div class="vip-crown-icon">👑</div>
+                    <div class="vip-text">
+                        <h3>ទិញសមាជិក VIP</h3>
+                        <p>ជ្រើសរើសកញ្ចប់ VIP ខាងក្រោមដើម្បីបញ្ជាក់ការទិញទៅ Telegram @RIENML1</p>
+                    </div>
                 </div>
+                <!-- ប៊ូតុងមើលចំណាត់ថ្នាក់សមាជិក VIP ទាំងអស់ (កន្លែងរង្វង់ពណ៌ក្រហម) -->
+                <button onclick="openPublicVipRankModal()" class="btn-vip-leaderboard" title="មើលចំណាត់ថ្នាក់សមាជិក VIP">
+                    <span style="font-size: 1.05rem;">🏆</span>
+                    <span>ចំណាត់ថ្នាក់ VIP</span>
+                </button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
                 <div id="vipPlansContainer" class="vip-btns-grid"></div>
@@ -492,6 +523,18 @@
         <i class="fa-brands fa-telegram"></i>
     </a>
 
+    <!-- Public VIP Leaderboard Modal (សម្រាប់អ្នកប្រើប្រាស់ទូទៅមើលចំណាត់ថ្នាក់ VIP ទាំងអស់) -->
+    <div id="publicVipRankModal" class="modal-overlay hidden">
+        <div class="modal-box" style="max-width: 520px; text-align: left; border-color: rgba(250, 204, 21, 0.4);">
+            <button onclick="closePublicVipRankModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px; padding-right: 24px;">
+                <span style="font-size: 1.25rem;">🏆</span>
+                <h3 style="font-size: 0.9rem; color: #facc15; font-weight: 700; line-height: 1.4;">បញ្ជីសមាជិក VIP ដែលមានចំនួនថ្ងៃច្រើនជាងគេ (១ ដល់ ក្រោម)៖</h3>
+            </div>
+            <div id="publicVipRankingsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 65vh; overflow-y: auto;"></div>
+        </div>
+    </div>
+
     <!-- Series Player Modal -->
     <div id="seriesModal" class="series-modal-overlay hidden">
         <div class="series-modal-header">
@@ -532,7 +575,7 @@
         </div>
     </div>
 
-    <!-- Quick Add Next Episode Modal for Admin (ដក Schedule ចេញ) -->
+    <!-- Quick Add Next Episode Modal for Admin (បន្ថែមប៊ូតុងបើក/បិទ 🔥 Hot) -->
     <div id="quickAddEpModal" class="modal-overlay hidden">
         <div class="modal-box" style="text-align: left; max-width: 500px;">
             <button onclick="closeQuickAddEpModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
@@ -542,7 +585,6 @@
                 <input type="hidden" id="quickAddVideoType">
                 <input type="hidden" id="quickAddVideoCategory">
                 <input type="hidden" id="quickAddImageUrl">
-                <input type="hidden" id="quickAddIsHot">
 
                 <div class="form-group">
                     <label>ឈ្មោះរឿងដុំ (Series Title)</label>
@@ -562,6 +604,12 @@
                         <option value="free">ឥតគិតថ្លៃ (Free)</option>
                         <option value="vip">សម្រាប់ VIP (VIP Only)</option>
                     </select>
+                </div>
+
+                <!-- ប៊ូតុងបើកឬបិទ 🔥 Hot នៅកន្លែងបង្ហោះភាគបន្ត -->
+                <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 10px; background: #121212; padding: 10px 12px; border-radius: 8px; border: 1px solid #333;">
+                    <input type="checkbox" id="quickAddIsHotCheckbox" style="width: 18px; height: 18px; accent-color: #E50914; cursor: pointer;">
+                    <label for="quickAddIsHotCheckbox" style="margin-bottom: 0; color: #facc15; font-weight: bold; cursor: pointer;">🔥 រឿង Hot (មានសញ្ញាភ្លើង)</label>
                 </div>
 
                 <button type="submit" class="btn-submit" style="background-color: #E50914; color: #fff; margin-top: 10px;">➕ បង្ហោះភាគនេះឥឡូវ</button>
@@ -585,7 +633,7 @@
                 <button onclick="switchAdminTab('users')" id="tabUsersBtn" class="tab-btn">💎 ផ្ដល់ VIP</button>
             </div>
 
-            <!-- Tab Maintenance Status (មុខងារបិទ/បើកវេបសាយ) -->
+            <!-- Tab Maintenance Status -->
             <div id="adminTabStatus">
                 <div style="background-color: #121212; border: 1px solid #333; padding: 16px; border-radius: 12px; margin-bottom: 12px;">
                     <h4 style="font-size: 0.9rem; color: #facc15; margin-bottom: 10px;">🛑 គ្រប់គ្រងស្ថានភាពដំណើរការវេបសាយ (Maintenance Mode)</h4>
@@ -643,7 +691,7 @@
                 <div id="vipRankingsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
             </div>
 
-            <!-- Upload Tab (ដក Schedule ចេញ) -->
+            <!-- Upload Tab -->
             <div id="adminTabUpload" class="hidden">
                 <form id="uploadForm" onsubmit="handleVideoUpload(event)">
                     <div class="form-group"><label>ចំណងជើងរឿងដុំ / ស៊េរី (ឧ. កំពូលព្រះបិសាច)</label><input type="text" id="seriesTitle" required placeholder="ឧ. កំពូលព្រះបិសាច" class="form-control"></div>
@@ -1103,6 +1151,9 @@
                         renderVipRankingsList();
                         updateStatsUI();
                     }
+                    if(!document.getElementById('publicVipRankModal').classList.contains('hidden')) {
+                        renderPublicVipRankingsList();
+                    }
                     if (window.currentUserTgObj) {
                         renderTelegramLoginWidget();
                     }
@@ -1173,7 +1224,6 @@
             });
         }
 
-        /* 🟢 មុខងារពិនិត្យ VIP ផុតកំណត់ ដែលទប់ស្កាត់ការផ្ញើសារซ้ำ ១០០% ដោយប្រើ Flag ក្នុង Database */
         async function checkVipExpiryBackground() {
             let now = Date.now();
 
@@ -1181,21 +1231,16 @@
                 for (let userKey of Object.keys(window.dbUsersList)) {
                     let u = window.dbUsersList[userKey];
                     
-                    // ពិនិត្យថាមាន vipExpiry ហើយបានផុតកំណត់ (vipExpiry <= now) ហើយមិនទាន់ធ្លាប់ផ្ញើសារជូនដំណឹង (notifiedExpired មិនមែន true)
                     if (u.vipExpiry && u.vipExpiry > 0 && u.vipExpiry <= now) {
                         if (u.notifiedExpired !== true) {
-                            // កំណត់ទិន្នន័យដក vipExpiry ចោល និងដាក់ notifiedExpired: true ជាបន្ទាន់ មុននឹងផ្ញើសារ ដើម្បីការពារការហៅซ้ำក្នុងពេលដំណាលគ្នា
                             try {
                                 await update(ref(db, 'users/' + userKey), { 
                                     vipExpiry: null,
                                     notifiedExpired: true 
                                 });
-                                
-                                // ផ្ញើសារទៅកាន់ Telegram Group តែ ១ ដងគត់
                                 await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${u.username}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(u.vipExpiry).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
                             } catch(e) {}
                         } else if (u.vipExpiry !== null) {
-                            // ប្រសិនបើធ្លាប់ផ្ញើសាររួចហើយ ប៉ុន្តែ vipExpiry មិនទាន់លុប ត្រូវលុបវាចោលស្ងៀមៗ
                             try {
                                 await update(ref(db, 'users/' + userKey), { vipExpiry: null });
                             } catch(e) {}
@@ -1374,6 +1419,75 @@
             }
             const message = encodeURIComponent(`សួស្ដី Admin (@RIENML1), ខ្ញុំចង់ទិញកញ្ចប់ VIP (${plan} - ${price})។ Telegram របស់ខ្ញុំគឺ: ${window.currentUserTgObj.username}`);
             window.open(`https://t.me/RIENML1?text=${message}`, '_blank');
+        }
+
+        /* Public VIP Leaderboard Functions */
+        window.openPublicVipRankModal = function() {
+            renderPublicVipRankingsList();
+            document.getElementById('publicVipRankModal').classList.remove('hidden');
+        }
+
+        window.closePublicVipRankModal = function() {
+            document.getElementById('publicVipRankModal').classList.add('hidden');
+        }
+
+        function renderPublicVipRankingsList() {
+            const container = document.getElementById('publicVipRankingsContainer');
+            if(!container) return;
+
+            let vipUsersArr = [];
+            const now = Date.now();
+
+            if (window.dbUsersList) {
+                Object.values(window.dbUsersList).forEach(u => {
+                    if (u.vipExpiry && u.vipExpiry > now) {
+                        vipUsersArr.push({
+                            username: u.username,
+                            first_name: u.first_name,
+                            photo_url: u.photo_url,
+                            expiry: u.vipExpiry,
+                            diffMs: u.vipExpiry - now
+                        });
+                    }
+                });
+            }
+
+            vipUsersArr.sort((a, b) => b.diffMs - a.diffMs);
+
+            if (vipUsersArr.length === 0) {
+                container.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 15px;">មិនទាន់មានសមាជិក VIP ឡើយ។</p>`;
+                return;
+            }
+
+            const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
+
+            container.innerHTML = vipUsersArr.map((item, index) => {
+                const rankNum = index + 1;
+                const timeStr = formatTimeRemaining(item.expiry);
+                let rankColor = "#aaa";
+                if(rankNum === 1) rankColor = "#facc15";
+                else if(rankNum === 2) rankColor = "#e2e8f0";
+                else if(rankNum === 3) rankColor = "#b45309";
+
+                return `
+                    <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid ${rankNum === 1 ? '#facc15' : '#2a2a2a'}; padding: 10px 14px; border-radius: 10px; height: 56px;">
+                        <div style="display: flex; align-items: center; gap: 12px; overflow: hidden;">
+                            <div style="font-size: 0.9rem; font-weight: bold; color: ${rankColor}; min-width: 24px; text-align: center;">#${rankNum}</div>
+                            <img src="${item.photo_url || 'https://via.placeholder.com/32'}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="Avatar">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="color: #fff; font-weight: bold; font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis;">${item.username}</span>
+                                    <img src="${vipBadgeImgUrl}" style="height: 16px; object-fit: contain; flex-shrink: 0;" alt="VIP">
+                                </div>
+                                <div style="color: #888; font-size: 0.6rem; overflow: hidden; text-overflow: ellipsis;">ឈ្មោះ: ${item.first_name || 'គ្មាន'}</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right; flex-shrink: 0;">
+                            <span style="font-size: 0.7rem; color: #facc15; font-weight: bold; background: rgba(250,204,21,0.1); padding: 4px 8px; border-radius: 6px; white-space: nowrap;">⏳ នៅសល់ ${timeStr}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         window.toggleAdminModal = function() {
@@ -1723,7 +1837,6 @@
             const cleanUserKey = tgUser.replace(/[^a-zA-Z0-9_]/g, '');
 
             try {
-                // នៅពេលផ្ដល់ VIP ថ្មី ត្រូវកំណត់ notifiedExpired ជា false វិញ ដើម្បីឱ្យពេលអស់សុពលភាពលើកក្រោយអាចផ្ញើសារបានម្តងទៀត
                 await update(ref(db, 'users/' + cleanUserKey), {
                     username: tgUser,
                     vipExpiry: expiryTime,
@@ -1904,12 +2017,22 @@
             const videoUrl = document.getElementById('quickAddVideoUrl').value.trim();
             let accessType = document.getElementById('quickAddAccessType').value;
             if (category === 'រឿងឥតគិតថ្លៃ') accessType = 'free';
-            const isHot = document.getElementById('quickAddIsHot').value === "true";
+            
+            // ទាញតម្លៃពីប៊ូតុងបើក/បិទ 🔥 Hot នៅកន្លែងបង្ហោះភាគបន្ត
+            const isHot = document.getElementById('quickAddIsHotCheckbox').checked;
 
             try {
                 const newVideoRef = push(ref(db, 'videos'));
                 await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
                 
+                // ធ្វើបច្ចុប្បន្នភាពស្ថានភាព Hot ទៅគ្រប់ភាគទាំងអស់នៃរឿងដុំនោះ (ដើម្បីឱ្យបិទ ឬ បើក មានប្រសិទ្ធភាពភ្លាម)
+                const existingEpisodes = window.videos.filter(v => v.series === series);
+                for (let item of existingEpisodes) {
+                    if (item.isHot !== isHot) {
+                        await update(ref(db, 'videos/' + item.id), { isHot: isHot });
+                    }
+                }
+
                 sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
 
                 closeQuickAddEpModal();
@@ -2134,7 +2257,10 @@
             document.getElementById('quickAddVideoType').value = refEp.type || 'រឿងភាគ';
             document.getElementById('quickAddVideoCategory').value = refEp.category || 'ស្នេហា';
             document.getElementById('quickAddImageUrl').value = refEp.imageUrl || '';
-            document.getElementById('quickAddIsHot').value = refEp.isHot ? "true" : "false";
+            
+            // កំណត់ស្ថានភាពប៊ូតុងបើក/បិទ 🔥 Hot តាមរឿងបច្ចុប្បន្ន
+            const isCurrentlyHot = sEpisodes.some(ep => ep.isHot === true);
+            document.getElementById('quickAddIsHotCheckbox').checked = isCurrentlyHot;
 
             const lastEpNum = sEpisodes.length + 1;
             document.getElementById('quickAddEpTitle').value = `រដូវកាលទី ${lastEpNum}`;
