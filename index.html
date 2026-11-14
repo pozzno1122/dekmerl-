@@ -47,7 +47,6 @@
         .vip-text h3 { color: #facc15; font-size: 0.85rem; font-weight: 700; }
         .vip-text p { color: #9ca3af; font-size: 0.65rem; margin-top: 2px; }
 
-        /* Public VIP Leaderboard Button */
         .btn-vip-leaderboard {
             background: rgba(250, 204, 21, 0.12);
             border: 1px solid rgba(250, 204, 21, 0.45);
@@ -339,13 +338,11 @@
 
         .hidden { display: none !important; }
 
-        /* Stats Card UI */
         .stats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
         .stat-card { background: #121212; border: 1px solid #333; border-radius: 10px; padding: 12px; text-align: center; }
         .stat-card h4 { font-size: 0.65rem; color: #888; }
         .stat-card p { font-size: 1.2rem; font-weight: bold; color: #E50914; margin-top: 4px; }
 
-        /* Maintenance Screen Overlay */
         .maintenance-screen {
             position: fixed;
             inset: 0;
@@ -385,7 +382,6 @@
             100% { transform: scale(1) rotate(360deg); }
         }
 
-        /* Click Ripple Effect */
         .click-ripple {
             position: fixed;
             border-radius: 50%;
@@ -398,27 +394,14 @@
         }
 
         @keyframes rippleExpand {
-            0% {
-                width: 10px;
-                height: 10px;
-                opacity: 0.9;
-                transform: translate(-50%, -50%) scale(0.2);
-            }
-            50% {
-                opacity: 0.6;
-            }
-            100% {
-                width: 70px;
-                height: 70px;
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(1.5);
-            }
+            0% { width: 10px; height: 10px; opacity: 0.9; transform: translate(-50%, -50%) scale(0.2); }
+            50% { opacity: 0.6; }
+            100% { width: 70px; height: 70px; opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
         }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <!-- Maintenance Screen Overlay (បង្ហាញនៅពេល Admin បិទវេបសាយ) -->
     <div id="maintenanceOverlay" class="maintenance-screen hidden">
         <div class="maintenance-box">
             <i class="fa-solid fa-gears maintenance-icon"></i>
@@ -449,7 +432,6 @@
         </div>
     </section>
 
-    <!-- Category Filter Pills -->
     <div class="category-filter">
         <button onclick="filterCategory('all')" id="cat_all" class="cat-pill active-cat">✨ ទាំងអស់</button>
         <button onclick="filterCategory('រឿងឥតគិតថ្លៃ')" id="cat_រឿងឥតគិតថ្លៃ" class="cat-pill">🎁 រឿងឥតគិតថ្លៃ</button>
@@ -463,7 +445,6 @@
         <button onclick="filterCategory('តួស្រី')" id="cat_តួស្រី" class="cat-pill">💃 តួស្រី</button>
     </div>
 
-    <!-- VIP Section -->
     <section class="vip-section">
         <div class="vip-card">
             <div class="vip-header-row">
@@ -474,7 +455,6 @@
                         <p>ជ្រើសរើសកញ្ចប់ VIP ខាងក្រោមដើម្បីបញ្ជាក់ការទិញទៅ Telegram @RIENML1</p>
                     </div>
                 </div>
-                <!-- ប៊ូតុងមើលចំណាត់ថ្នាក់សមាជិក VIP ទាំងអស់ (កន្លែងរង្វង់ពណ៌ក្រហម) -->
                 <button onclick="openPublicVipRankModal()" class="btn-vip-leaderboard" title="មើលចំណាត់ថ្នាក់សមាជិក VIP">
                     <span style="font-size: 1.05rem;">🏆</span>
                     <span>ចំណាត់ថ្នាក់ VIP</span>
@@ -490,7 +470,6 @@
         </div>
     </section>
 
-    <!-- Admin Tools Section -->
     <div id="adminPanelTrigger" class="admin-trigger-wrap hidden">
         <button onclick="toggleAdminModal()" class="btn-admin-panel">
             <i class="fa-solid fa-gear"></i>
@@ -523,7 +502,6 @@
         <i class="fa-brands fa-telegram"></i>
     </a>
 
-    <!-- Public VIP Leaderboard Modal (សម្រាប់អ្នកប្រើប្រាស់ទូទៅមើលចំណាត់ថ្នាក់ VIP ទាំងអស់) -->
     <div id="publicVipRankModal" class="modal-overlay hidden">
         <div class="modal-box" style="max-width: 520px; text-align: left; border-color: rgba(250, 204, 21, 0.4);">
             <button onclick="closePublicVipRankModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
@@ -535,7 +513,6 @@
         </div>
     </div>
 
-    <!-- Series Player Modal -->
     <div id="seriesModal" class="series-modal-overlay hidden">
         <div class="series-modal-header">
             <button onclick="closeSeriesModal()" class="btn-back-series">
@@ -575,7 +552,6 @@
         </div>
     </div>
 
-    <!-- Quick Add Next Episode Modal for Admin (បន្ថែមប៊ូតុងបើក/បិទ 🔥 Hot) -->
     <div id="quickAddEpModal" class="modal-overlay hidden">
         <div class="modal-box" style="text-align: left; max-width: 500px;">
             <button onclick="closeQuickAddEpModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
@@ -606,7 +582,6 @@
                     </select>
                 </div>
 
-                <!-- ប៊ូតុងបើកឬបិទ 🔥 Hot នៅកន្លែងបង្ហោះភាគបន្ត -->
                 <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 10px; background: #121212; padding: 10px 12px; border-radius: 8px; border: 1px solid #333;">
                     <input type="checkbox" id="quickAddIsHotCheckbox" style="width: 18px; height: 18px; accent-color: #E50914; cursor: pointer;">
                     <label for="quickAddIsHotCheckbox" style="margin-bottom: 0; color: #facc15; font-weight: bold; cursor: pointer;">🔥 រឿង Hot (មានសញ្ញាភ្លើង)</label>
@@ -617,7 +592,6 @@
         </div>
     </div>
 
-    <!-- Admin Management Modal -->
     <div id="adminModal" class="modal-overlay hidden">
         <div class="modal-box" style="max-width: 650px; text-align: left;">
             <button onclick="toggleAdminModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
@@ -633,7 +607,6 @@
                 <button onclick="switchAdminTab('users')" id="tabUsersBtn" class="tab-btn">💎 ផ្ដល់ VIP</button>
             </div>
 
-            <!-- Tab Maintenance Status -->
             <div id="adminTabStatus">
                 <div style="background-color: #121212; border: 1px solid #333; padding: 16px; border-radius: 12px; margin-bottom: 12px;">
                     <h4 style="font-size: 0.9rem; color: #facc15; margin-bottom: 10px;">🛑 គ្រប់គ្រងស្ថានភាពដំណើរការវេបសាយ (Maintenance Mode)</h4>
@@ -691,7 +664,6 @@
                 <div id="vipRankingsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
             </div>
 
-            <!-- Upload Tab -->
             <div id="adminTabUpload" class="hidden">
                 <form id="uploadForm" onsubmit="handleVideoUpload(event)">
                     <div class="form-group"><label>ចំណងជើងរឿងដុំ / ស៊េរី (ឧ. កំពូលព្រះបិសាច)</label><input type="text" id="seriesTitle" required placeholder="ឧ. កំពូលព្រះបិសាច" class="form-control"></div>
@@ -748,7 +720,7 @@
 
             <div id="adminTabBanners" class="hidden">
                 <form onsubmit="saveBannerSettings(event)">
-                    <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 12px;">🖼️ កែសម្រួលលីងរូបភាព Banner Carousel (៣ ទៅដល់ ៨ រូបភាព)៖</h4>
+                    <h4 style="font-size: 0.85rem; color: #bbb; margin-bottom: 12px;">🖼️ កែសម្រួលលីងរូបភាព Banner Carousel (៣ ទៅដល់ 8 រូបភាព)៖</h4>
                     <div class="form-group"><label>Banner ទី ១ (តម្រូវឱ្យមាន)</label><input type="url" id="bannerUrl1" required class="form-control" placeholder="https://..."></div>
                     <div class="form-group"><label>Banner ទី ២ (តម្រូវឱ្យមាន)</label><input type="url" id="bannerUrl2" required class="form-control" placeholder="https://..."></div>
                     <div class="form-group"><label>Banner ទី ៣ (តម្រូវឱ្យមាន)</label><input type="url" id="bannerUrl3" required class="form-control" placeholder="https://..."></div>
@@ -794,7 +766,6 @@
         </div>
     </div>
 
-    <!-- Edit Video Modal -->
     <div id="editVideoModal" class="modal-overlay hidden">
         <div class="modal-box" style="text-align: left;">
             <button onclick="closeEditModal()" class="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
@@ -859,26 +830,17 @@
         const superAdminTelegram = "@ktyofficial169".toLowerCase().trim();
         const secondAdminTelegram = "@rienml1".toLowerCase().trim();
 
-        /* Telegram Bots Settings */
         const botToken = "8153039437:AAHSGyPYXvTzu9ck1K2vfL4oZMDAES-wCTE";
         const chatId = "-1004357183059";
-
-        /* VIP Bot */
         const vipBotToken = "9260453589:AAHTu0QrFkmoYugNuCGCOhD_lBTHM3N4qZs";
         const vipChatId = "-1004493438456";
-
-        /* Telegram Bot សម្រាប់រឿងបង្ហោះភ្លាមៗ (Instant Upload) */
         const movieBotToken = "9284674255:AAHP3kX9xipGvouXRXx4sZWcL_x_BnGnNaE";
         const movieChatId = "-1004381190574";
-
-        /* Telegram Bot សម្រាប់ VIP អស់សុពលភាព */
         const expiredVipBotToken = "9246036170:AAHb7bTyGetzB0hV5YwNAT-5-izAlogkBY0";
         const expiredVipChatId = "-1004387202073";
 
-        /* Global Status Variable */
         window.siteMaintenanceStatus = { isClosed: false, reason: "" };
 
-        /* Click Ripple Water Effect */
         function createClickRipple(e) {
             let clientX, clientY;
             if (e.touches && e.touches.length > 0) {
@@ -888,34 +850,36 @@
                 clientX = e.clientX;
                 clientY = e.clientY;
             }
-
             if (!clientX && !clientY) return;
-
             const circle = document.createElement('div');
             circle.classList.add('click-ripple');
             circle.style.left = `${clientX}px`;
             circle.style.top = `${clientY}px`;
-
             document.body.appendChild(circle);
-
-            setTimeout(() => {
-                circle.remove();
-            }, 600);
+            setTimeout(() => { circle.remove(); }, 600);
         }
-
         window.addEventListener('pointerdown', createClickRipple, { passive: true });
 
-        /* Listen to Site Maintenance Status Realtime */
         function listenToMaintenanceStatus() {
             const maintenanceRef = ref(db, 'systemSettings/maintenance');
             onValue(maintenanceRef, (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
-                    window.siteMaintenanceStatus = data;
-                } else {
-                    window.siteMaintenanceStatus = { isClosed: false, reason: "" };
-                }
+                window.siteMaintenanceStatus = data ? data : { isClosed: false, reason: "" };
                 applyMaintenanceModeUI();
+            });
+        }
+
+        // Realtime Listener សម្រាប់ទាញយកលំដាប់រឿង 70% ដែល Admin បាន Refresh
+        function listenToBottom70Refresh() {
+            const refreshRef = ref(db, 'systemSettings/bottom70RefreshOrder');
+            onValue(refreshRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.order) {
+                    window.shuffledBottom70Order = data.order;
+                    renderVideos();
+                } else {
+                    window.shuffledBottom70Order = null;
+                }
             });
         }
 
@@ -953,23 +917,18 @@
                 }
                 closeSeriesModal();
             } else {
-                if (overlay) {
-                    overlay.classList.add('hidden');
-                }
+                if (overlay) overlay.classList.add('hidden');
             }
         }
 
         window.toggleWebsiteMaintenance = async function(shouldClose) {
             if (!isUserAdmin()) return;
-
             const reasonInput = document.getElementById('maintenanceReasonInput');
             const reason = reasonInput ? reasonInput.value.trim() : "";
-
             if (shouldClose && !reason) {
                 alert("សូមបញ្ចូលមូលហេតុ ឬសារជូនដំណឹងនៅពេលបិទវេបសាយ!");
                 return;
             }
-
             const maintenanceRef = ref(db, 'systemSettings/maintenance');
             try {
                 await set(maintenanceRef, {
@@ -978,12 +937,7 @@
                     updatedBy: window.currentUserTgObj ? window.currentUserTgObj.username : "Admin",
                     updatedAt: Date.now()
                 });
-
-                if (shouldClose) {
-                    alert("បានបិទវេបសាយជោគជ័យ! អ្នកមើលទាំងអស់នឹងឃើញសារជូនដំណឹងនេះភ្លាមៗ។");
-                } else {
-                    alert("បានបើកដំណើរការវេបសាយឡើងវិញជោគជ័យ! អតិថិជនទាំងអស់អាចមើលរឿងបានជាធម្មតាវិញ។");
-                }
+                alert(shouldClose ? "បានបិទវេបសាយជោគជ័យ!" : "បានបើកដំណើរការវេបសាយឡើងវិញជោគជ័យ!");
             } catch (err) {
                 alert("កំហុស៖ " + err.message);
             }
@@ -999,99 +953,57 @@
             } catch (err) {}
         }
 
-        async function sendVipTelegramAlert(textMsg) {
-            await sendTelegramAlert(textMsg, vipBotToken, vipChatId);
-        }
-
-        async function sendExpiredVipTelegramAlert(textMsg) {
-            await sendTelegramAlert(textMsg, expiredVipBotToken, expiredVipChatId);
-        }
-
+        async function sendVipTelegramAlert(textMsg) { await sendTelegramAlert(textMsg, vipBotToken, vipChatId); }
+        async function sendExpiredVipTelegramAlert(textMsg) { await sendTelegramAlert(textMsg, expiredVipBotToken, expiredVipChatId); }
         async function sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl) {
-            const textMsg = `🎬 **មានការបង្ហោះរឿងថ្មីនៅលើវេបសាយ!**\n\n` +
-                            `📌 **ឈ្មោះរឿង:** ${series}\n` +
-                            `🎞️ **ចំណងជើងភាគ/រដូវកាល:** ${ep}\n` +
-                            `📽️ **ប្រភេទរឿង:** ${type}\n` +
-                            `🏷️ **ប្រភេទសាច់រឿង:** ${category}\n` +
-                            `🔗 **លីងវីដេអូ:** ${videoUrl}\n` +
-                            `🖼️ **លីងរូបភាព:** ${imageUrl}\n\n` +
-                            `🌐 **វេបសាយ:** DekMerl-ដេកមើល`;
+            const textMsg = `🎬 **មានការបង្ហោះរឿងថ្មីនៅលើវេបសាយ!**\n\n📌 **ឈ្មោះរឿង:** ${series}\n🎞️ **ភាគ:** ${ep}\n📽️ **ប្រភេទ:** ${type}\n🏷️ **សាច់រឿង:** ${category}\n🔗 **លីង:** ${videoUrl}\n🌐 **DekMerl-ដេកមើល**`;
             await sendTelegramAlert(textMsg, movieBotToken, movieChatId);
         }
 
         function formatTimeRemaining(expiryTime) {
             const diffMs = expiryTime - Date.now();
             if (diffMs <= 0) return "ផុតកំណត់";
-            
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
             const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-
-            if (diffDays > 0) {
-                return `${diffDays} ថ្ងៃ`;
-            } else if (diffHours > 0) {
-                return `${diffHours} ម៉ោង`;
-            } else {
-                return `${diffMins > 0 ? diffMins : 1} នាទី`;
-            }
+            if (diffDays > 0) return `${diffDays} ថ្ងៃ`;
+            if (diffHours > 0) return `${diffHours} ម៉ោង`;
+            return `${diffMins > 0 ? diffMins : 1} នាទី`;
         }
 
         function trackSiteVisits() {
-            const visitRef = ref(db, 'analytics/totalVisits');
-            runTransaction(visitRef, (currentValue) => {
-                return (currentValue || 0) + 1;
-            });
+            runTransaction(ref(db, 'analytics/totalVisits'), (c) => (c || 0) + 1);
         }
 
         async function saveUserToDatabase(user) {
             if (!user || !user.username) return;
             const cleanUserKey = user.username.replace(/[^a-zA-Z0-9_]/g, '');
-            const userRef = ref(db, 'users/' + cleanUserKey);
-            
-            const userData = {
-                username: user.username,
-                first_name: user.first_name || '',
-                photo_url: user.photo_url || 'https://via.placeholder.com/32',
-                lastSeen: Date.now()
-            };
-
             try {
-                await update(userRef, userData);
+                await update(ref(db, 'users/' + cleanUserKey), {
+                    username: user.username,
+                    first_name: user.first_name || '',
+                    photo_url: user.photo_url || 'https://via.placeholder.com/32',
+                    lastSeen: Date.now()
+                });
             } catch(e) {}
         }
 
         function updateUserActivityStatus(currentlyWatching = null) {
             if (!window.currentUserTgObj || !window.currentUserTgObj.username) return;
             const cleanUserKey = window.currentUserTgObj.username.replace(/[^a-zA-Z0-9_]/g, '');
-            const userRef = ref(db, 'users/' + cleanUserKey);
-
-            const payload = {
-                lastSeen: Date.now()
-            };
-            if (currentlyWatching !== null) {
-                payload.currentlyWatching = currentlyWatching;
-            }
-
-            try {
-                update(userRef, payload);
-            } catch(e) {}
+            const payload = { lastSeen: Date.now() };
+            if (currentlyWatching !== null) payload.currentlyWatching = currentlyWatching;
+            try { update(ref(db, 'users/' + cleanUserKey), payload); } catch(e) {}
         }
 
         function recordWatchHistory(seriesName, epTitle) {
             if (!window.currentUserTgObj || !window.currentUserTgObj.username) return;
             const cleanUserKey = window.currentUserTgObj.username.replace(/[^a-zA-Z0-9_]/g, '');
-            const historyRef = ref(db, `users/${cleanUserKey}/watchHistory/${seriesName.replace(/[^a-zA-Z0-9_]/g, '_')}`);
-
-            const historyData = {
-                series: seriesName,
-                lastEp: epTitle,
-                updatedAt: Date.now()
-            };
-
             try {
-                set(historyRef, historyData);
+                set(ref(db, `users/${cleanUserKey}/watchHistory/${seriesName.replace(/[^a-zA-Z0-9_]/g, '_')}`), {
+                    series: seriesName, lastEp: epTitle, updatedAt: Date.now()
+                });
             } catch(e) {}
-
             updateUserActivityStatus(`កំពុងមើលរឿង៖ ${seriesName} (${epTitle})`);
         }
 
@@ -1107,12 +1019,10 @@
                     };
                     const savedBefore = localStorage.getItem('dekmerl_tg_user');
                     localStorage.setItem('dekmerl_tg_user', JSON.stringify(user));
-
                     saveUserToDatabase(user);
-
                     window.history.replaceState({}, document.title, window.location.pathname);
                     if (!savedBefore) { 
-                        sendTelegramAlert(`👤 **អតិថិជនថ្មីបានចុះឈ្មោះ/ចូលប្រើប្រាស់!**\n\n🆔 ID: ${user.id}\n👤 ឈ្មោះ: ${user.first_name}\n🌐 Username: ${user.username}\n📅 ពេលវាលា: ${new Date().toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`); 
+                        sendTelegramAlert(`👤 **អតិថិជនថ្មីបានចូលប្រើប្រាស់!**\n🆔 ID: ${user.id}\n👤 ឈ្មោះ: ${user.first_name}\n🌐 Username: ${user.username}\n🌐 វេបសាយ: DekMerl-ដេកមើល`); 
                     }
                     return user;
                 }
@@ -1140,8 +1050,7 @@
         ];
 
         function listenToUsers() {
-            const usersRef = ref(db, 'users');
-            onValue(usersRef, (snapshot) => {
+            onValue(ref(db, 'users'), (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     window.dbUsersList = data;
@@ -1154,14 +1063,10 @@
                     if(!document.getElementById('publicVipRankModal').classList.contains('hidden')) {
                         renderPublicVipRankingsList();
                     }
-                    if (window.currentUserTgObj) {
-                        renderTelegramLoginWidget();
-                    }
+                    if (window.currentUserTgObj) renderTelegramLoginWidget();
                 }
             });
-
-            const visitsRef = ref(db, 'analytics/totalVisits');
-            onValue(visitsRef, (snapshot) => {
+            onValue(ref(db, 'analytics/totalVisits'), (snapshot) => {
                 window.totalVisits = snapshot.val() || 0;
                 updateStatsUI();
             });
@@ -1171,11 +1076,9 @@
             const visitsEl = document.getElementById('totalVisitsCount');
             const regEl = document.getElementById('totalRegUsersCount');
             const onlineEl = document.getElementById('activeOnlineUsersCount');
-
             const usersArr = Object.values(window.dbUsersList || {});
             const now = Date.now();
             const onlineCount = usersArr.filter(u => u.lastSeen && (now - u.lastSeen < 3 * 60 * 1000)).length;
-
             if (visitsEl) visitsEl.innerText = window.totalVisits;
             if (regEl) regEl.innerText = usersArr.length;
             if (onlineEl) onlineEl.innerText = onlineCount;
@@ -1184,9 +1087,7 @@
         function renderBanners() {
             const track = document.getElementById('carouselSlides');
             if(!track) return;
-            track.innerHTML = window.bannerImages.map(imgUrl => `
-                <div class="slide"><img src="${imgUrl}" alt="Banner" loading="lazy"></div>
-            `).join('');
+            track.innerHTML = window.bannerImages.map(imgUrl => `<div class="slide"><img src="${imgUrl}" alt="Banner" loading="lazy"></div>`).join('');
         }
 
         window.saveBannerSettings = function(e) {
@@ -1194,27 +1095,21 @@
             const banners = [];
             for (let i = 1; i <= 8; i++) {
                 const val = document.getElementById(`bannerUrl${i}`).value.trim();
-                if (val !== "") {
-                    banners.push(val);
-                }
+                if (val !== "") banners.push(val);
             }
-
             if (banners.length < 3) {
                 alert("សូមបញ្ចូលយ៉ាងហោចណាស់ Banner ចំនួន ៣ រូបភាព!");
                 return;
             }
-
             window.bannerImages = banners;
             localStorage.setItem('dekmerl_banners', JSON.stringify(window.bannerImages));
             try { set(ref(db, 'banners'), window.bannerImages); } catch(err) {}
-
             renderBanners();
-            alert(`បានរក្សាទុក និងប្ដូររូបភាព Banner ចំនួន ${banners.length} ជោគជ័យ!`);
+            alert(`បានរក្សាទុក Banner ចំនួន ${banners.length} ជោគជ័យ!`);
         }
 
         function listenToBanners() {
-            const bannerRef = ref(db, 'banners');
-            onValue(bannerRef, (snapshot) => {
+            onValue(ref(db, 'banners'), (snapshot) => {
                 const data = snapshot.val();
                 if (data && Array.isArray(data)) {
                     window.bannerImages = data;
@@ -1226,24 +1121,17 @@
 
         async function checkVipExpiryBackground() {
             let now = Date.now();
-
             if (window.dbUsersList) {
                 for (let userKey of Object.keys(window.dbUsersList)) {
                     let u = window.dbUsersList[userKey];
-                    
                     if (u.vipExpiry && u.vipExpiry > 0 && u.vipExpiry <= now) {
                         if (u.notifiedExpired !== true) {
                             try {
-                                await update(ref(db, 'users/' + userKey), { 
-                                    vipExpiry: null,
-                                    notifiedExpired: true 
-                                });
-                                await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${u.username}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(u.vipExpiry).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                                await update(ref(db, 'users/' + userKey), { vipExpiry: null, notifiedExpired: true });
+                                await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n👤 អតិថិជន: ${u.username}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
                             } catch(e) {}
                         } else if (u.vipExpiry !== null) {
-                            try {
-                                await update(ref(db, 'users/' + userKey), { vipExpiry: null });
-                            } catch(e) {}
+                            try { await update(ref(db, 'users/' + userKey), { vipExpiry: null }); } catch(e) {}
                         }
                     }
                 }
@@ -1256,12 +1144,10 @@
             listenToBanners();
             listenToUsers();
             listenToMaintenanceStatus();
+            listenToBottom70Refresh(); // បញ្ចូល Realtime Sync សម្រាប់ Refresh 70%
             checkVipExpiryBackground();
             setInterval(checkVipExpiryBackground, 30000);
-            
-            setInterval(() => {
-                updateUserActivityStatus();
-            }, 60000);
+            setInterval(() => { updateUserActivityStatus(); }, 60000);
 
             const slides = document.getElementById('carouselSlides');
             let currentSlide = 0;
@@ -1281,62 +1167,38 @@
             document.addEventListener('click', (e) => {
                 const wrap = document.querySelector('.search-box-wrap');
                 const dropdown = document.getElementById('searchSuggestionsDropdown');
-                if (wrap && dropdown && !wrap.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
+                if (wrap && dropdown && !wrap.contains(e.target)) dropdown.classList.add('hidden');
             });
 
             const reasonInput = document.getElementById('maintenanceReasonInput');
-            if (reasonInput) {
-                reasonInput.addEventListener('input', () => {
-                    reasonInput.dataset.userEdited = "true";
-                });
-            }
+            if (reasonInput) reasonInput.addEventListener('input', () => { reasonInput.dataset.userEdited = "true"; });
         });
 
         function renderTelegramLoginWidget() {
             const container = document.getElementById('telegramLoginButton');
             if (!container) return;
-
             if (window.currentUserTgObj) {
                 const hasVip = isUserVip();
                 let vipCountdownText = "";
                 const isDeveloper = window.currentUserTgObj.username.toLowerCase().trim() === superAdminTelegram;
-                
                 if (hasVip && !isUserAdmin()) {
                     const username = window.currentUserTgObj.username.toLowerCase().trim();
                     const cleanUserKey = username.replace(/[^a-zA-Z0-9_]/g, '');
-                    let expiry = 0;
-                    if (window.dbUsersList && window.dbUsersList[cleanUserKey] && window.dbUsersList[cleanUserKey].vipExpiry) {
-                        expiry = window.dbUsersList[cleanUserKey].vipExpiry;
-                    } else {
-                        const vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
-                        expiry = vipUsers[username] || 0;
-                    }
-                    if (expiry > Date.now()) {
-                        vipCountdownText = formatTimeRemaining(expiry);
-                    }
+                    let expiry = (window.dbUsersList && window.dbUsersList[cleanUserKey]) ? window.dbUsersList[cleanUserKey].vipExpiry : 0;
+                    if (expiry > Date.now()) vipCountdownText = formatTimeRemaining(expiry);
                 }
-
                 const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
-
                 container.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 6px; background-color: #1e1e1e; border: 1px solid ${hasVip ? '#facc15' : '#333'}; padding: 4px 8px; border-radius: 20px;">
                         <img src="${window.currentUserTgObj.photo_url || 'https://via.placeholder.com/28'}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #444;" alt="Avatar">
                         <i class="fa-brands fa-telegram" style="color: #229ED9; font-size: 1.1rem; margin-right: 2px;"></i>
                         ${isDeveloper ? '<span style="color: red; font-weight: bold; font-size: 0.75rem;">Developer</span>' : ''}
-                        ${hasVip && !isDeveloper ? `
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <img src="${vipBadgeImgUrl}" style="height: 22px; object-fit: contain;" alt="VIP">
-                                ${vipCountdownText ? `<span style="font-size: 0.6rem; color: #facc15; font-weight: bold;">(នៅសល់ ${vipCountdownText})</span>` : ''}
-                            </div>
-                        ` : ''}
+                        ${hasVip && !isDeveloper ? `<div style="display: flex; align-items: center; gap: 4px;"><img src="${vipBadgeImgUrl}" style="height: 22px; object-fit: contain;" alt="VIP">${vipCountdownText ? `<span style="font-size: 0.6rem; color: #facc15; font-weight: bold;">(នៅសល់ ${vipCountdownText})</span>` : ''}</div>` : ''}
                         <button onclick="logoutUser()" style="background: rgba(255,255,255,0.08); border: none; color: #ff4d4d; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 2px;" title="ចាកចេញ"><i class="fa-solid fa-right-from-bracket" style="font-size: 0.75rem;"></i></button>
                     </div>
                 `;
             } else {
                 if (container.querySelector('script') || container.querySelector('iframe')) return;
-                
                 container.innerHTML = '';
                 const script = document.createElement('script');
                 script.async = true;
@@ -1365,34 +1227,19 @@
         function isUserVip() {
             if (!window.currentUserTgObj) return false;
             if (isUserAdmin()) return true;
-            
             const username = window.currentUserTgObj.username.toLowerCase().trim();
             const cleanUserKey = username.replace(/[^a-zA-Z0-9_]/g, '');
-            
-            if (window.dbUsersList && window.dbUsersList[cleanUserKey]) {
-                const userRecord = window.dbUsersList[cleanUserKey];
-                if (userRecord.vipExpiry && userRecord.vipExpiry > Date.now()) {
-                    return true;
-                }
-            }
-
+            if (window.dbUsersList && window.dbUsersList[cleanUserKey] && window.dbUsersList[cleanUserKey].vipExpiry > Date.now()) return true;
             let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
-            const expiry = vipUsers[username];
-            if (expiry && expiry > Date.now()) return true;
-
-            return false;
+            return vipUsers[username] && vipUsers[username] > Date.now();
         }
 
         function updateAuthUI() {
             const adminTrigger = document.getElementById('adminPanelTrigger');
-            if (window.currentUserTgObj) {
-                if (adminTrigger) {
-                    if (isUserAdmin()) adminTrigger.classList.remove('hidden');
-                    else adminTrigger.classList.add('hidden');
-                }
-            } else {
-                if (adminTrigger) adminTrigger.classList.add('hidden');
-            }
+            if (window.currentUserTgObj && adminTrigger) {
+                if (isUserAdmin()) adminTrigger.classList.remove('hidden');
+                else adminTrigger.classList.add('hidden');
+            } else if (adminTrigger) adminTrigger.classList.add('hidden');
             applyMaintenanceModeUI();
         }
 
@@ -1421,54 +1268,34 @@
             window.open(`https://t.me/RIENML1?text=${message}`, '_blank');
         }
 
-        /* Public VIP Leaderboard Functions */
         window.openPublicVipRankModal = function() {
             renderPublicVipRankingsList();
             document.getElementById('publicVipRankModal').classList.remove('hidden');
         }
-
-        window.closePublicVipRankModal = function() {
-            document.getElementById('publicVipRankModal').classList.add('hidden');
-        }
+        window.closePublicVipRankModal = function() { document.getElementById('publicVipRankModal').classList.add('hidden'); }
 
         function renderPublicVipRankingsList() {
             const container = document.getElementById('publicVipRankingsContainer');
             if(!container) return;
-
             let vipUsersArr = [];
             const now = Date.now();
-
             if (window.dbUsersList) {
                 Object.values(window.dbUsersList).forEach(u => {
                     if (u.vipExpiry && u.vipExpiry > now) {
-                        vipUsersArr.push({
-                            username: u.username,
-                            first_name: u.first_name,
-                            photo_url: u.photo_url,
-                            expiry: u.vipExpiry,
-                            diffMs: u.vipExpiry - now
-                        });
+                        vipUsersArr.push({ username: u.username, first_name: u.first_name, photo_url: u.photo_url, expiry: u.vipExpiry, diffMs: u.vipExpiry - now });
                     }
                 });
             }
-
             vipUsersArr.sort((a, b) => b.diffMs - a.diffMs);
-
             if (vipUsersArr.length === 0) {
                 container.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 15px;">មិនទាន់មានសមាជិក VIP ឡើយ។</p>`;
                 return;
             }
-
             const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
-
             container.innerHTML = vipUsersArr.map((item, index) => {
                 const rankNum = index + 1;
                 const timeStr = formatTimeRemaining(item.expiry);
-                let rankColor = "#aaa";
-                if(rankNum === 1) rankColor = "#facc15";
-                else if(rankNum === 2) rankColor = "#e2e8f0";
-                else if(rankNum === 3) rankColor = "#b45309";
-
+                let rankColor = rankNum === 1 ? "#facc15" : (rankNum === 2 ? "#e2e8f0" : (rankNum === 3 ? "#b45309" : "#aaa"));
                 return `
                     <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid ${rankNum === 1 ? '#facc15' : '#2a2a2a'}; padding: 10px 14px; border-radius: 10px; height: 56px;">
                         <div style="display: flex; align-items: center; gap: 12px; overflow: hidden;">
@@ -1476,14 +1303,14 @@
                             <img src="${item.photo_url || 'https://via.placeholder.com/32'}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="Avatar">
                             <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <span style="color: #fff; font-weight: bold; font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis;">${item.username}</span>
-                                    <img src="${vipBadgeImgUrl}" style="height: 16px; object-fit: contain; flex-shrink: 0;" alt="VIP">
+                                    <span style="color: #fff; font-weight: bold; font-size: 0.8rem;">${item.username}</span>
+                                    <img src="${vipBadgeImgUrl}" style="height: 16px; object-fit: contain;" alt="VIP">
                                 </div>
-                                <div style="color: #888; font-size: 0.6rem; overflow: hidden; text-overflow: ellipsis;">ឈ្មោះ: ${item.first_name || 'គ្មាន'}</div>
+                                <div style="color: #888; font-size: 0.6rem;">ឈ្មោះ: ${item.first_name || 'គ្មាន'}</div>
                             </div>
                         </div>
                         <div style="text-align: right; flex-shrink: 0;">
-                            <span style="font-size: 0.7rem; color: #facc15; font-weight: bold; background: rgba(250,204,21,0.1); padding: 4px 8px; border-radius: 6px; white-space: nowrap;">⏳ នៅសល់ ${timeStr}</span>
+                            <span style="font-size: 0.7rem; color: #facc15; font-weight: bold; background: rgba(250,204,21,0.1); padding: 4px 8px; border-radius: 6px;">⏳ នៅសល់ ${timeStr}</span>
                         </div>
                     </div>
                 `;
@@ -1500,137 +1327,65 @@
         }
 
         window.switchAdminTab = function(tabName) {
-            document.getElementById('adminTabStatus').classList.add('hidden');
-            document.getElementById('adminTabStats').classList.add('hidden');
-            document.getElementById('adminTabVipRank').classList.add('hidden');
-            document.getElementById('adminTabUpload').classList.add('hidden');
-            document.getElementById('adminTabEpisodes').classList.add('hidden');
-            document.getElementById('adminTabMembers').classList.add('hidden');
-            document.getElementById('adminTabBanners').classList.add('hidden');
-            document.getElementById('adminTabVip').classList.add('hidden');
-            document.getElementById('adminTabUsers').classList.add('hidden');
-
-            document.getElementById('tabStatusBtn').classList.remove('active-tab');
-            document.getElementById('tabStatsBtn').classList.remove('active-tab');
-            document.getElementById('tabVipRankBtn').classList.remove('active-tab');
-            document.getElementById('tabUploadBtn').classList.remove('active-tab');
-            document.getElementById('tabEpisodesBtn').classList.remove('active-tab');
-            document.getElementById('tabMembersBtn').classList.remove('active-tab');
-            document.getElementById('tabBannersBtn').classList.remove('active-tab');
-            document.getElementById('tabVipBtn').classList.remove('active-tab');
-            document.getElementById('tabUsersBtn').classList.remove('active-tab');
-
-            if (tabName === 'status') {
-                document.getElementById('adminTabStatus').classList.remove('hidden');
-                document.getElementById('tabStatusBtn').classList.add('active-tab');
-                applyMaintenanceModeUI();
-            } else if (tabName === 'stats') {
-                document.getElementById('adminTabStats').classList.remove('hidden');
-                document.getElementById('tabStatsBtn').classList.add('active-tab');
-                renderAdminWatchHistoryList();
-                updateStatsUI();
-            } else if (tabName === 'vipRank') {
-                document.getElementById('adminTabVipRank').classList.remove('hidden');
-                document.getElementById('tabVipRankBtn').classList.add('active-tab');
-                renderVipRankingsList();
-            } else if (tabName === 'upload') {
-                document.getElementById('adminTabUpload').classList.remove('hidden');
-                document.getElementById('tabUploadBtn').classList.add('active-tab');
-            } else if (tabName === 'episodes') {
-                document.getElementById('adminTabEpisodes').classList.remove('hidden');
-                document.getElementById('tabEpisodesBtn').classList.add('active-tab');
-                renderAdminAllEpisodesList();
-            } else if (tabName === 'members') {
-                document.getElementById('adminTabMembers').classList.remove('hidden');
-                document.getElementById('tabMembersBtn').classList.add('active-tab');
-                renderAdminMemberList();
-            } else if (tabName === 'banners') {
-                document.getElementById('adminTabBanners').classList.remove('hidden');
-                document.getElementById('tabBannersBtn').classList.add('active-tab');
+            ['Status', 'Stats', 'VipRank', 'Upload', 'Episodes', 'Members', 'Banners', 'Vip', 'Users'].forEach(t => {
+                document.getElementById(`adminTab${t}`).classList.add('hidden');
+                document.getElementById(`tab${t}Btn`).classList.remove('active-tab');
+            });
+            document.getElementById(`adminTab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.remove('hidden');
+            document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Btn`).classList.add('active-tab');
+            if (tabName === 'status') applyMaintenanceModeUI();
+            if (tabName === 'stats') { renderAdminWatchHistoryList(); updateStatsUI(); }
+            if (tabName === 'vipRank') renderVipRankingsList();
+            if (tabName === 'episodes') renderAdminAllEpisodesList();
+            if (tabName === 'members') renderAdminMemberList();
+            if (tabName === 'banners') {
                 for (let i = 1; i <= 8; i++) {
                     const el = document.getElementById(`bannerUrl${i}`);
                     if (el) el.value = window.bannerImages[i - 1] || '';
                 }
-            } else if (tabName === 'vip') {
-                document.getElementById('adminTabVip').classList.remove('hidden');
-                document.getElementById('tabVipBtn').classList.add('active-tab');
-                renderVipSettingsForm();
-            } else if (tabName === 'users') {
-                document.getElementById('adminTabUsers').classList.remove('hidden');
-                document.getElementById('tabUsersBtn').classList.add('active-tab');
-                renderVipUserList();
             }
+            if (tabName === 'vip') renderVipSettingsForm();
+            if (tabName === 'users') renderVipUserList();
         }
 
         window.renderAdminWatchHistoryList = function() {
             const container = document.getElementById('adminWatchHistoryContainer');
             if (!container) return;
-
             const searchQuery = (document.getElementById('adminWatchHistorySearch')?.value || '').toLowerCase().trim();
             let usersArr = Object.values(window.dbUsersList || {});
-
-            if (searchQuery !== '') {
-                usersArr = usersArr.filter(u => u.username.toLowerCase().includes(searchQuery) || (u.first_name && u.first_name.toLowerCase().includes(searchQuery)));
-            }
-
+            if (searchQuery !== '') usersArr = usersArr.filter(u => u.username.toLowerCase().includes(searchQuery) || (u.first_name && u.first_name.toLowerCase().includes(searchQuery)));
             const now = Date.now();
-
             usersArr.sort((a, b) => {
-                const aIsOnline = a.lastSeen && (now - a.lastSeen < 3 * 60 * 1000);
-                const bIsOnline = b.lastSeen && (now - b.lastSeen < 3 * 60 * 1000);
-                const aIsWatching = aIsOnline && a.currentlyWatching && a.currentlyWatching !== "";
-                const bIsWatching = bIsOnline && b.currentlyWatching && b.currentlyWatching !== "";
-
+                const aIsWatching = (a.lastSeen && (now - a.lastSeen < 3 * 60 * 1000) && a.currentlyWatching);
+                const bIsWatching = (b.lastSeen && (now - b.lastSeen < 3 * 60 * 1000) && b.currentlyWatching);
                 if (aIsWatching && !bIsWatching) return -1;
                 if (!aIsWatching && bIsWatching) return 1;
-
-                if (aIsOnline && !bIsOnline) return -1;
-                if (!aIsOnline && bIsOnline) return 1;
-
                 return (b.lastSeen || 0) - (a.lastSeen || 0);
             });
-
             if (usersArr.length === 0) {
                 container.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 15px;">មិនទាន់មានប្រវត្តិមើលរឿង ឬរកមិនឃើញឡើយ។</p>`;
                 return;
             }
-
             container.innerHTML = usersArr.map(u => {
                 const isOnline = u.lastSeen && (now - u.lastSeen < 3 * 60 * 1000);
-                const isWatching = isOnline && u.currentlyWatching && u.currentlyWatching !== "";
-
+                const isWatching = isOnline && u.currentlyWatching;
                 const historyItems = u.watchHistory ? Object.values(u.watchHistory) : [];
                 historyItems.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
-
-                let historyHTML = '';
-                if (historyItems.length > 0) {
-                    historyHTML = historyItems.map(h => `
-                        <div style="font-size: 0.7rem; color: #aaa; background: #181818; padding: 4px 8px; border-radius: 4px; margin-top: 4px;">
-                            🎬 <span style="color: #fff; font-weight: bold;">${h.series}</span> — <span style="color: #facc15;">${h.lastEp}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    historyHTML = `<div style="font-size: 0.7rem; color: #666; margin-top: 4px;">មិនទាន់មានប្រវត្តិមើលរឿងនៅឡើយ</div>`;
-                }
-
+                let historyHTML = historyItems.length > 0 ? historyItems.map(h => `<div style="font-size: 0.7rem; color: #aaa; background: #181818; padding: 4px 8px; border-radius: 4px; margin-top: 4px;">🎬 <span style="color: #fff; font-weight: bold;">${h.series}</span> — <span style="color: #facc15;">${h.lastEp}</span></div>`).join('') : `<div style="font-size: 0.7rem; color: #666; margin-top: 4px;">មិនទាន់មានប្រវត្តិមើលរឿងនៅឡើយ</div>`;
                 return `
                     <div style="background-color: #121212; border: 1px solid ${isWatching ? '#22c55e' : '#2a2a2a'}; border-radius: 10px; padding: 10px;">
                         <div style="display: flex; align-items: center; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <img src="${u.photo_url || 'https://via.placeholder.com/32'}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;" alt="Avatar">
                                 <div>
-                                    <div style="font-size: 0.8rem; font-weight: bold; color: #fff;">
-                                        ${u.username} ${u.username.toLowerCase().trim() === superAdminTelegram ? '<span style="color: red;">[Developer]</span>' : ''}
-                                    </div>
+                                    <div style="font-size: 0.8rem; font-weight: bold; color: #fff;">${u.username} ${u.username.toLowerCase().trim() === superAdminTelegram ? '<span style="color: red;">[Developer]</span>' : ''}</div>
                                     <div style="font-size: 0.65rem; color: #888;">${u.first_name || 'គ្មានឈ្មោះ'}</div>
                                 </div>
                             </div>
-                            <div>
-                                ${isWatching ? `<span style="font-size: 0.65rem; background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid #22c55e; padding: 2px 8px; border-radius: 12px; font-weight: bold;">🟢 ${u.currentlyWatching}</span>` : (isOnline ? `<span style="font-size: 0.65rem; background: rgba(34,197,94,0.1); color: #22c55e; padding: 2px 6px; border-radius: 4px;">🟢 កំពុងសកម្ម</span>` : `<span style="font-size: 0.65rem; color: #666;">Offline</span>`)}
-                            </div>
+                            <div>${isWatching ? `<span style="font-size: 0.65rem; background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid #22c55e; padding: 2px 8px; border-radius: 12px; font-weight: bold;">🟢 ${u.currentlyWatching}</span>` : (isOnline ? `<span style="font-size: 0.65rem; background: rgba(34,197,94,0.1); color: #22c55e; padding: 2px 6px; border-radius: 4px;">🟢 សកម្ម</span>` : `<span style="font-size: 0.65rem; color: #666;">Offline</span>`)}</div>
                         </div>
                         <div style="margin-top: 8px; border-top: 1px solid #222; padding-top: 6px;">
-                            <div style="font-size: 0.7rem; font-weight: bold; color: #E50914;">📚 ប្រវត្តិរឿងដែលបានមើល៖</div>
+                            <div style="font-size: 0.7rem; font-weight: bold; color: #E50914;">📚 ប្រវត្តិរឿងที่បានមើល៖</div>
                             ${historyHTML}
                         </div>
                     </div>
@@ -1641,56 +1396,38 @@
         window.renderVipRankingsList = function() {
             const container = document.getElementById('vipRankingsContainer');
             if(!container) return;
-
             let vipUsersArr = [];
             const now = Date.now();
-
             if (window.dbUsersList) {
                 Object.values(window.dbUsersList).forEach(u => {
-                    if (u.vipExpiry && u.vipExpiry > now) {
-                        vipUsersArr.push({
-                            username: u.username,
-                            first_name: u.first_name,
-                            photo_url: u.photo_url,
-                            expiry: u.vipExpiry,
-                            diffMs: u.vipExpiry - now
-                        });
-                    }
+                    if (u.vipExpiry && u.vipExpiry > now) vipUsersArr.push({ username: u.username, first_name: u.first_name, photo_url: u.photo_url, expiry: u.vipExpiry, diffMs: u.vipExpiry - now });
                 });
             }
-
             vipUsersArr.sort((a, b) => b.diffMs - a.diffMs);
-
             if (vipUsersArr.length === 0) {
                 container.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 15px;">មិនទាន់មានសមាជិក VIP ឡើយ។</p>`;
                 return;
             }
-
             const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
-
             container.innerHTML = vipUsersArr.map((item, index) => {
                 const rankNum = index + 1;
                 const timeStr = formatTimeRemaining(item.expiry);
-                let rankColor = "#aaa";
-                if(rankNum === 1) rankColor = "#facc15";
-                else if(rankNum === 2) rankColor = "#e2e8f0";
-                else if(rankNum === 3) rankColor = "#b45309";
-
+                let rankColor = rankNum === 1 ? "#facc15" : (rankNum === 2 ? "#e2e8f0" : (rankNum === 3 ? "#b45309" : "#aaa"));
                 return `
                     <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid ${rankNum === 1 ? '#facc15' : '#2a2a2a'}; padding: 10px 14px; border-radius: 10px; height: 56px;">
                         <div style="display: flex; align-items: center; gap: 12px; overflow: hidden;">
                             <div style="font-size: 0.9rem; font-weight: bold; color: ${rankColor}; min-width: 24px; text-align: center;">#${rankNum}</div>
-                            <img src="${item.photo_url || 'https://via.placeholder.com/32'}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="Avatar">
+                            <img src="${item.photo_url || 'https://via.placeholder.com/32'}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;" alt="Avatar">
                             <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <span style="color: #fff; font-weight: bold; font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis;">${item.username}</span>
-                                    <img src="${vipBadgeImgUrl}" style="height: 16px; object-fit: contain; flex-shrink: 0;" alt="VIP">
+                                    <span style="color: #fff; font-weight: bold; font-size: 0.8rem;">${item.username}</span>
+                                    <img src="${vipBadgeImgUrl}" style="height: 16px; object-fit: contain;" alt="VIP">
                                 </div>
-                                <div style="color: #888; font-size: 0.6rem; overflow: hidden; text-overflow: ellipsis;">ឈ្មោះ: ${item.first_name || 'គ្មាន'}</div>
+                                <div style="color: #888; font-size: 0.6rem;">ឈ្មោះ: ${item.first_name || 'គ្មាន'}</div>
                             </div>
                         </div>
                         <div style="text-align: right; flex-shrink: 0;">
-                            <span style="font-size: 0.7rem; color: #facc15; font-weight: bold; background: rgba(250,204,21,0.1); padding: 4px 8px; border-radius: 6px; white-space: nowrap;">⏳ នៅសល់ ${timeStr}</span>
+                            <span style="font-size: 0.7rem; color: #facc15; font-weight: bold; background: rgba(250,204,21,0.1); padding: 4px 8px; border-radius: 6px;">⏳ នៅសល់ ${timeStr}</span>
                         </div>
                     </div>
                 `;
@@ -1701,45 +1438,33 @@
             const container = document.getElementById('adminMemberListContainer');
             const countBadge = document.getElementById('memberCountBadge');
             if(!container) return;
-
             const searchQuery = (document.getElementById('adminMemberSearchInput')?.value || '').toLowerCase().trim();
             let usersArr = Object.values(window.dbUsersList || {});
-            
-            if (searchQuery !== '') {
-                usersArr = usersArr.filter(u => u.username.toLowerCase().includes(searchQuery) || (u.first_name && u.first_name.toLowerCase().includes(searchQuery)));
-            }
-
+            if (searchQuery !== '') usersArr = usersArr.filter(u => u.username.toLowerCase().includes(searchQuery) || (u.first_name && u.first_name.toLowerCase().includes(searchQuery)));
             if(countBadge) {
                 const totalVipCount = usersArr.filter(u => u.vipExpiry && u.vipExpiry > Date.now()).length;
                 countBadge.innerText = `សរុប: ${usersArr.length}នាក់ | VIP: ${totalVipCount}នាក់`;
             }
-
             if(usersArr.length === 0) {
-                container.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 15px;">មិនទាន់មានសមាជិកចុះឈ្មោះ ឬរកមិនឃើញឡើយ។</p>`;
+                container.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 15px;">មិនទាន់មានសមាជិកចុះឈ្មោះឡើយ។</p>`;
                 return;
             }
-
             const vipBadgeImgUrl = "https://cdn.phototourl.com/member/2026-11-01-e61463f0-b32c-4bac-a34a-141510e20296.png";
-
             container.innerHTML = usersArr.map(u => {
                 const expiry = u.vipExpiry || 0;
                 const isVip = expiry > Date.now();
                 const isDeveloper = u.username.toLowerCase().trim() === superAdminTelegram;
-                let timeStr = "";
-                if(isVip) {
-                    timeStr = `(សល់ ${formatTimeRemaining(expiry)})`;
-                }
-
+                let timeStr = isVip ? `(សល់ ${formatTimeRemaining(expiry)})` : "";
                 return `
                     <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid ${isVip ? '#facc15' : '#333'}; padding: 8px 12px; border-radius: 10px; height: 56px;">
                         <div style="display: flex; align-items: center; gap: 10px; overflow: hidden; flex: 1;">
-                            <img src="${u.photo_url || 'https://via.placeholder.com/32'}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="Avatar">
+                            <img src="${u.photo_url || 'https://via.placeholder.com/32'}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" alt="Avatar">
                             <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <span style="color: #fff; font-weight: bold; font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis;">${u.username}</span>
-                                    ${isDeveloper ? '<span style="color: red; font-weight: bold; font-size: 0.65rem; flex-shrink: 0;">[Developer]</span>' : (isVip ? `<img src="${vipBadgeImgUrl}" style="height: 16px; object-fit: contain; flex-shrink: 0;" alt="VIP">` : '<span style="font-size: 0.55rem; background: #333; color: #aaa; padding: 1px 5px; border-radius: 4px; flex-shrink: 0;">សមាជិកធម្មតា</span>')}
+                                    <span style="color: #fff; font-weight: bold; font-size: 0.8rem;">${u.username}</span>
+                                    ${isDeveloper ? '<span style="color: red; font-weight: bold; font-size: 0.65rem;">[Developer]</span>' : (isVip ? `<img src="${vipBadgeImgUrl}" style="height: 16px; object-fit: contain;" alt="VIP">` : '<span style="font-size: 0.55rem; background: #333; color: #aaa; padding: 1px 5px; border-radius: 4px;">ធម្មតា</span>')}
                                 </div>
-                                <div style="color: #888; font-size: 0.6rem; overflow: hidden; text-overflow: ellipsis;">ឈ្មោះ: ${u.first_name || 'គ្មាន'} ${timeStr}</div>
+                                <div style="color: #888; font-size: 0.6rem;">ឈ្មោះ: ${u.first_name || 'គ្មាន'} ${timeStr}</div>
                             </div>
                         </div>
                         <div style="display: flex; gap: 6px; flex-shrink: 0; margin-left: 8px;">
@@ -1759,14 +1484,10 @@
         window.removeUserRecord = async function(username) {
             if(confirm(`តើអ្នកពិតជាចង់លុបគណនី ${username} នេះចេញពីប្រព័ន្ធមែនទេ?`)) {
                 const cleanUserKey = username.replace(/[^a-zA-Z0-9_]/g, '');
-                try {
-                    await remove(ref(db, 'users/' + cleanUserKey));
-                } catch(e) {}
-
+                try { await remove(ref(db, 'users/' + cleanUserKey)); } catch(e) {}
                 let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
                 delete vipUsers[username];
                 localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
-
                 renderAdminMemberList();
                 renderVipUserList();
                 renderVipRankingsList();
@@ -1778,12 +1499,8 @@
             const listContainer = document.getElementById('adminAllEpisodesList');
             if(!listContainer) return;
             const searchQuery = (document.getElementById('adminEpisodeSearchInput')?.value || '').toLowerCase().trim();
-
             let list = window.videos;
-            if(searchQuery !== '') {
-                list = list.filter(v => v.series.toLowerCase().includes(searchQuery) || v.ep.toLowerCase().includes(searchQuery));
-            }
-
+            if(searchQuery !== '') list = list.filter(v => v.series.toLowerCase().includes(searchQuery) || v.ep.toLowerCase().includes(searchQuery));
             if(list.length === 0) {
                 listContainer.innerHTML = `<p style="font-size: 0.75rem; color: #666; text-align: center; padding: 10px;">មិនទាន់មានភាគវីដេអូ ឬរកមិនឃើញឡើយ។</p>`;
                 return;
@@ -1808,9 +1525,7 @@
                     await remove(ref(db, 'videos/' + id));
                     renderAdminAllEpisodesList();
                     alert("បានលុបភាគវីដេអូជោគជ័យ!");
-                } catch(err) {
-                    alert("កំហុស៖ " + err.message);
-                }
+                } catch(err) { alert("កំហុស៖ " + err.message); }
             }
         }
 
@@ -1818,93 +1533,58 @@
             e.preventDefault();
             let tgUser = document.getElementById('targetTgUser').value.toLowerCase().trim();
             if(!tgUser.startsWith('@')) tgUser = '@' + tgUser;
-            
             const amount = parseInt(document.getElementById('vipAmountValue').value) || 1;
             const unit = document.getElementById('vipTimeUnit').value;
-
             let durationMs = amount * 24 * 60 * 60 * 1000;
             let unitLabel = `${amount} ថ្ងៃ`;
-
-            if (unit === 'minutes') {
-                durationMs = amount * 60 * 1000;
-                unitLabel = `${amount} នាទី`;
-            } else if (unit === 'hours') {
-                durationMs = amount * 60 * 60 * 1000;
-                unitLabel = `${amount} ម៉ោង`;
-            }
-
+            if (unit === 'minutes') { durationMs = amount * 60 * 1000; unitLabel = `${amount} នាទី`; }
+            else if (unit === 'hours') { durationMs = amount * 60 * 60 * 1000; unitLabel = `${amount} ម៉ោង`; }
             const expiryTime = Date.now() + durationMs;
             const cleanUserKey = tgUser.replace(/[^a-zA-Z0-9_]/g, '');
-
             try {
-                await update(ref(db, 'users/' + cleanUserKey), {
-                    username: tgUser,
-                    vipExpiry: expiryTime,
-                    notifiedExpired: false
-                });
-
+                await update(ref(db, 'users/' + cleanUserKey), { username: tgUser, vipExpiry: expiryTime, notifiedExpired: false });
                 let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
                 vipUsers[tgUser] = expiryTime;
                 localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
-
                 const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
-                
-                sendVipTelegramAlert(`💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n📅 ថ្ងៃផុតកំណត់: ${new Date(expiryTime).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
-
+                sendVipTelegramAlert(`💎 **បញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 Admin: ${adminName}\n📅 ផុតកំណត់: ${new Date(expiryTime).toLocaleString()}\n🌐 DekMerl-ដេកមើល`);
                 document.getElementById('targetTgUser').value = "";
                 renderVipUserList();
                 renderAdminMemberList();
                 renderVipRankingsList();
                 renderTelegramLoginWidget();
                 alert(`បានផ្ដល់សិទ្ធិ VIP ជូន ${tgUser} រយៈពេល ${unitLabel} ជោគជ័យ!`);
-            } catch(err) {
-                alert("កំហុស៖ " + err.message);
-            }
+            } catch(err) { alert("កំហុស៖ " + err.message); }
         }
 
         function renderVipUserList() {
             const list = document.getElementById('vipUserList');
             if(!list) return;
-            
             let vipUsersArr = [];
             if (window.dbUsersList) {
                 Object.values(window.dbUsersList).forEach(u => {
-                    if (u.vipExpiry && u.vipExpiry > Date.now()) {
-                        vipUsersArr.push({ username: u.username, expiry: u.vipExpiry });
-                    }
+                    if (u.vipExpiry && u.vipExpiry > Date.now()) vipUsersArr.push({ username: u.username, expiry: u.vipExpiry });
                 });
             }
-
             if(vipUsersArr.length === 0) {
                 list.innerHTML = `<p style="font-size: 0.75rem; color: #666;">មិនទាន់មានសមាជិក VIP ទេ។</p>`;
                 return;
             }
-            list.innerHTML = vipUsersArr.map(item => {
-                const timeStr = formatTimeRemaining(item.expiry);
-                return `
-                    <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem;">
-                        <div><span style="color: #facc15; font-weight: bold;">${item.username}</span> <span style="color: #888; font-size: 0.7rem;">(នៅសល់ ${timeStr})</span></div>
-                        <button onclick="removeVipUser('${item.username}')" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: 700;">លុប VIP</button>
-                    </div>
-                `;
-            }).join('');
+            list.innerHTML = vipUsersArr.map(item => `
+                <div style="display: flex; align-items: center; justify-content: space-between; background-color: #121212; border: 1px solid #333; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem;">
+                    <div><span style="color: #facc15; font-weight: bold;">${item.username}</span> <span style="color: #888; font-size: 0.7rem;">(នៅសល់ ${formatTimeRemaining(item.expiry)})</span></div>
+                    <button onclick="removeVipUser('${item.username}')" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: 700;">លុប VIP</button>
+                </div>
+            `).join('');
         }
 
         window.removeVipUser = async function(user) {
             const cleanUserKey = user.replace(/[^a-zA-Z0-9_]/g, '');
-            try {
-                await update(ref(db, 'users/' + cleanUserKey), {
-                    vipExpiry: null,
-                    notifiedExpired: true
-                });
-            } catch(e) {}
-
+            try { await update(ref(db, 'users/' + cleanUserKey), { vipExpiry: null, notifiedExpired: true }); } catch(e) {}
             let vipUsers = JSON.parse(localStorage.getItem('dekmerl_vip_users')) || {};
             delete vipUsers[user];
             localStorage.setItem('dekmerl_vip_users', JSON.stringify(vipUsers));
-
-            sendVipTelegramAlert(`🗑️ **ដកសិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${user}\n🔻 ស្ថានភាព: បានដកសិទ្ធិ VIP ដោយ Admin\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
-
+            sendVipTelegramAlert(`🗑️ **ដកសិទ្ធិ VIP!**\n👤 អតិថិជន: ${user}\n🌐 DekMerl-ដេកមើល`);
             renderVipUserList();
             renderAdminMemberList();
             renderVipRankingsList();
@@ -1913,17 +1593,13 @@
         }
 
         function listenToVideos() {
-            const videosRef = ref(db, 'videos');
-            onValue(videosRef, (snapshot) => {
+            onValue(ref(db, 'videos'), (snapshot) => {
                 window.videos = [];
                 const data = snapshot.val();
                 if (data) {
-                    Object.keys(data).forEach((key) => {
-                        window.videos.push({ id: key, ...data[key] });
-                    });
+                    Object.keys(data).forEach((key) => { window.videos.push({ id: key, ...data[key] }); });
                 }
                 renderVideos();
-                
                 const openModalSeries = document.getElementById('seriesModalTitle').innerText;
                 if (openModalSeries && !document.getElementById('seriesModal').classList.contains('hidden')) {
                     openSeriesModal(openModalSeries, false);
@@ -1938,31 +1614,23 @@
             renderVideos();
         }
 
-        window.refreshBottom70Movies = function() {
+        // មុខងារ Refresh 70% ខាងក្រោមឡើងលើ និង Sync ទៅកាន់ Database
+        window.refreshBottom70Movies = async function() {
             if (!isUserAdmin()) return;
-
             let seriesMap = {};
             window.videos.forEach(v => {
                 if (!seriesMap[v.series]) {
-                    seriesMap[v.series] = {
-                        series: v.series,
-                        isHot: v.isHot || false,
-                        createdAt: v.createdAt || 0
-                    };
+                    seriesMap[v.series] = { series: v.series, isHot: v.isHot || false, createdAt: v.createdAt || 0 };
                 }
                 if (v.isHot) seriesMap[v.series].isHot = true;
             });
-
             const allSeries = Object.values(seriesMap);
             const nonHotSeries = allSeries.filter(s => !s.isHot);
-
             if (nonHotSeries.length === 0) {
                 alert("មិនមានរឿងចាស់ៗ (Non-Hot) សម្រាប់ Refresh ទេ!");
                 return;
             }
-
             nonHotSeries.sort((a, b) => b.createdAt - a.createdAt);
-
             const bottomCount = Math.ceil(nonHotSeries.length * 0.7);
             const bottomPart = nonHotSeries.slice(nonHotSeries.length - bottomCount);
             
@@ -1970,11 +1638,18 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [bottomPart[i], bottomPart[j]] = [bottomPart[j], bottomPart[i]];
             }
+            const shuffledOrder = bottomPart.map(s => s.series);
 
-            window.shuffledBottom70Order = bottomPart.map(s => s.series);
-
-            renderVideos();
-            alert("✨ បានរៀបចំ និងរីហ្វ្រេសរឿង ៧០% ខាងក្រោមលោតឡើងមកលើជោគជ័យ!");
+            try {
+                await set(ref(db, 'systemSettings/bottom70RefreshOrder'), {
+                    order: shuffledOrder,
+                    updatedAt: Date.now(),
+                    updatedBy: window.currentUserTgObj ? window.currentUserTgObj.username : "Admin"
+                });
+                alert("✨ បានរីហ្វ្រេសរឿង ៧០% ខាងក្រោមឡើងលើ និងធ្វើបច្ចុប្បន្នភាពទូទាំងវេបសាយជោគជ័យ!");
+            } catch (err) {
+                alert("កំហុស៖ " + err.message);
+            }
         }
 
         window.handleVideoUpload = async function(e) {
@@ -1985,26 +1660,18 @@
             const category = document.getElementById('videoCategory').value;
             const videoUrl = document.getElementById('videoUrl').value.trim();
             const imageUrl = document.getElementById('imageUrl').value.trim();
-            
             let accessType = document.getElementById('accessType').value;
-            if (category === 'រឿងឥតគិតថ្លៃ') {
-                accessType = 'free';
-            }
-
+            if (category === 'រឿងឥតគិតថ្លៃ') accessType = 'free';
             const isHot = document.getElementById('isHot').checked;
 
             try {
                 const newVideoRef = push(ref(db, 'videos'));
                 await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
-                
                 sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
-
                 document.getElementById('uploadForm').reset();
                 toggleAdminModal();
-                alert("បង្ហោះវីដេអូរឿងទៅកាន់ Database និង Telegram ជោគជ័យ!");
-            } catch (err) {
-                alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
-            }
+                alert("បង្ហោះវីដេអូរឿងជោគជ័យ!");
+            } catch (err) { alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message); }
         }
 
         window.handleQuickAddEpisode = async function(e) {
@@ -2017,73 +1684,46 @@
             const videoUrl = document.getElementById('quickAddVideoUrl').value.trim();
             let accessType = document.getElementById('quickAddAccessType').value;
             if (category === 'រឿងឥតគិតថ្លៃ') accessType = 'free';
-            
-            // ទាញតម្លៃពីប៊ូតុងបើក/បិទ 🔥 Hot នៅកន្លែងបង្ហោះភាគបន្ត
             const isHot = document.getElementById('quickAddIsHotCheckbox').checked;
 
             try {
                 const newVideoRef = push(ref(db, 'videos'));
                 await set(newVideoRef, { series, ep, type, category, videoUrl, imageUrl, accessType, isHot, createdAt: Date.now() });
-                
-                // ធ្វើបច្ចុប្បន្នភាពស្ថានភាព Hot ទៅគ្រប់ភាគទាំងអស់នៃរឿងដុំនោះ (ដើម្បីឱ្យបិទ ឬ បើក មានប្រសិទ្ធភាពភ្លាម)
                 const existingEpisodes = window.videos.filter(v => v.series === series);
                 for (let item of existingEpisodes) {
-                    if (item.isHot !== isHot) {
-                        await update(ref(db, 'videos/' + item.id), { isHot: isHot });
-                    }
+                    if (item.isHot !== isHot) await update(ref(db, 'videos/' + item.id), { isHot: isHot });
                 }
-
                 sendMovieTelegramAlert(series, ep, type, category, videoUrl, imageUrl);
-
                 closeQuickAddEpModal();
-                alert(`បានបង្ហោះ ${ep} សម្រាប់រឿង "${series}" ទៅកាន់ Database និង Telegram ជោគជ័យ!`);
-            } catch (err) {
-                alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message);
-            }
+                alert(`បានបង្ហោះ ${ep} សម្រាប់រឿង "${series}" ជោគជ័យ!`);
+            } catch (err) { alert("មានបញ្ហាក្នុងការបង្ហោះ៖ " + err.message); }
         }
 
         function renderVideos() {
             const grid = document.getElementById('videoGrid');
             if(!grid) return;
-
             let filtered = window.videos;
-            
-            if (window.currentCategory !== 'all') {
-                filtered = filtered.filter(v => v.category === window.currentCategory);
-            }
+            if (window.currentCategory !== 'all') filtered = filtered.filter(v => v.category === window.currentCategory);
 
             const seriesMap = {};
             filtered.forEach(v => {
                 if (!seriesMap[v.series]) {
-                    seriesMap[v.series] = {
-                        series: v.series,
-                        imageUrl: v.imageUrl,
-                        type: v.type || 'រឿងភាគ',
-                        category: v.category || 'ស្នេហា',
-                        isHot: v.isHot || false,
-                        createdAt: v.createdAt || 0,
-                        episodes: []
-                    };
+                    seriesMap[v.series] = { series: v.series, imageUrl: v.imageUrl, type: v.type || 'រឿងភាគ', category: v.category || 'ស្នេហា', isHot: v.isHot || false, createdAt: v.createdAt || 0, episodes: [] };
                 }
                 if (v.isHot) seriesMap[v.series].isHot = true;
-                if ((v.createdAt || 0) > seriesMap[v.series].createdAt) {
-                    seriesMap[v.series].createdAt = v.createdAt;
-                }
+                if ((v.createdAt || 0) > seriesMap[v.series].createdAt) seriesMap[v.series].createdAt = v.createdAt;
                 seriesMap[v.series].episodes.push(v);
             });
 
             let seriesList = Object.values(seriesMap);
-
             let hotSeries = seriesList.filter(s => s.isHot);
             let normalSeries = seriesList.filter(s => !s.isHot);
-
             hotSeries.sort((a, b) => b.createdAt - a.createdAt);
 
             if (window.shuffledBottom70Order && window.shuffledBottom70Order.length > 0) {
                 normalSeries.sort((a, b) => {
                     let indexA = window.shuffledBottom70Order.indexOf(a.series);
                     let indexB = window.shuffledBottom70Order.indexOf(b.series);
-                    
                     if (indexA !== -1 && indexB !== -1) return indexA - indexB;
                     if (indexA !== -1) return -1;
                     if (indexB !== -1) return 1;
@@ -2101,7 +1741,6 @@
             }
 
             const isAdmin = isUserAdmin();
-
             grid.innerHTML = seriesList.map((s) => {
                 const firstEp = s.episodes[0];
                 const isFreeSeries = s.category === 'រឿងឥតគិតថ្លៃ';
@@ -2110,22 +1749,14 @@
                     <div class="video-card">
                         <div class="thumbnail-box" onclick="openSeriesModal('${s.series.replace(/'/g, "\\'")}')">
                             <img src="${s.imageUrl}" alt="Thumbnail" loading="lazy">
-                            <span class="badge-access ${isFreeEp ? 'badge-free' : 'badge-vip'}">
-                                ${isFreeSeries ? '🎁 ឥតគិតថ្លៃ' : (isFreeEp ? 'ឥតគិតថ្លៃ' : '👑 VIP')}
-                            </span>
+                            <span class="badge-access ${isFreeEp ? 'badge-free' : 'badge-vip'}">${isFreeSeries ? '🎁 ឥតគិតថ្លៃ' : (isFreeEp ? 'ឥតគិតថ្លៃ' : '👑 VIP')}</span>
                             ${s.isHot ? '<span class="badge-hot">🔥 HOT</span>' : ''}
                         </div>
                         <div class="video-details" onclick="openSeriesModal('${s.series.replace(/'/g, "\\'")}')" style="cursor: pointer;">
                             <div class="series-name">${s.series}</div>
                             <div class="series-info">${s.type || 'រឿងភាគ'} | ${s.episodes.length} ភាគ</div>
                         </div>
-                        
-                        ${isAdmin ? `
-                            <div class="admin-card-actions" style="padding: 0 6px 6px;">
-                                <button onclick="openEditModal('${firstEp.id}')" class="btn-card-edit">✏️ កែ</button>
-                                <button onclick="deleteSeries('${s.series.replace(/'/g, "\\'")}')" class="btn-card-delete">🗑️ លុប</button>
-                            </div>
-                        ` : ''}
+                        ${isAdmin ? `<div class="admin-card-actions" style="padding: 0 6px 6px;"><button onclick="openEditModal('${firstEp.id}')" class="btn-card-edit">✏️ កែ</button><button onclick="deleteSeries('${s.series.replace(/'/g, "\\'")}')" class="btn-card-delete">🗑️ លុប</button></div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -2135,37 +1766,22 @@
             const input = document.getElementById('searchInput');
             const dropdown = document.getElementById('searchSuggestionsDropdown');
             if(!input || !dropdown) return;
-
             const query = input.value.toLowerCase().trim();
-            if(query === '') {
-                dropdown.classList.add('hidden');
-                dropdown.innerHTML = '';
-                return;
-            }
-
+            if(query === '') { dropdown.classList.add('hidden'); dropdown.innerHTML = ''; return; }
             const seriesMap = {};
-            window.videos.forEach(v => {
-                if(!seriesMap[v.series]) {
-                    seriesMap[v.series] = { series: v.series, imageUrl: v.imageUrl };
-                }
-            });
-
-            const allSeries = Object.values(seriesMap);
-            const matched = allSeries.filter(s => s.series.toLowerCase().includes(query));
-
+            window.videos.forEach(v => { if(!seriesMap[v.series]) seriesMap[v.series] = { series: v.series, imageUrl: v.imageUrl }; });
+            const matched = Object.values(seriesMap).filter(s => s.series.toLowerCase().includes(query));
             if(matched.length === 0) {
-                dropdown.innerHTML = `<div style="padding: 10px; font-size: 0.75rem; color: #888; text-align: center;">រកមិនឃើញរឿងដែលត្រូវគ្នា</div>`;
+                dropdown.innerHTML = `<div style="padding: 10px; font-size: 0.75rem; color: #888; text-align: center;">រកមិនឃើញរឿង</div>`;
                 dropdown.classList.remove('hidden');
                 return;
             }
-
             dropdown.innerHTML = matched.map(s => `
                 <div class="suggestion-item" onclick="selectSuggestion('${s.series.replace(/'/g, "\\'")}')">
                     <img src="${s.imageUrl}" class="suggestion-thumb" alt="Thumb" loading="lazy">
                     <span class="suggestion-text">${s.series}</span>
                 </div>
             `).join('');
-
             dropdown.classList.remove('hidden');
         }
 
@@ -2180,17 +1796,14 @@
                 alert("វេបសាយកំពុងតែត្រូវបានសម្រួល/ជួសជុល សូមរង់ចាំបន្តិច!");
                 return;
             }
-
             const sEpisodes = window.videos.filter(v => v.series === seriesName);
             if(sEpisodes.length === 0) return;
-
             sEpisodes.sort((a, b) => {
                 const numA = parseInt(a.ep.replace(/[^0-9]/g, '')) || 0;
                 const numB = parseInt(b.ep.replace(/[^0-9]/g, '')) || 0;
                 if (numA !== numB) return numA - numB;
                 return (a.createdAt || 0) - (b.createdAt || 0);
             });
-
             const firstEp = sEpisodes[0];
             const isFreeSeries = firstEp.category === 'រឿងឥតគិតថ្លៃ';
 
@@ -2202,9 +1815,7 @@
             const adminManageBox = document.getElementById('seriesAdminManageBtnBox');
             if (isUserAdmin()) {
                 adminManageBox.innerHTML = `<button onclick="toggleAdminModal(); switchAdminTab('episodes');" style="background-color: #2563eb; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-pen-to-square"></i> គ្រប់គ្រងភាគទាំងអស់</button>`;
-            } else {
-                adminManageBox.innerHTML = '';
-            }
+            } else { adminManageBox.innerHTML = ''; }
 
             const epContainer = document.getElementById('episodeListContainer');
             const isAdmin = isUserAdmin();
@@ -2218,31 +1829,17 @@
                             <span class="ep-thumb-badge">${isEpFree ? '▶ ឥតគិតថ្លៃ' : '👑 VIP'}</span>
                         </div>
                         <div class="ep-thumb-title" onclick="playEpisode('${ep.id}')" style="cursor: pointer; flex: 1;">${ep.ep}</div>
-                        
-                        ${isAdmin ? `
-                            <div style="display: flex; gap: 4px; padding: 4px 8px;">
-                                <button onclick="openEditModal('${ep.id}')" style="background-color: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;" title="កែប្រែភាគនេះ">✏️ កែ</button>
-                                <button onclick="deleteEpisode('${ep.id}')" style="background-color: #dc2626; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;" title="លុបភាគនេះ">🗑️</button>
-                            </div>
-                        ` : ''}
+                        ${isAdmin ? `<div style="display: flex; gap: 4px; padding: 4px 8px;"><button onclick="openEditModal('${ep.id}')" style="background-color: #2563eb; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">✏️ កែ</button><button onclick="deleteEpisode('${ep.id}')" style="background-color: #dc2626; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">🗑️</button></div>` : ''}
                     </div>
                 `;
             }).join('');
 
             if (isAdmin) {
-                episodesHTML += `
-                    <div class="add-episode-card-btn" onclick="openQuickAddEpModal('${seriesName.replace(/'/g, "\\'")}')">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>បង្ហោះភាគបន្ត</span>
-                    </div>
-                `;
+                episodesHTML += `<div class="add-episode-card-btn" onclick="openQuickAddEpModal('${seriesName.replace(/'/g, "\\'")}')"><i class="fa-solid fa-plus"></i><span>បង្ហោះភាគបន្ត</span></div>`;
             }
 
             epContainer.innerHTML = episodesHTML;
-
-            if (resetPlay) {
-                playEpisode(sEpisodes[0].id);
-            }
+            if (resetPlay) playEpisode(sEpisodes[0].id);
             document.getElementById('seriesModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
@@ -2251,29 +1848,19 @@
             const sEpisodes = window.videos.filter(v => v.series === seriesName);
             if(sEpisodes.length === 0) return;
             const refEp = sEpisodes[0];
-
             document.getElementById('quickAddSeriesTitle').value = refEp.series;
             document.getElementById('quickAddSeriesTitleDisplay').value = refEp.series;
             document.getElementById('quickAddVideoType').value = refEp.type || 'រឿងភាគ';
             document.getElementById('quickAddVideoCategory').value = refEp.category || 'ស្នេហា';
             document.getElementById('quickAddImageUrl').value = refEp.imageUrl || '';
-            
-            // កំណត់ស្ថានភាពប៊ូតុងបើក/បិទ 🔥 Hot តាមរឿងបច្ចុប្បន្ន
-            const isCurrentlyHot = sEpisodes.some(ep => ep.isHot === true);
-            document.getElementById('quickAddIsHotCheckbox').checked = isCurrentlyHot;
-
-            const lastEpNum = sEpisodes.length + 1;
-            document.getElementById('quickAddEpTitle').value = `រដូវកាលទី ${lastEpNum}`;
+            document.getElementById('quickAddIsHotCheckbox').checked = sEpisodes.some(ep => ep.isHot === true);
+            document.getElementById('quickAddEpTitle').value = `រដូវកាលទី ${sEpisodes.length + 1}`;
             document.getElementById('quickAddVideoUrl').value = '';
             document.getElementById('quickAddAccessType').value = (refEp.category === 'រឿងឥតគិតថ្លៃ') ? 'free' : 'vip';
-
             document.getElementById('quickAddEpModal').classList.remove('hidden');
         }
 
-        window.closeQuickAddEpModal = function() {
-            document.getElementById('quickAddEpModal').classList.add('hidden');
-        }
-
+        window.closeQuickAddEpModal = function() { document.getElementById('quickAddEpModal').classList.add('hidden'); }
         window.closeSeriesModal = function() {
             document.getElementById('seriesModal').classList.add('hidden');
             document.getElementById('seriesPlayerFrame').src = "";
@@ -2283,20 +1870,17 @@
 
         window.playEpisode = function(id) {
             if (window.siteMaintenanceStatus.isClosed && !isUserAdmin()) {
-                alert("វេបសាយកំពុងតែត្រូវបានសម្រួល/ជួសជុល សូមរង់ចាំបន្តិច!");
+                alert("វេបសាយកំពុងតែកែសម្រួល សូមរង់ចាំបន្តិច!");
                 return;
             }
-
             const v = window.videos.find(item => item.id === id);
             if(!v) return;
-
             document.querySelectorAll('.episode-thumb-card').forEach(b => b.classList.remove('active-ep'));
             const activeCard = document.getElementById(`ep_card_${id}`);
             if(activeCard) activeCard.classList.add('active-ep');
 
             const iframe = document.getElementById('seriesPlayerFrame');
             const lockedMsg = document.getElementById('vipLockedMessage');
-
             const isFreeSeries = v.category === 'រឿងឥតគិតថ្លៃ';
             const isEpFree = v.accessType === 'free' || v.accessType === 'ឥតគិតថ្លៃ';
             const hasVipAccess = isUserVip() || isFreeSeries || isEpFree;
@@ -2312,7 +1896,6 @@
                 lockedMsg.classList.add('hidden');
                 lockedMsg.style.display = "none";
                 iframe.src = v.videoUrl;
-
                 recordWatchHistory(v.series, v.ep);
             }
         }
@@ -2321,13 +1904,9 @@
             if(confirm(`តើអ្នកពិតជាចង់លុបរឿងដុំ "${seriesName}" ទាំងមូលមែនទេ?`)) {
                 try {
                     const toDelete = window.videos.filter(v => v.series === seriesName);
-                    for (let ep of toDelete) {
-                        await remove(ref(db, 'videos/' + ep.id));
-                    }
+                    for (let ep of toDelete) await remove(ref(db, 'videos/' + ep.id));
                     alert("បានលុបរឿងជោគជ័យ!");
-                } catch(err) {
-                    alert("កំហុស៖ " + err.message);
-                }
+                } catch(err) { alert("កំហុស៖ " + err.message); }
             }
         }
 
@@ -2341,10 +1920,7 @@
             document.getElementById('editCategory').value = v.category || 'ស្នេហា';
             document.getElementById('editVideoUrl').value = v.videoUrl;
             document.getElementById('editImageUrl').value = v.imageUrl;
-            
-            const accessVal = (v.accessType === 'free' || v.accessType === 'ឥតគិតថ្លៃ') ? 'free' : 'vip';
-            document.getElementById('editAccessType').value = accessVal;
-            
+            document.getElementById('editAccessType').value = (v.accessType === 'free' || v.accessType === 'ឥតគិតថ្លៃ') ? 'free' : 'vip';
             document.getElementById('editIsHot').checked = v.isHot || false;
             document.getElementById('editVideoModal').classList.remove('hidden');
         }
@@ -2356,9 +1932,7 @@
             const id = document.getElementById('editId').value;
             const category = document.getElementById('editCategory').value;
             let accessType = document.getElementById('editAccessType').value;
-            if (category === 'រឿងឥតគិតថ្លៃ') {
-                accessType = 'free';
-            }
+            if (category === 'រឿងឥតគិតថ្លៃ') accessType = 'free';
 
             const updatedData = {
                 series: document.getElementById('editSeriesTitle').value.trim(),
@@ -2375,13 +1949,9 @@
                 closeEditModal();
                 renderAdminAllEpisodesList();
                 const currentSeriesTitle = document.getElementById('seriesModalTitle').innerText;
-                if (currentSeriesTitle) {
-                    openSeriesModal(currentSeriesTitle, false);
-                }
-                alert("បានកែសម្រួលវីដេអូរឿងជោគជ័យ!");
-            } catch(err) {
-                alert("កំហុស៖ " + err.message);
-            }
+                if (currentSeriesTitle) openSeriesModal(currentSeriesTitle, false);
+                alert("បានកែសម្រួលជោគជ័យ!");
+            } catch(err) { alert("កំហុស៖ " + err.message); }
         }
 
         function renderVipSettingsForm() {
