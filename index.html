@@ -1232,27 +1232,37 @@
         }
 
         async function checkVipExpiryBackground() {
-            let now = Date.now();
+            if (!window.dbUsersList) return;
+            const now = Date.now();
 
-            if (window.dbUsersList) {
-                for (let userKey of Object.keys(window.dbUsersList)) {
-                    let u = window.dbUsersList[userKey];
-                    
-                    if (u.vipExpiry && u.vipExpiry > 0 && u.vipExpiry <= now) {
-                        if (u.notifiedExpired !== true) {
-                            try {
-                                await update(ref(db, 'users/' + userKey), { 
-                                    vipExpiry: null,
-                                    notifiedExpired: true 
-                                });
-                                await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${u.username}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(u.vipExpiry).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
-                            } catch(e) {}
-                        } else if (u.vipExpiry !== null) {
-                            try {
-                                await update(ref(db, 'users/' + userKey), { vipExpiry: null });
-                            } catch(e) {}
+            for (let userKey of Object.keys(window.dbUsersList)) {
+                const u = window.dbUsersList[userKey];
+                if (!u || !u.vipExpiry) continue;
+
+                const expiryNum = Number(u.vipExpiry);
+                if (expiryNum > 0 && expiryNum <= now) {
+                    const userRef = ref(db, 'users/' + userKey);
+                    let shouldSendAlert = false;
+                    let expiredAtTime = expiryNum;
+
+                    try {
+                        const txResult = await runTransaction(userRef, (currentData) => {
+                            if (!currentData) return currentData;
+                            const currentExpiry = Number(currentData.vipExpiry || 0);
+
+                            if (currentExpiry > 0 && currentExpiry <= Date.now() && currentData.notifiedExpired !== true) {
+                                currentData.vipExpiry = null;
+                                currentData.notifiedExpired = true;
+                                shouldSendAlert = true;
+                                expiredAtTime = currentExpiry;
+                            }
+                            return currentData;
+                        });
+
+                        if (txResult.committed && shouldSendAlert) {
+                            await sendExpiredVipTelegramAlert(`⚠️ **សមាជិក VIP បានអស់សុពលភាព!**\n\n👤 អតិថិជន: ${u.username}\n🔻 ស្ថានភាព: បានធ្លាក់មកជាសមាជិកធម្មតាវិញ\n📅 ពេលវាលាផុតកំណត់: ${new Date(expiredAtTime).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
                         }
-                    }
+                    } catch (e) {}
                 }
             }
         }
@@ -1840,8 +1850,11 @@
                 unitLabel = `${amount} ម៉ោង`;
             }
 
-            const expiryTime = Date.now() + durationMs;
             const cleanUserKey = tgUser.replace(/[^a-zA-Z0-9_]/g, '');
+            const now = Date.now();
+            const existingUser = window.dbUsersList && window.dbUsersList[cleanUserKey];
+            const existingExpiry = existingUser && Number(existingUser.vipExpiry) > now ? Number(existingUser.vipExpiry) : now;
+            const expiryTime = existingExpiry + durationMs;
 
             try {
                 await update(ref(db, 'users/' + cleanUserKey), {
@@ -1856,7 +1869,7 @@
 
                 const adminName = window.currentUserTgObj ? window.currentUserTgObj.username : '@RIENML1';
                 
-                sendVipTelegramAlert(`💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n📅 ថ្ងៃផុតកំណត់: ${new Date(expiryTime).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
+                await sendVipTelegramAlert(`💎 **ដំណឹងបញ្ជាក់ការផ្ដល់សិទ្ធិ VIP!**\n\n👤 អតិថិជន: ${tgUser}\n⏳ រយៈពេល: ${unitLabel}\n👑 អ្នកគ្រប់គ្រងអនុម័ត: ${adminName}\n📅 ថ្ងៃផុតកំណត់: ${new Date(expiryTime).toLocaleString()}\n🌐 វេបសាយ: DekMerl-ដេកមើល`);
 
                 document.getElementById('targetTgUser').value = "";
                 renderVipUserList();
